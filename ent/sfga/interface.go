@@ -2,12 +2,14 @@
 // schema from its github.com/sfborg/sfga repository.
 package sfga
 
-// SFGA provides methods to operate SFGA schema.
-type SFGA interface {
-	// FetchSchema returns SFGA schema according to provided GitRepo.
+import "database/sql"
+
+// Schema provides methods to operate Schema schema.
+type Schema interface {
+	// Fetch returns SFGA schema according to provided GitRepo.
 	// If something went wrong, or the sha256 does not match downloaded
 	// schema, it returns an error.
-	FetchSchema() ([]byte, error)
+	Fetch() ([]byte, error)
 
 	// Clean removes the temporary path for the schema. Returns an error
 	// if something went wrong.
@@ -19,4 +21,25 @@ type SFGA interface {
 	// Path returns temporary directory where SFGA schema is downloaded from
 	// GitRepo.
 	Path() string
+}
+
+// Archive deals with SFGA files, and connects to their database.
+type Archive interface {
+	// Extract uncopresses SFGA file and places it in cache, ready to be
+	// queried.
+	Extract() error
+
+	// Create uses cache directory to create SFGA archive.
+	Create(path string) error
+
+	// Clean removes cache directory.
+	Clean() error
+	DB
+}
+
+// DB provides connection to SFGA archive SQLite database.
+type DB interface {
+	FileDB() string
+	Connect() (*sql.DB, error)
+	Close() error
 }

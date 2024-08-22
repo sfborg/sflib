@@ -6,8 +6,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fatih/color v1.16.0 h1:zmkK9Ngbjj+K0yRhTVONQh1p/HknKYSlNT+vZCzyokM=
 github.com/fatih/color v1.16.0/go.mod h1:fL2Sau1YI5c0pdGEVCbKQbLXB6edEj1ZgiY4NijnWvE=
-github.com/gnames/gnsys v0.3.2 h1:sEJK+o+mG3daZMVg3uLQ8Tzz1e0fIP+q4TtSr+CJ2FA=
-github.com/gnames/gnsys v0.3.2/go.mod h1:xg0s4lEaoUgIgkdsSqbGXNNhvRJUsdJUYtqrHwRYOHE=
+github.com/gnames/gnsys v0.3.3 h1:RI1VR2UOGiYgDeCKKKf5Rxm9/WrN/xABZZlrOek2d/w=
+github.com/gnames/gnsys v0.3.3/go.mod h1:/JXSi3FSYUuaMkucGqht96pN6xHc4jRQuZ0ZVN7j2p8=
 github.com/matryer/is v1.4.1 h1:55ehd8zaGABKLXQUe2awZ99BD/PTc2ls+KV/dXphgEQ=
 github.com/matryer/is v1.4.1/go.mod h1:8I/i5uYgLzgsgEloJE1U6xx5HkBQpAZvepWuujKwMRU=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=

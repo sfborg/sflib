@@ -1,4 +1,4 @@
-package sfgaio
+package schemaio
 
 import (
 	"crypto/sha256"
@@ -12,17 +12,17 @@ import (
 	"github.com/sfborg/sflib/ent/sfga"
 )
 
-type sfgaio struct {
+type schemaio struct {
 	repo sfga.GitRepo
 	path string
 }
 
-func New(repo sfga.GitRepo, path string) sfga.SFGA {
-	res := &sfgaio{repo: repo, path: path}
+func New(repo sfga.GitRepo, path string) sfga.Schema {
+	res := &schemaio{repo: repo, path: path}
 	return res
 }
 
-func (s *sfgaio) FetchSchema() ([]byte, error) {
+func (s *schemaio) Fetch() ([]byte, error) {
 	res, err := s.loadSchema()
 	if err == nil {
 		return res, nil
@@ -38,7 +38,7 @@ func (s *sfgaio) FetchSchema() ([]byte, error) {
 }
 
 // Clean removes SFGA data directory.
-func (s *sfgaio) Clean() error {
+func (s *schemaio) Clean() error {
 	err := os.RemoveAll(s.path)
 	if err != nil {
 		err = fmt.Errorf("cannot remove path %s: %w", s.path, err)
@@ -48,16 +48,16 @@ func (s *sfgaio) Clean() error {
 }
 
 // GitRepo returns GitRepo of its instance.
-func (s *sfgaio) GitRepo() sfga.GitRepo {
+func (s *schemaio) GitRepo() sfga.GitRepo {
 	return s.repo
 }
 
 // Path returns temporary path where SFGA schema is downloaded.
-func (s *sfgaio) Path() string {
+func (s *schemaio) Path() string {
 	return s.path
 }
 
-func (s *sfgaio) loadSchema() ([]byte, error) {
+func (s *schemaio) loadSchema() ([]byte, error) {
 	var err error
 	var exists bool
 	schemaPath := filepath.Join(s.path, "schema.sql")
@@ -89,7 +89,7 @@ func (s *sfgaio) loadSchema() ([]byte, error) {
 	return res, nil
 }
 
-func (s *sfgaio) cloneRepo() error {
+func (s *schemaio) cloneRepo() error {
 	var err error
 	err = s.Clean()
 	if err != nil {

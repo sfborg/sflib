@@ -1,4 +1,4 @@
-package sfgaio_test
+package schemaio_test
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/gnames/gnsys"
 	"github.com/sfborg/sflib/ent/sfga"
-	"github.com/sfborg/sflib/io/sfgaio"
+	"github.com/sfborg/sflib/io/schemaio"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,12 +21,12 @@ func TestFetchSchema(t *testing.T) {
 	}
 	tmpPath := filepath.Join(os.TempDir(), repo.ShaSchemaSQL)
 
-	s := sfgaio.New(repo, tmpPath)
+	s := schemaio.New(repo, tmpPath)
 	err = s.Clean()
 	st := gnsys.GetDirState(s.Path())
 	assert.Equal(gnsys.DirAbsent, st)
 
-	schema, err := s.FetchSchema()
+	schema, err := s.Fetch()
 	assert.Nil(err)
 
 	st = gnsys.GetDirState(s.Path())
@@ -36,7 +36,7 @@ func TestFetchSchema(t *testing.T) {
 	assert.Contains(string(schema), "CREATE TABLE")
 
 	// second time it should take cached schema.
-	schema, err = s.FetchSchema()
+	schema, err = s.Fetch()
 	assert.Nil(err)
 
 	assert.True(len(schema) > 200)
@@ -44,8 +44,8 @@ func TestFetchSchema(t *testing.T) {
 
 	// check for matching the hash
 	repo.ShaSchemaSQL = "1234567"
-	s = sfgaio.New(repo, tmpPath)
-	schema, err = s.FetchSchema()
+	s = schemaio.New(repo, tmpPath)
+	schema, err = s.Fetch()
 	assert.NotNil(err)
 	assert.Nil(schema)
 

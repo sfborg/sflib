@@ -29,9 +29,6 @@ type Archive interface {
 	// queried.
 	Extract() error
 
-	// Create uses cache directory to create SFGA archive.
-	Create(path string) error
-
 	// Clean removes cache directory.
 	Clean() error
 	DB
@@ -39,7 +36,22 @@ type Archive interface {
 
 // DB provides connection to SFGA archive SQLite database.
 type DB interface {
-	FileDB() string
+	// Connect creates databse connection and returns back the
+	// databse handler or error.
 	Connect() (*sql.DB, error)
+
+	// Close stops database connection.
 	Close() error
+
+	// FileDB returns path to the SFGA database file, if it is not
+	// yet available, returns empty string.
+	FileDB() string
+
+	// Create uses cache directory to create SFGA archive.
+	// Name of the file determins its compression algorithm as well
+	// as sql (plain text)  or sqlite (binary) type.
+	MkSfga(path string) error
+
+	// Version returns version number of SFGA schema.
+	Version() string
 }

@@ -31,7 +31,6 @@ type Archive interface {
 
 	// Clean removes cache directory.
 	Clean() error
-	DB
 }
 
 // DB provides connection to SFGA archive SQLite database.

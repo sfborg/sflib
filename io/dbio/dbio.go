@@ -20,37 +20,19 @@ type dbio struct {
 	db      *sql.DB
 }
 
-func New(dbDir string) (sfga.DB, error) {
-	var err error
+func New(dbDir string) sfga.DB {
 	res := &dbio{dir: dbDir}
-	res.file, res.isSql, err = dbFile(dbDir)
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-func (d *dbio) readFromSQL() error {
-	var err error
-	dbFile := d.file + "ite"
-
-	read := fmt.Sprintf(".read %s", d.file)
-	fmt.Println()
-
-	cmd := exec.Command("sqlite3", dbFile, read)
-	err = cmd.Run()
-	if err != nil {
-		return err
-	}
-
-	d.isSql = false
-	d.file = dbFile
-	return nil
+	return res
 }
 
 func (d *dbio) Connect() (*sql.DB, error) {
 	var err error
 	var db *sql.DB
+
+	d.file, d.isSql, err = dbFile(d.dir)
+	if err != nil {
+		return nil, err
+	}
 
 	if d.isSql {
 		err = d.readFromSQL()
@@ -136,4 +118,22 @@ func dbFile(dbDir string) (string, bool, error) {
 		err = fmt.Errorf("extension should be .sql or .sqlite: %s", f)
 		return "", false, err
 	}
+}
+
+func (d *dbio) readFromSQL() error {
+	var err error
+	dbFile := d.file + "ite"
+
+	read := fmt.Sprintf(".read %s", d.file)
+	fmt.Println()
+
+	cmd := exec.Command("sqlite3", dbFile, read)
+	err = cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	d.isSql = false
+	d.file = dbFile
+	return nil
 }

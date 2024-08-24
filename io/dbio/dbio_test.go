@@ -18,56 +18,10 @@ var dbCache = filepath.Join(cache, "db")
 
 func TestNew(t *testing.T) {
 	assert := assert.New(t)
-	var a sfga.Archive
 	var d sfga.DB
-	var err error
-	tests := []struct {
-		msg    string
-		file   string
-		dbFile string
-		isSql  bool
-	}{
-		{"sql", "dinof.sql", "dinof.sql", true},
-		{"sql zip", "dinof.sql.zip", "dinof.sql", true},
-		{"sql tar", "dinof.sql.tar.gz", "dinof.sql", true},
-		{"bin", "dinof.sqlite", "dinof.sqlite", false},
-		{"bin zip", "dinof.sqlite.zip", "dinof.sqlite", false},
-		{"bin tar", "dinof.sqlite.tar.gz", "dinof.sqlite", false},
-	}
-
-	for _, v := range tests {
-		sf := filepath.Join("..", "..", "testdata", v.file)
-		a, err = archio.New(sf, cache)
-		assert.Nil(err)
-		err = a.Extract()
-		assert.Nil(err)
-
-		d, err = dbio.New(dbCache)
-		assert.Nil(err)
-		assert.Equal(v.dbFile, filepath.Base(d.FileDB()))
-	}
-	err = a.Clean()
-	assert.Nil(err)
-}
-
-func TestNewBad(t *testing.T) {
-	assert := assert.New(t)
-	var a sfga.Archive
-	var d sfga.DB
-	var err error
-	sf := filepath.Join("..", "..", "testdata", "dwca.tar.gz")
-	a, err = archio.New(sf, cache)
-	assert.Nil(err)
-
-	err = a.Extract()
-	assert.Nil(err)
-
-	d, err = dbio.New(dbCache)
-	assert.NotNil(err)
-	assert.Nil(d)
-
-	err = a.Clean()
-	assert.Nil(err)
+	d = dbio.New(dbCache)
+	_, ok := d.(sfga.DB)
+	assert.True(ok)
 }
 
 func TestConnect(t *testing.T) {
@@ -78,28 +32,55 @@ func TestConnect(t *testing.T) {
 	var err error
 
 	tests := []struct {
-		msg  string
-		file string
+		msg   string
+		file  string
+		isBad bool
 	}{
-		{"sql", "dinof.sql"},
-		{"sqlite", "dinof.sqlite"},
+		{"dwca", "dwca.tar.gz", true},
+		{"sql", "dinof.sql", false},
+		{"sql zip", "dinof.sql.zip", false},
+		{"sql tar", "dinof.sql.tar.gz", false},
+		{"sqlite", "dinof.sqlite", false},
+		{"sqlite zip", "dinof.sqlite.zip", false},
+		{"sqlite tar", "dinof.sqlite.tar.gz", false},
 	}
 	for _, v := range tests {
 		sf := filepath.Join("..", "..", "testdata", v.file)
+		d = dbio.New(dbCache)
+
 		a, err = archio.New(sf, cache)
 		assert.Nil(err)
 
 		err = a.Extract()
 		assert.Nil(err)
 
-		d, err = dbio.New(dbCache)
-		assert.Nil(err)
 		db, err = d.Connect()
-		assert.Nil(err)
-		assert.NotNil(db)
+
+		if v.isBad {
+			assert.NotNil(err)
+			assert.Nil(db)
+		} else {
+			assert.Nil(err)
+			assert.NotNil(db)
+		}
 	}
 	err = a.Clean()
 	assert.Nil(err)
+}
+
+func TestConnectNoExtract(t *testing.T) {
+	assert := assert.New(t)
+
+	sf := filepath.Join("..", "..", "testdata", "dwca.tar.gz")
+	a, err := archio.New(sf, cache)
+	assert.Nil(err)
+	err = a.Clean()
+	assert.Nil(err)
+
+	d := dbio.New(dbCache)
+	db, err := d.Connect()
+	assert.NotNil(err)
+	assert.Nil(db)
 }
 
 func TestVersion(t *testing.T) {
@@ -115,7 +96,7 @@ func TestVersion(t *testing.T) {
 	err = a.Extract()
 	assert.Nil(err)
 
-	d, err = dbio.New(dbCache)
+	d = dbio.New(dbCache)
 	assert.Nil(err)
 
 	ver := d.Version()
@@ -136,7 +117,7 @@ func TestClose(t *testing.T) {
 	err = a.Extract()
 	assert.Nil(err)
 
-	d, err = dbio.New(dbCache)
+	d = dbio.New(dbCache)
 	assert.Nil(err)
 	db, err = d.Connect()
 	assert.Nil(err)

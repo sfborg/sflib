@@ -10,13 +10,27 @@ import (
 )
 
 type archio struct {
+	// sfgaFilePath is the path to SFGArchive file. The file can be
+	// compressed, SQL dump or binary file of SQLite database.
 	sfgaFilePath string
-	cachePath    string
+
+	// cachePath is the root of temporary directory to place working copy of
+	// SFGArchive. Other paths (dbPath and downloadPath are children of
+	// cachePath.
+	cachePath string
+
+	// downloadPath is a temporary directory where remote SFGArchive
+	// would be downloaded for further processing.
 	downloadPath string
-	dbPath       string
-	sfga.DB
+
+	// dbPath is the path where from which SQLite file of SFGArchive script is
+	// accessed.
+	dbPath string
 }
 
+// New creates an instance that is responsible to deal with
+// handling SFGArchive on file system level. It does not interact
+// with the archive on the SQLite database level.
 func New(sfgaFilePath, cachePath string) (sfga.Archive, error) {
 	var err error
 	exists, _ := gnsys.FileExists(sfgaFilePath)
@@ -33,6 +47,7 @@ func New(sfgaFilePath, cachePath string) (sfga.Archive, error) {
 	return res, nil
 }
 
+// Extract decompresses SFGArchive (if needed).
 func (a *archio) Extract() error {
 	var err error
 	err = a.resetCache()
@@ -56,10 +71,13 @@ func (a *archio) Extract() error {
 	return nil
 }
 
+// Create uses database of SFGArchive that exists in the cache directory
+// and makes a copy of the Archive at the path provided by the user.
 func (a *archio) Create(path string) error {
 	return nil
 }
 
+// Clean empties cachePath, or creates it if necessary.
 func (a *archio) Clean() error {
 	switch gnsys.GetDirState(a.cachePath) {
 	case gnsys.DirAbsent:

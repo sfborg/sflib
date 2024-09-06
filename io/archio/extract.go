@@ -131,19 +131,19 @@ func (a *archio) untar(tarReader *tar.Reader) error {
 			return err
 		}
 
-		// Get the individual filePath from the header.
-		filePath := filepath.Join(a.dbPath, header.Name)
+		// Get the individual dbFile from the header.
+		dbFile := filepath.Join(a.dbPath, header.Name)
 
 		switch header.Typeflag {
 		case tar.TypeDir:
 			// Handle directory.
-			err = os.MkdirAll(filePath, os.FileMode(header.Mode))
+			err = os.MkdirAll(dbFile, os.FileMode(header.Mode))
 			if err != nil {
 				return err
 			}
 		case tar.TypeReg:
 			// Handle regular file.
-			writer, err = os.Create(filePath)
+			writer, err = os.Create(dbFile)
 			if err != nil {
 				return err
 			}

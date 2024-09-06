@@ -20,11 +20,17 @@ type dbio struct {
 	db      *sql.DB
 }
 
+// New creates an instance that will manage database functionality
+// of SFGArchive. Connection to database is created by Connect method.
+// It takes a path to a directory where SFGA file is either extracted or
+// copied. This is a temporary directory that will be deleted in the end.
 func New(dbDir string) sfga.DB {
 	res := &dbio{dir: dbDir}
 	return res
 }
 
+// Connect returns the database handler to SFGArchive. If connection
+// failed to be established, it returns the corresponding error.
 func (d *dbio) Connect() (*sql.DB, error) {
 	var err error
 	var db *sql.DB
@@ -64,26 +70,25 @@ func (d *dbio) Connect() (*sql.DB, error) {
 	return db, nil
 }
 
+// Close closes the connection to SFGArchiave database.
 func (d *dbio) Close() error {
 	return d.db.Close()
 }
 
+// FileDB returns the path to SFGArchive file.
 func (d *dbio) FileDB() string {
 	return d.file
 }
 
-func (d *dbio) MkSfga(sfgaPath string) error {
-	return nil
-}
-
+// Version returns the version of SFGArchive's schema.
 func (d *dbio) Version() string {
 	if d.version == "" {
-		d.setVersion()
+		d.getVersion()
 	}
 	return d.version
 }
 
-func (d *dbio) setVersion() {
+func (d *dbio) getVersion() {
 	if d.db == nil {
 		d.Connect()
 	}
@@ -96,6 +101,9 @@ func (d *dbio) setVersion() {
 }
 
 // dbFile finds the database file in the extracted data from SFGA.
+// at first we only know the directory where SFGArchive is extracted
+// or placed. This function allow to find the file path to the
+// database.
 func dbFile(dbDir string) (string, bool, error) {
 	es, err := os.ReadDir(dbDir)
 	if err != nil {
@@ -120,6 +128,7 @@ func dbFile(dbDir string) (string, bool, error) {
 	}
 }
 
+// readFromSQL creates SQLite file from SFGArchive's SQL dump.
 func (d *dbio) readFromSQL() error {
 	var err error
 	dbFile := d.file + "ite"

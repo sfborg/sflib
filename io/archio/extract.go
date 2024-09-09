@@ -4,12 +4,12 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/gnames/gnsys"
+	"github.com/sfborg/sflib/ent/sfga"
 )
 
 func (a *archio) extract() error {
@@ -22,7 +22,7 @@ func (a *archio) extract() error {
 		return a.copy()
 	default:
 		base := filepath.Base(a.sfgaFilePath)
-		err := fmt.Errorf("unknown extension '%s'", base)
+		err := &sfga.ErrUnknownExt{File: base}
 		return err
 	}
 }
@@ -30,7 +30,7 @@ func (a *archio) extract() error {
 func (a *archio) copy() error {
 	src, err := os.Open(a.sfgaFilePath)
 	if err != nil {
-		return err
+		return &sfga.ErrFileOpen{File: a.sfgaFilePath, Err: err}
 	}
 	defer src.Close()
 
@@ -38,14 +38,14 @@ func (a *archio) copy() error {
 	dstPath := filepath.Join(a.dbPath, base)
 	dst, err := os.Create(dstPath)
 	if err != nil {
-		return err
+		return &sfga.ErrFileCreate{File: dstPath, Err: err}
 	}
 	defer dst.Close()
 
 	buf := make([]byte, 64*1024) // 32KB buffer size (adjust as needed)
 	_, err = io.CopyBuffer(dst, src, buf)
 	if err != nil {
-		return err
+		return &sfga.ErrFileCopy{Src: src.Name(), Dst: dst.Name(), Err: err}
 	}
 
 	return nil
@@ -55,14 +55,14 @@ func (a *archio) extractTarGz() error {
 	// Open the .tar.gz archive for reading.
 	file, err := os.Open(a.sfgaFilePath)
 	if err != nil {
-		return err
+		return &sfga.ErrFileOpen{File: a.sfgaFilePath, Err: err}
 	}
 	defer file.Close()
 
 	// Create a new gzip reader.
 	gzReader, err := gzip.NewReader(file)
 	if err != nil {
-		return err
+		return &sfga.ErrTarGzReader{File: a.sfgaFilePath, Err: err}
 	}
 	defer gzReader.Close()
 
@@ -75,15 +75,16 @@ func (a *archio) extractZip() error {
 	// Open the zip file for reading.
 	r, err := zip.OpenReader(a.sfgaFilePath)
 	if err != nil {
-		return err
+		return &sfga.ErrZipReader{File: a.sfgaFilePath, Err: err}
 	}
 	defer r.Close()
 
 	for _, f := range r.File {
 		// Construct the full path for the file/directory and ensure its directory exists.
 		fpath := filepath.Join(a.dbPath, f.Name)
-		if err := os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-			return err
+		dir := filepath.Dir(fpath)
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return &sfga.ErrDirCreate{Dir: dir, Err: err}
 		}
 
 		// If it's a directory, move on to the next entry.
@@ -95,7 +96,7 @@ func (a *archio) extractZip() error {
 		// Open the file within the zip.
 		rc, err := f.Open()
 		if err != nil {
-			return err
+			return &sfga.ErrFileOpen{File: f.Name, Err: err}
 		}
 		defer rc.Close()
 
@@ -106,14 +107,14 @@ func (a *archio) extractZip() error {
 			f.Mode(),
 		)
 		if err != nil {
-			return err
+			return &sfga.ErrFileOpen{File: outFile.Name(), Err: err}
 		}
 		defer outFile.Close()
 
 		// Copy the contents of the file from the zip to the new file.
 		_, err = io.Copy(outFile, rc)
 		if err != nil {
-			return err
+			return &sfga.ErrFileCopy{Src: f.Name, Dst: outFile.Name(), Err: err}
 		}
 	}
 
@@ -128,7 +129,7 @@ func (a *archio) untar(tarReader *tar.Reader) error {
 			break
 		}
 		if err != nil {
-			return err
+			return &sfga.ErrTarGzReader{Err: err}
 		}
 
 		// Get the individual dbFile from the header.
@@ -139,23 +140,23 @@ func (a *archio) untar(tarReader *tar.Reader) error {
 			// Handle directory.
 			err = os.MkdirAll(dbFile, os.FileMode(header.Mode))
 			if err != nil {
-				return err
+				return &sfga.ErrDirCreate{Dir: dbFile, Err: err}
 			}
 		case tar.TypeReg:
 			// Handle regular file.
 			writer, err = os.Create(dbFile)
 			if err != nil {
-				return err
+				return &sfga.ErrFileCreate{File: dbFile, Err: err}
 			}
 			io.Copy(writer, tarReader)
 			writer.Close()
 		default:
-			return err
+			return &sfga.ErrFileCreate{File: dbFile, Err: err}
 		}
 	}
 	state := gnsys.GetDirState(a.dbPath)
 	if state == gnsys.DirEmpty {
-		err := fmt.Errorf("bad tar file '%s'", a.sfgaFilePath)
+		err := &sfga.ErrEmptyTar{File: a.sfgaFilePath}
 		return err
 	}
 	return nil

@@ -58,14 +58,14 @@ func (a *archio) Extract() error {
 	if strings.HasPrefix(a.sfgaFilePath, "http") {
 		dlPath, err := a.download()
 		if err != nil {
-			return err
+			return &sfga.ErrDownload{URL: a.sfgaFilePath, Err: err}
 		}
 		a.sfgaFilePath = dlPath
 	}
 
 	err = a.extract()
 	if err != nil {
-		return err
+		return &sfga.ErrExtractArchive{File: a.sfgaFilePath, Err: err}
 	}
 
 	return nil

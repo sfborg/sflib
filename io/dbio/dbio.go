@@ -139,7 +139,7 @@ func (d *dbio) readFromSQL() error {
 	cmd := exec.Command("sqlite3", dbFile, read)
 	err = cmd.Run()
 	if err != nil {
-		return err
+		return &sfga.ErrSQLiteLoadSQL{Err: err}
 	}
 
 	d.isSql = false

@@ -41,8 +41,7 @@ func (s *schemaio) Fetch() ([]byte, error) {
 func (s *schemaio) Clean() error {
 	err := os.RemoveAll(s.path)
 	if err != nil {
-		err = fmt.Errorf("cannot remove path %s: %w", s.path, err)
-		return err
+		return &sfga.ErrDirRemove{Dir: s.path, Err: err}
 	}
 	return nil
 }
@@ -93,7 +92,7 @@ func (s *schemaio) cloneRepo() error {
 	var err error
 	err = s.Clean()
 	if err != nil {
-		return err
+		return &sfga.ErrRepoCacheClean{Dir: s.path, Err: err}
 	}
 
 	var currentDir string
@@ -101,7 +100,7 @@ func (s *schemaio) cloneRepo() error {
 	err = cmd.Run()
 	if err != nil {
 		err = fmt.Errorf("cannot clone GitHub Repo %s: %w", s.repo.URL, err)
-		return err
+		return &sfga.ErrRepoClean{URL: s.repo.URL, Err: err}
 	}
 
 	currentDir, err = os.Getwd()
@@ -112,8 +111,7 @@ func (s *schemaio) cloneRepo() error {
 
 	err = os.Chdir(s.path)
 	if err != nil {
-		err = fmt.Errorf("cannot chdir %s: %w", s.path, err)
-		return err
+		return &sfga.ErrDirChange{Src: currentDir, Dst: s.path, Err: err}
 	}
 
 	if s.repo.Tag == "" {
@@ -123,8 +121,7 @@ func (s *schemaio) cloneRepo() error {
 	cmd = exec.Command("git", "checkout", s.repo.Tag)
 	err = cmd.Run()
 	if err != nil {
-		err = fmt.Errorf("cannot checkout tag %s: %w", s.repo.Tag, err)
-		return err
+		return &sfga.ErrRepoTagCheckout{Tag: s.repo.Tag, Err: err}
 	}
 
 	return nil

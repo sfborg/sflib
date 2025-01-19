@@ -37,6 +37,7 @@ func (d *dbio) dumpBinary(outFile string) error {
 	if err = cmd.Run(); err != nil {
 		return &sfga.ErrSQLiteCreateBinary{File: outFile, Err: err}
 	}
+	slog.Info("SQLite binary file is created", "file", outFile)
 
 	return nil
 }
@@ -102,5 +103,6 @@ func createZip(outFile string) error {
 	if err != nil {
 		return &sfga.ErrZipCreate{File: zipFile, Err: err}
 	}
+	slog.Info("SQLite ZIP file is created", "file", outFile)
 	return nil
 }

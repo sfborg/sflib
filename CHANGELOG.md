@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.6] - 2025-01-19 Sun
+
+Add: more logs
+
 ## [v0.1.5] - 2024-09-09 Mon
 
 Add [#3]: Improve error handling.
@@ -37,6 +41,7 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.1.6]: https://github.com/sfborg/sflib/compare/v0.1.5...v0.1.6
 [v0.1.5]: https://github.com/sfborg/sflib/compare/v0.1.4...v0.1.5
 [v0.1.4]: https://github.com/sfborg/sflib/compare/v0.1.3...v0.1.4
 [v0.1.3]: https://github.com/sfborg/sflib/compare/v0.1.2...v0.1.3

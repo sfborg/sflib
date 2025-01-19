@@ -16,8 +16,8 @@ func TestFetchSchema(t *testing.T) {
 	var err error
 	repo := sfga.GitRepo{
 		URL:          "https://github.com/sfborg/sfga",
-		Tag:          "v1.2.1",
-		ShaSchemaSQL: "e84cc873",
+		Tag:          "v0.3.18",
+		ShaSchemaSQL: "bc5379b0bb5",
 	}
 	tmpPath := filepath.Join(os.TempDir(), repo.ShaSchemaSQL)
 

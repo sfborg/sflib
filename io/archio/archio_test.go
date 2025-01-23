@@ -43,7 +43,7 @@ func TestDownload(t *testing.T) {
 	assert := assert.New(t)
 	var a sfga.Archive
 	var err error
-	sf := "http://opendata.globalnames.org/sfga/147-vascan-2024-08-29.sql.zip"
+	sf := "http://opendata.globalnames.org/sfga/147-vascan-2025-01-31.sql.zip"
 	a, err = archio.New(sf, cache)
 	assert.Nil(err)
 	err = a.Extract()

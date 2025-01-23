@@ -1,8 +1,9 @@
 module github.com/sfborg/sflib
 
-go 1.22.5
+go 1.23.5
 
 require (
+	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/gnames/gnsys v0.3.3
 	github.com/stretchr/testify v1.9.0
 	modernc.org/sqlite v1.32.0

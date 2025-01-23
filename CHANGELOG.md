@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.8] - 2025-02-12 Wed
+
+Add: method IsCompatible to check if an app can use the archive.
+
 ## [v0.1.7] - 2025-01-23 Thu
 
 Add: fix logs.

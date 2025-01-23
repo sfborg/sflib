@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/sfborg/sflib/ent/sfga"
 	_ "modernc.org/sqlite"
 )
@@ -98,6 +100,28 @@ func (d *dbio) getVersion() {
 	if err == nil {
 		d.version = version
 	}
+}
+
+func (d *dbio) IsCompatible(outver string) bool {
+	intver := d.Version()
+	intVer, err := semver.NewVersion(d.Version())
+	if err != nil {
+		slog.Error("SFGA version is misformed", "version", intver)
+		return false
+	}
+	outVer, err := semver.NewVersion(outver)
+	if err != nil {
+		slog.Error("External SFGA version is misformed", "version", outver)
+		return false
+	}
+
+	if intVer.Equal(outVer) {
+		return true
+	}
+	if intVer.GreaterThan(outVer) {
+		return true
+	}
+	return false
 }
 
 // dbFile finds the database file in the extracted data from SFGA.

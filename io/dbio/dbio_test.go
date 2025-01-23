@@ -103,6 +103,43 @@ func TestVersion(t *testing.T) {
 	assert.True(strings.HasPrefix(ver, "v"))
 }
 
+func TestIsCompatible(t *testing.T) {
+	assert := assert.New(t)
+	var a sfga.Archive
+	var d sfga.DB
+	var err error
+
+	sf := filepath.Join("..", "..", "testdata", "dinof.sqlite")
+	a, err = archio.New(sf, cache)
+	assert.Nil(err)
+
+	err = a.Extract()
+	assert.Nil(err)
+
+	d = dbio.New(dbCache)
+	assert.Nil(err)
+
+	ver := d.Version()
+	assert.Equal("v1.2.1", ver)
+
+	tests := []struct {
+		msg, ver string
+		isCmp    bool
+	}{
+		{"eq", "v1.2.1", true},
+		{"less", "v1.2.0", true},
+		{"less2", "v1.1.17", true},
+		{"gr", "v1.2.3", false},
+		{"gr2", "v2.0.0", false},
+		{"bad", "v.0.0", false},
+		{"bad2", "smth", false},
+	}
+	for _, v := range tests {
+		res := d.IsCompatible(v.ver)
+		assert.Equal(v.isCmp, res)
+	}
+}
+
 func TestClose(t *testing.T) {
 	assert := assert.New(t)
 	var a sfga.Archive

@@ -60,4 +60,8 @@ type DB interface {
 
 	// Version returns the version number of the SFGA schema.
 	Version() string
+
+	// IsCompatible returns back true if provided version is equal or larger
+	// than the version of the database.
+	IsCompatible(version string) bool
 }

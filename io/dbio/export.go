@@ -103,6 +103,6 @@ func createZip(outFile string) error {
 	if err != nil {
 		return &sfga.ErrZipCreate{File: zipFile, Err: err}
 	}
-	slog.Info("SQLite ZIP file is created", "file", outFile)
+	slog.Info("SQLite ZIP file is created", "file", zipFile)
 	return nil
 }

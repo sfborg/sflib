@@ -5,9 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.7] - 2025-01-23 Thu
+
+Add: fix logs.
+
 ## [v0.1.6] - 2025-01-19 Sun
 
-Add: more logs
+Add: more logs.
 
 ## [v0.1.5] - 2024-09-09 Mon
 

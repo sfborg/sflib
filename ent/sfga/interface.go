@@ -3,7 +3,11 @@
 // GitHub repository at github.com/sfborg/sfga.
 package sfga
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/gnames/coldp/ent/coldp"
+)
 
 // Schema defines methods for managing the SFGA database schema.
 // Specific data required for methods is taken from the configuraion of
@@ -13,51 +17,86 @@ type Schema interface {
 	// Returns the schema in bytes, and an error if retrieval fails or the
 	// downloaded schema's SHA256 hash doesn't match the expected value.
 	Fetch() ([]byte, error)
-
-	// Clean removes the temporary directory used to store repo with the
-	// downloaded schema. Returns an error if the removal process encounters any
-	// issues.
-	Clean() error
-
-	// GitRepo returns the Git repository information (GitRepo struct)
-	// associated with this SFGA instance.
-	GitRepo() GitRepo
-
-	// Path returns the temporary directory path where the SFGA schema is
-	// downloaded from the Git repository.
-	Path() string
 }
 
-// Archive provides methods for interacting with SFGA archive files and their
-// corresponding database.
+// Archive represents SFGA archive
 type Archive interface {
+	Packager
+	Accessor
+	CoLDPInserter
+}
+
+// Packager provides methods for interacting with SFGA archive packages.
+// It can extract files or create a new package from files.
+type Packager interface {
 	// Extract decompresses the SFGA archive file and stores it in a cache
 	// directory, making it accessible for querying.
-	Extract() error
+	Import(src, dst string) error
 
-	// Clean removes the cache directory containing the extracted SFGA archive.
-	Clean() error
+	// Create a new SFGA file of a specific version.
+	Create(dir string, repo GitRepo) error
+
+	// Export SFGA archive from cache to the outputPath, returns error if export
+	// fails. If isBin is true, export binary database, instead of SQL dump. If
+	// isZip is true, compress as zip file.
+	Export(outputPath string, isZip bool) error
 }
 
-// DB defines methods for establishing and managing a connection to the
+// Accessor defines methods for establishing and managing a connection to the
 // SQLite database associated with the SFGA archive.
-type DB interface {
+type Accessor interface {
 	// Connect establishes a connection to the SQLite database and returns the
 	// database handle or an error if the connection fails.
 	Connect() (*sql.DB, error)
 
+	// Db returns connector to the database.
+	Db() *sql.DB
+
+	// Ping checks if database exists
+	Ping() bool
+
 	// Close terminates the database connection.
 	Close() error
 
-	// FileDB returns the path to the SFGA database file. If the file is not
+	// DbPath returns the path to the SFGA database file. If the file is not
 	// yet available, it returns an empty string.
-	FileDB() string
-
-	// Export SFGA archive to the outputPath, returns error if export fails.
-	// If isBin is true, export binary database, instead of SQL dump. If
-	// isZip is true, compress as zip file.
-	Export(outputPath string, isBin, isZip bool) error
+	DbPath() string
 
 	// Version returns the version number of the SFGA schema.
 	Version() string
+}
+
+type CoLDPInserter interface {
+	// InsertMeta saves data from *coldp.Meta object to SFGA DB.
+	InsertMeta(meta *coldp.Meta) error
+
+	// InsertAuthors saves data from coldp.Author objects to SFGA DB.
+	InsertAuthors(data []coldp.Author) error
+
+	// InsertDistributions saves data from coldp.Distribution objects to
+	// SFGA DB.
+	InsertDistributions(data []coldp.Distribution) error
+
+	// InsertMedia saves data from coldp.Media objects to SFGA DB.
+	InsertMedia(data []coldp.Media) error
+
+	// InsertNames saves data from coldp.Name objects to SFGA DB.
+	InsertNames(data []coldp.Name) error
+
+	// InsertNameRelations saves data from coldp.NameRelation objects to
+	// SFGA Db.
+	InsertNameRelations(data []coldp.NameRelation) error
+
+	// InsertNameUsages
+	InsertNameUsages(data []coldp.NameUsage) error
+	InsertReferences(data []coldp.Reference) error
+	InsertSpeciesEstimates(data []coldp.SpeciesEstimate) error
+	InsertSpeciesInteractions(data []coldp.SpeciesInteraction) error
+	InsertSynonyms(data []coldp.Synonym) error
+	InsertTaxa(data []coldp.Taxon) error
+	InsertTaxonConceptRelations(data []coldp.TaxonConceptRelation) error
+	InsertTaxonProperties(data []coldp.TaxonProperty) error
+	InsertTreatments(data []coldp.Treatment) error
+	InsertTypeMaterials(data []coldp.TypeMaterial) error
+	InsertVernaculars(data []coldp.Vernacular) error
 }

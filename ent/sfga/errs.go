@@ -35,24 +35,6 @@ func (e *ErrFileCopy) Error() string {
 	return e.Err.Error()
 }
 
-type ErrTarGzReader struct {
-	File string
-	Err  error
-}
-
-func (e *ErrTarGzReader) Error() string {
-	return e.Err.Error()
-}
-
-type ErrZipReader struct {
-	File string
-	Err  error
-}
-
-func (e *ErrZipReader) Error() string {
-	return e.Err.Error()
-}
-
 type ErrDirCreate struct {
 	Dir string
 	Err error
@@ -80,48 +62,12 @@ func (e *ErrDirChange) Error() string {
 	return e.Err.Error()
 }
 
-type ErrEmptyTar struct {
-	File string
-	Err  error
-}
-
-func (e *ErrEmptyTar) Error() string {
-	return "empty tar file"
-}
-
-type ErrCacheClean struct {
-	Dir string
-	Err error
-}
-
-func (e *ErrCacheClean) Error() string {
-	return e.Err.Error()
-}
-
-type ErrRepoCacheClean struct {
-	Dir string
-	Err error
-}
-
-func (e *ErrRepoCacheClean) Error() string {
-	return e.Err.Error()
-}
-
-type ErrRepoClean struct {
+type ErrRepoClone struct {
 	URL string
 	Err error
 }
 
-func (e *ErrRepoClean) Error() string {
-	return e.Err.Error()
-}
-
-type ErrRepoTagCheckout struct {
-	Tag string
-	Err error
-}
-
-func (e *ErrRepoTagCheckout) Error() string {
+func (e *ErrRepoClone) Error() string {
 	return e.Err.Error()
 }
 
@@ -140,6 +86,30 @@ type ErrExtractArchive struct {
 }
 
 func (e *ErrExtractArchive) Error() string {
+	return e.Err.Error()
+}
+
+type ErrSQLiteConnect struct {
+	Err error
+}
+
+func (e *ErrSQLiteConnect) Error() string {
+	return e.Err.Error()
+}
+
+type ErrSQLitePragma struct {
+	Err error
+}
+
+func (e *ErrSQLitePragma) Error() string {
+	return e.Err.Error()
+}
+
+type ErrSQLiteQuery struct {
+	Err error
+}
+
+func (e *ErrSQLiteQuery) Error() string {
 	return e.Err.Error()
 }
 

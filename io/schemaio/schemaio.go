@@ -8,69 +8,31 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gnames/gnsys"
 	"github.com/sfborg/sflib/ent/sfga"
+	_ "modernc.org/sqlite"
 )
 
 type schemaio struct {
 	repo sfga.GitRepo
-	path string
 }
 
-func New(repo sfga.GitRepo, path string) sfga.Schema {
-	res := &schemaio{repo: repo, path: path}
+func New(repo sfga.GitRepo) sfga.Schema {
+	res := &schemaio{repo: repo}
 	return res
 }
 
 func (s *schemaio) Fetch() ([]byte, error) {
-	res, err := s.loadSchema()
-	if err == nil {
-		return res, nil
-	}
-
-	err = s.cloneRepo()
+	tempDir, err := os.MkdirTemp("", "git-schema-")
 	if err != nil {
 		return nil, err
 	}
+	defer os.RemoveAll(tempDir)
 
-	res, err = s.loadSchema()
-	return res, err
-}
-
-// Clean removes SFGA data directory.
-func (s *schemaio) Clean() error {
-	err := os.RemoveAll(s.path)
+	err = s.cloneRepo(tempDir)
 	if err != nil {
-		return &sfga.ErrDirRemove{Dir: s.path, Err: err}
-	}
-	return nil
-}
-
-// GitRepo returns GitRepo of its instance.
-func (s *schemaio) GitRepo() sfga.GitRepo {
-	return s.repo
-}
-
-// Path returns temporary path where SFGA schema is downloaded.
-func (s *schemaio) Path() string {
-	return s.path
-}
-
-func (s *schemaio) loadSchema() ([]byte, error) {
-	var err error
-	var exists bool
-	schemaPath := filepath.Join(s.path, "schema.sql")
-	exists, err = gnsys.FileExists(schemaPath)
-
-	if err != nil {
-		err = fmt.Errorf("bad file %s: %w", schemaPath, err)
 		return nil, err
 	}
-
-	if !exists {
-		err = fmt.Errorf("file %s does not exist", schemaPath)
-		return nil, err
-	}
+	schemaPath := filepath.Join(tempDir, "schema.sql")
 
 	res, err := os.ReadFile(schemaPath)
 	if err != nil {
@@ -84,44 +46,17 @@ func (s *schemaio) loadSchema() ([]byte, error) {
 		err = fmt.Errorf("Schema does not match %s", s.repo.ShaSchemaSQL)
 		return nil, err
 	}
-
-	return res, nil
+	return res, err
 }
 
-func (s *schemaio) cloneRepo() error {
-	var err error
-	err = s.Clean()
-	if err != nil {
-		return &sfga.ErrRepoCacheClean{Dir: s.path, Err: err}
-	}
-
-	var currentDir string
-	cmd := exec.Command("git", "clone", s.repo.URL, s.path)
-	err = cmd.Run()
+func (s *schemaio) cloneRepo(tmpDir string) error {
+	cmd := exec.Command(
+		"git", "clone", "--depth=1", "--branch", s.repo.Tag, s.repo.URL, tmpDir,
+	)
+	err := cmd.Run()
 	if err != nil {
 		err = fmt.Errorf("cannot clone GitHub Repo %s: %w", s.repo.URL, err)
-		return &sfga.ErrRepoClean{URL: s.repo.URL, Err: err}
-	}
-
-	currentDir, err = os.Getwd()
-	if err != nil {
-		return err
-	}
-	defer os.Chdir(currentDir)
-
-	err = os.Chdir(s.path)
-	if err != nil {
-		return &sfga.ErrDirChange{Src: currentDir, Dst: s.path, Err: err}
-	}
-
-	if s.repo.Tag == "" {
-		return nil
-	}
-
-	cmd = exec.Command("git", "checkout", s.repo.Tag)
-	err = cmd.Run()
-	if err != nil {
-		return &sfga.ErrRepoTagCheckout{Tag: s.repo.Tag, Err: err}
+		return &sfga.ErrRepoClone{URL: s.repo.URL, Err: err}
 	}
 
 	return nil

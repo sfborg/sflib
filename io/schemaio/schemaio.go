@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/sfborg/sflib/ent/sfga"
+	_ "modernc.org/sqlite"
 )
 
 type schemaio struct {
@@ -55,7 +56,7 @@ func (s *schemaio) cloneRepo(tmpDir string) error {
 	err := cmd.Run()
 	if err != nil {
 		err = fmt.Errorf("cannot clone GitHub Repo %s: %w", s.repo.URL, err)
-		return &sfga.ErrRepoClean{URL: s.repo.URL, Err: err}
+		return &sfga.ErrRepoClone{URL: s.repo.URL, Err: err}
 	}
 
 	return nil

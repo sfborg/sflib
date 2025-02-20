@@ -91,16 +91,44 @@ type CoLDPInserter interface {
 	// SFGA Db.
 	InsertNameRelations(data []coldp.NameRelation) error
 
-	// InsertNameUsages
+	// InsertNameUsages saves data from coldp.NameUsage objects to
+	// SFGA Db.
 	InsertNameUsages(data []coldp.NameUsage) error
+
+	// InsertReferences saves data from coldp.Reference objects to
+	// SFGA Db.
 	InsertReferences(data []coldp.Reference) error
+
+	// InsertSpeciesEstimates saves data from  coldp.SpeciesEstimate objects to
+	// SFGA Db.
 	InsertSpeciesEstimates(data []coldp.SpeciesEstimate) error
+
+	// InsertSpeciesInteractions saves data from coldp.SpeciesInteraction objects
+	// to SFGA Db.
 	InsertSpeciesInteractions(data []coldp.SpeciesInteraction) error
+
+	// InsertSynonyms saves data from coldp.Synonym objects
+	// to SFGA Db.
 	InsertSynonyms(data []coldp.Synonym) error
+
+	// InsertTaxa saves data from coldp.Taxon objects
+	// to SFGA Db.
 	InsertTaxa(data []coldp.Taxon) error
+
+	// InsertTaxonConceptRelations saves data from coldp.TaxonConcepRelation
+	// objects to SFGA Db.
 	InsertTaxonConceptRelations(data []coldp.TaxonConceptRelation) error
+
+	// InsertTaxonProperties saves data from coldp.TaxonProperty objects to SFGA
+	// Db.
 	InsertTaxonProperties(data []coldp.TaxonProperty) error
+
+	// InsertTreatments saves data from coldp.Treatment objects to SFGA Db.
 	InsertTreatments(data []coldp.Treatment) error
+
+	// InsertTypeMaterials saves data from coldp.TypeMaterial objects to SFGA Db.
 	InsertTypeMaterials(data []coldp.TypeMaterial) error
+
+	// InsertVernaculars saves data from coldp.Vernacular objects to SFGA Db.
 	InsertVernaculars(data []coldp.Vernacular) error
 }

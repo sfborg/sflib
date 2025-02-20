@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/ent/sfga"
 )
 
 type sfgaio struct {
+	cfg *config.Config
 	// downloadDir is a temporary directory where remote SFGArchive
 	// would be downloaded for further processing.
 	downloadDir string

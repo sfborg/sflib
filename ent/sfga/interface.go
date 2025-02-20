@@ -34,7 +34,7 @@ type Packager interface {
 	Import(src, dst string) error
 
 	// Create a new SFGA file of a specific version.
-	Create(dir string, repo GitRepo) error
+	Create(dir string) error
 
 	// Export SFGA archive from cache to the outputPath, returns error if export
 	// fails. If isBin is true, export binary database, instead of SQL dump. If

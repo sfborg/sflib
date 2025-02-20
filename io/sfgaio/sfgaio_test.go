@@ -12,12 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var repo = sfga.GitRepo{
-	URL:          "https://github.com/sfborg/sfga",
-	Tag:          "v0.3.24",
-	ShaSchemaSQL: "b1db9df2e759f",
-}
-
 func TestCreate(t *testing.T) {
 	assert := assert.New(t)
 	tempDir, err := os.MkdirTemp("", "test-create")
@@ -25,7 +19,7 @@ func TestCreate(t *testing.T) {
 	defer os.RemoveAll(tempDir)
 
 	s := sfgaio.New()
-	err = s.Create(tempDir, repo)
+	err = s.Create(tempDir)
 	assert.Nil(err)
 
 	exists, _ := gnsys.FileExists(filepath.Join(tempDir, "schema.sql"))
@@ -42,7 +36,7 @@ func TestExport(t *testing.T) {
 	defer os.RemoveAll(tempDir)
 
 	s := sfgaio.New()
-	err = s.Create(tempDir, repo)
+	err = s.Create(tempDir)
 	assert.Nil(err)
 
 	sfgaFile := filepath.Join(tempDir, "tmp")
@@ -178,7 +172,7 @@ func TestConnect(t *testing.T) {
 		a = sfgaio.New()
 
 		if v.file == "" {
-			err = a.Create(tempDir, repo)
+			err = a.Create(tempDir)
 			assert.Nil(err)
 		} else {
 			err = a.Import(src, tempDir)
@@ -219,7 +213,7 @@ func TestVersion(t *testing.T) {
 		a = sfgaio.New()
 
 		if v.file == "" {
-			err = a.Create(tempDir, repo)
+			err = a.Create(tempDir)
 			assert.Nil(err)
 		} else {
 			err = a.Import(src, tempDir)

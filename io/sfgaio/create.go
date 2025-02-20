@@ -7,14 +7,18 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/ent/sfga"
 	"github.com/sfborg/sflib/io/schemaio"
 )
 
 // Create copies schema from repo and uses it to create
 // new SQLite database.
-func (s *sfgaio) Create(dir string, repo sfga.GitRepo) error {
-	sch := schemaio.New(repo)
+func (s *sfgaio) Create(dir string) error {
+	if s.cfg == nil {
+		s.cfg = config.New()
+	}
+	sch := schemaio.New(s.cfg.GitRepo)
 	s.buildDir = dir
 	schema, err := sch.Fetch()
 	if err != nil {

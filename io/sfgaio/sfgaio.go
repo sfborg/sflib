@@ -10,10 +10,6 @@ import (
 
 type sfgaio struct {
 	cfg *config.Config
-	// downloadDir is a temporary directory where remote SFGArchive
-	// would be downloaded for further processing.
-	downloadDir string
-
 	// extractDir is the place where the content of SFGA is extracted to.
 	extractDir string
 

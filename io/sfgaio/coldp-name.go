@@ -19,31 +19,31 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO name
-		(
-		id, alternative_id, source_id, scientific_name, authorship,
-		rank_id, uninomial, genus, infrageneric_epithet,
-		specific_epithet,infraspecific_epithet, cultivar_epithet,
-		notho_id, original_spelling, combination_authorship,
-		combination_authorship_id, combination_ex_authorship,
-		combination_ex_authorship_id, combination_authorship_year,
-		basionym_authorship, basionym_authorship_id,
-		basionym_ex_authorship, basionym_ex_authorship_id,
-		basionym_authorship_year, code_id, status_id, reference_id,
-		published_in_year, published_in_page, published_in_page_link,
-		gender_id, gender_agreement, etymology,
-		link, remarks, modified, modified_by,
-		gn_scientific_name_string
-		)
-	VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?, ?,?,?,
-		?,?,?, ?,?,?,?, ?) 
+  INSERT INTO name
+    (
+    col__id, col__alternative_id, col__source_id, col__scientific_name,
+    col__authorship, col__rank_id, col__uninomial, col__genus,
+    col__infrageneric_epithet, col__specific_epithet,
+    col__infraspecific_epithet, col__cultivar_epithet, col__notho_id,
+    col__original_spelling, col__combination_authorship,
+    col__combination_authorship_id, col__combination_ex_authorship,
+    col__combination_ex_authorship_id, col__combination_authorship_year,
+    col__basionym_authorship, col__basionym_authorship_id,
+    col__basionym_ex_authorship, col__basionym_ex_authorship_id,
+    col__basionym_authorship_year, col__code_id, col__status_id,
+    col__reference_id, col__published_in_year, col__published_in_page,
+    col__published_in_page_link, col__gender_id, col__gender_agreement,
+    col__etymology, col__link, col__remarks, col__modified,
+    col__modified_by, gn__scientific_name_string)
+  VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?, ?,?,?,
+    ?,?,?, ?,?,?,?, ?) 
 `)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	basStmt, err := tx.Prepare(`
+	relStmt, err := tx.Prepare(`
 	INSERT INTO name_relation
 		(name_id, related_name_id, type_id)
 	VALUES (?, ?, ?)
@@ -51,7 +51,7 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 	if err != nil {
 		return err
 	}
-	defer basStmt.Close()
+	defer relStmt.Close()
 
 	for _, n := range data {
 		_, err = stmt.Exec(
@@ -76,7 +76,7 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 		if n.BasionymID == "" {
 			continue
 		}
-		basStmt.Exec(
+		relStmt.Exec(
 			n.ID, n.BasionymID, coldp.Basionym.ID(),
 		)
 		if err != nil {

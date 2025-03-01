@@ -19,12 +19,12 @@ func (s *sfgaio) InsertTaxonConceptRelations(data []coldp.TaxonConceptRelation) 
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO taxon_concept_relation
-		(
-			taxon_id, related_taxon_id, source_id, type_id, reference_id,
-			remarks, modified, modified_by
-		)
-	VALUES (?,?,?,?,?, ?,?,?)
+  INSERT INTO taxon_concept_relation
+    (
+    col__taxon_id, col__related_taxon_id, col__source_id, col__type_id,
+    col__reference_id, col__remarks, col__modified, col__modified_by
+    )
+  VALUES (?,?,?,?,?, ?,?,?)
 `)
 	if err != nil {
 		return err

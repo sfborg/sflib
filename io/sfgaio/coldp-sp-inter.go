@@ -21,12 +21,13 @@ func (s *sfgaio) InsertSpeciesInteractions(
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO species_interaction
-		(
-			taxon_id, related_taxon_id, source_id, related_taxon_scientific_name,
-			type, reference_id, remarks, modified, modified_by
-		)
-	VALUES (?,?,?,?, ?,?,?,?,?)
+  INSERT INTO species_interaction
+    (
+    col__taxon_id, col__related_taxon_id, col__source_id,
+    col__related_taxon_scientific_name, col__type_id, col__reference_id,
+    col__remarks, col__modified, col__modified_by
+    )
+  VALUES (?,?,?,?, ?,?,?,?,?)
 `)
 	if err != nil {
 		return err

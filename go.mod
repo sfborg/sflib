@@ -1,22 +1,22 @@
 module github.com/sfborg/sflib
 
-go 1.23.5
+go 1.23.6
 
 require (
-	github.com/gnames/coldp v0.3.7
-	github.com/gnames/gnsys v0.3.6
+	github.com/gnames/coldp v0.3.10
+	github.com/gnames/gnsys v0.3.8
 	github.com/stretchr/testify v1.9.0
-	modernc.org/sqlite v1.35.0
+	modernc.org/sqlite v1.36.0
 )
 
 require (
 	github.com/VividCortex/ewma v1.2.0 // indirect
-	github.com/cheggaaa/pb/v3 v3.1.6 // indirect
+	github.com/cheggaaa/pb/v3 v3.1.7 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/gnames/gnfmt v0.5.4 // indirect
-	github.com/gnames/gnlib v0.44.0 // indirect
+	github.com/gnames/gnlib v0.45.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
@@ -29,7 +29,7 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
-	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa // indirect
+	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

@@ -19,17 +19,18 @@ func (s *sfgaio) InsertTaxonProperties(data []coldp.TaxonProperty) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO taxon_property
-		(
-		taxon_id, source_id, property, value, reference_id, page,
-		ordinal, remarks, modified, modified_by
-		)
-	VALUES (?,?,?,?,?,?, ?,?,?,?)
+  INSERT INTO taxon_property
+    (
+    col__taxon_id, col__source_id, col__property, col__value,
+    col__reference_id, col__page, col__ordinal, col__remarks, col__modified,
+    col__modified_by
+    )
+  VALUES (?,?,?,?,?,?, ?,?,?,?)
 `)
 	if err != nil {
 		return err
 	}
-	stmt.Close()
+	defer stmt.Close()
 
 	for _, n := range data {
 		_, err = stmt.Exec(

@@ -19,15 +19,16 @@ func (s *sfgaio) InsertTypeMaterials(data []coldp.TypeMaterial) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO type_material
-		(
-		id, source_id, name_id, citation, status_id,
-		institution_code, catalog_number, reference_id, locality,
-		country, latitude, longitude, altitude, host, sex_id,
-		date, collector, associated_sequences, 
-		link, remarks, modified, modified_by
-		)
-	VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?,?,?,?, ?,?,?, ?,?,?,?)
+  INSERT INTO type_material
+    (
+    col__id, col__source_id, col__name_id, col__citation, col__status_id,
+    col__institution_code, col__catalog_number, col__reference_id,
+    col__locality, col__country, col__latitude, col__longitude,
+    col__altitude, col__host, col__sex_id, col__date, col__collector,
+    col__associated_sequences, col__link, col__remarks, col__modified,
+    col__modified_by
+    )
+  VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?,?,?,?, ?,?,?, ?,?,?,?)
 `)
 	if err != nil {
 		return err

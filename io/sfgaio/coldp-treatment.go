@@ -21,7 +21,8 @@ func (s *sfgaio) InsertTreatments(data []coldp.Treatment) error {
 	stmt, err := tx.Prepare(`
 	INSERT INTO treatment
 		(
-		taxon_id, source_id, document, format, modified, modified_by
+		col__taxon_id, col__source_id, col__document, col__format, col__modified,
+		col__modified_by
 		)
 	VALUES (?,?,?,?,?,?)
 `)

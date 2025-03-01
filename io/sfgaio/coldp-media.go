@@ -19,12 +19,13 @@ func (s *sfgaio) InsertMedia(data []coldp.Media) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO media
-		(
-			taxon_id, source_id, url, type, format, title, created,
-			creator, license, link, remarks, modified, modified_by
-		)
-	VALUES (?,?,?,?,?,?,?, ?,?,?,?,?,?)
+  INSERT INTO media
+    (
+    col__taxon_id, col__source_id, col__url, col__type, col__format,
+    col__title, col__created, col__creator, col__license, col__link,
+    col__remarks, col__modified, col__modified_by
+    )
+  VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?)
 `)
 	if err != nil {
 		return err

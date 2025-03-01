@@ -10,14 +10,17 @@ import (
 func (s *sfgaio) InsertMeta(m *coldp.Meta) error {
 	var id int
 	q := `
-	INSERT INTO metadata
-		(
-		doi, title, alias, description, issued, version, keywords,
-		geographic_scope, taxonomic_scope, temporal_scope, confidence,
-		completeness, license, url, logo, label, citation, private
-		)
-	VALUES
-		(?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?)`
+INSERT INTO metadata
+  (
+  col__doi, col__title, col__alias, col__description, col__issued,
+  col__version, col__keywords, col__geographic_scope,
+  col__taxonomic_scope, col__temporal_scope, col__confidence,
+  col__completeness, col__license, col__url, col__logo, col__label,
+  col__citation, col__private
+  )
+VALUES
+(?,?,?,?,?, ?,?,?, ?,?,?,  ?,?,?,?,?, ?,?)
+`
 
 	keywords := strings.Join(m.Keywords, ",")
 	var private int
@@ -26,9 +29,10 @@ func (s *sfgaio) InsertMeta(m *coldp.Meta) error {
 	}
 
 	_, err := s.db.Exec(q,
-		m.DOI, m.Title, m.Alias, m.Description, m.Issued, m.Version, keywords,
-		m.GeographicScope, m.TaxonomicScope, m.TemporalScope, m.Confidence,
-		m.Completeness, m.License, m.URL, m.Logo, m.Label, m.Citation, private,
+		m.DOI, m.Title, m.Alias, m.Description, m.Issued, m.Version,
+		keywords, m.GeographicScope, m.TaxonomicScope, m.TemporalScope,
+		m.Confidence, m.Completeness, m.License, m.URL, m.Logo,
+		m.Label, m.Citation, private,
 	)
 	if err != nil {
 		slog.Error("Error inserting metadata", "error", err)
@@ -80,8 +84,11 @@ func (s *sfgaio) InsertMeta(m *coldp.Meta) error {
 
 func (s *sfgaio) addActor(cnt *coldp.Actor, metaID int, table string) error {
 	q := `INSERT INTO ` + table + `
-      (metadata_id, orcid, given, family, rorid, organisation, email, url, note)
-			VALUES
+      (
+      col__metadata_id, col__orcid, col__given, col__family, col__rorid,
+      col__organisation, col__email, col__url, col__note
+      )
+      VALUES
       (?,?,?,?,?,?,?,?,?)`
 
 	_, err := s.db.Exec(q,

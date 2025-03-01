@@ -19,12 +19,12 @@ func (s *sfgaio) InsertSpeciesEstimates(data []coldp.SpeciesEstimate) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO species_estimate
-		(
-		taxon_id, source_id, estimate, type_id, reference_id,
-		remarks, modified, modified_by
-		)
-	VALUES (?,?,?,?,?, ?,?,?)
+  INSERT INTO species_estimate
+    (
+    col__taxon_id, col__source_id, col__estimate, col__type_id,
+    col__reference_id, col__remarks, col__modified, col__modified_by
+    )
+  VALUES (?,?,?,?,?, ?,?,?)
 `)
 	if err != nil {
 		return err

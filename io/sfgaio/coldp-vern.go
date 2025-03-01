@@ -19,13 +19,13 @@ func (s *sfgaio) InsertVernaculars(data []coldp.Vernacular) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO vernacular
-		(
-			taxon_id, source_id, name, transliteration, language, preferred,
-	   	country, area, sex_id, reference_id, remarks, modified,
-	  	modified_by
-		)
-	VALUES (?,?,?,?,?,?, ?,?,?,?,?,?, ?)
+  INSERT INTO vernacular
+    (
+    col__taxon_id, col__source_id, col__name, col__transliteration,
+    col__language, col__preferred, col__country, col__area, col__sex_id,
+    col__reference_id, col__remarks, col__modified, col__modified_by
+    )
+  VALUES (?,?,?,?,?,?, ?,?,?,?,?,?, ?)
 `)
 	if err != nil {
 		return err

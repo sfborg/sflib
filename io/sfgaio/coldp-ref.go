@@ -20,14 +20,15 @@ func (s *sfgaio) InsertReferences(data []coldp.Reference) error {
 
 	stmt, err := tx.Prepare(`
 	INSERT INTO reference
-		(
-		id, alternative_id, source_id, citation, type_id,
-		author, author_id, editor, editor_id, title, title_short,
-		container_author, container_title, container_title_short,
-		issued, accessed, collection_title, collection_editor,
-		volume, issue, edition, page, publisher,
-		publisher_place, version, isbn, issn, doi,
-		link, remarks, modified, modified_by
+		(	
+		col__id, col__alternative_id, col__source_id, col__citation, col__type_id,
+		col__author, col__author_id, col__editor, col__editor_id, col__title,
+		col__title_short, col__container_author, col__container_title,
+		col__container_title_short, col__issued, col__accessed,
+		col__collection_title, col__collection_editor, col__volume, col__issue,
+		col__edition, col__page, col__publisher, col__publisher_place,
+		col__version, col__isbn, col__issn, col__doi, col__link, col__remarks,
+		col__modified, col__modified_by
 		)
 	VALUES (
 		?,?,?,?,?, ?,?,?,?,?,?, ?,?,?, ?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?

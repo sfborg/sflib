@@ -19,22 +19,23 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 	}()
 
 	tStmt, err := tx.Prepare(`
-	INSERT INTO taxon
-		(
-		id, alternative_id, source_id, parent_id, ordinal, branch_length,
-		name_id, name_phrase, according_to_id, according_to_page,
-		according_to_page_link, scrutinizer, scrutinizer_id,
-		scrutinizer_date, status_id, reference_id, extinct,
-		temporal_range_start_id, temporal_range_end_id,
-		environment_id, species, section, subgenus, genus, subtribe,
-		tribe, subfamily, family, superfamily, suborder, "order",
-		subclass, class, subphylum, phylum, kingdom,
-		link, remarks, modified, modified_by
-		)
-	VALUES (
-		?,?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?,?,
-		?,?,?,?,?,?, ?,?,?,?,?, ?,?,?,?
-		)
+  INSERT INTO taxon
+    (
+    col__id, col__alternative_id, col__source_id, col__parent_id, col__ordinal,
+    col__branch_length, col__name_id, col__name_phrase, col__according_to_id,
+    col__according_to_page, col__according_to_page_link, col__scrutinizer,
+    col__scrutinizer_id, col__scrutinizer_date, col__status_id,
+    col__reference_id, col__extinct, col__temporal_range_start_id,
+    col__temporal_range_end_id, col__environment_id, col__species,
+    col__section, col__subgenus, col__genus, col__subtribe, col__tribe,
+    col__subfamily, col__family, col__superfamily, col__suborder, col__order,
+    col__subclass, col__class, col__subphylum, col__phylum, col__kingdom,
+    col__link, col__remarks, col__modified, col__modified_by
+    )
+  VALUES (
+    ?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?,?,?,
+    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?
+    )
 `)
 	if err != nil {
 		return err
@@ -42,24 +43,25 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 	defer tStmt.Close()
 
 	nStmt, err := tx.Prepare(`
-	INSERT INTO name
-		(
-		id, alternative_id, source_id, scientific_name, authorship,
-		rank_id, uninomial, genus, infrageneric_epithet,
-		specific_epithet,infraspecific_epithet, cultivar_epithet,
-		notho_id, original_spelling, combination_authorship,
-		combination_authorship_id, combination_ex_authorship,
-		combination_ex_authorship_id, combination_authorship_year,
-		basionym_authorship, basionym_authorship_id,
-		basionym_ex_authorship, basionym_ex_authorship_id,
-		basionym_authorship_year, code_id, status_id, reference_id,
-		published_in_year, published_in_page, published_in_page_link,
-		gender_id, gender_agreement, etymology,
-		link, remarks, modified, modified_by,
-		gn_scientific_name_string
-		)
-	VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?, ?,?,?,
-		?,?,?, ?,?,?,?, ?) 
+  INSERT INTO name
+    (
+    col__id, col__alternative_id, col__source_id, col__scientific_name,
+    col__authorship, col__rank_id, col__uninomial, col__genus,
+    col__infrageneric_epithet, col__specific_epithet,
+    col__infraspecific_epithet, col__cultivar_epithet, col__notho_id,
+    col__original_spelling, col__combination_authorship,
+    col__combination_authorship_id, col__combination_ex_authorship,
+    col__combination_ex_authorship_id, col__combination_authorship_year,
+    col__basionym_authorship, col__basionym_authorship_id,
+    col__basionym_ex_authorship, col__basionym_ex_authorship_id,
+    col__basionym_authorship_year, col__code_id, col__status_id,
+    col__reference_id, col__published_in_year, col__published_in_page,
+    col__published_in_page_link, col__gender_id, col__gender_agreement,
+    col__etymology, col__link, col__remarks, col__modified, col__modified_by,
+    gn__scientific_name_string
+    )
+  VALUES (?,?,?,?, ?,?,?,?, ?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?, ?,?,?,
+    ?,?,?, ?,?,?,?,?, ?) 
 `)
 	if err != nil {
 		return err
@@ -67,21 +69,22 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 	defer nStmt.Close()
 
 	sStmt, err := tx.Prepare(`
-	INSERT INTO synonym
-	  (
-		id, taxon_id, source_id, name_id, name_phrase, according_to_id,
-		status_id, reference_id, link, remarks, modified, modified_by
-	  )
-	VALUES (?,?,?,?,?,?, ?,?,?,?,?,?)`)
+  INSERT INTO synonym
+    (
+    col__id, col__taxon_id, col__source_id, col__name_id, col__name_phrase,
+    col__according_to_id, col__status_id, col__reference_id, col__link,
+    col__remarks, col__modified, col__modified_by
+    )
+  VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?)`)
 	if err != nil {
 		return err
 	}
 	defer sStmt.Close()
 
 	basStmt, err := tx.Prepare(`
-	INSERT INTO name_relation
-		(name_id, related_name_id, type_id)
-	VALUES (?, ?, ?)
+  INSERT INTO name_relation
+    (col__name_id, col__related_name_id, col__type_id)
+  VALUES (?, ?, ?)
 `)
 	if err != nil {
 		return err

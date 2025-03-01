@@ -5,6 +5,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.4] - 2025-03-01 Sat
+
+Add: move to sfga v0.3.25
+Add: tests for coldp insert methods.
+Add: update modules.
+
+## [v0.2.3] - 2025-02-20 Thu
+
+Add: coldp insert methods.
+
+## [v0.2.2] - 2025-02-20 Thu
+
+Add: incorporate sfga schema version with the lib.
+
+## [v0.2.1] - 2025-02-20 Thu
+
+Add: improve docs, update modules.
+
+## [v0.2.0] - 2025-02-20 Thu
+
+Add: major refactoring.
+
 ## [v0.1.8] - 2025-02-12 Wed
 
 Add: method IsCompatible to check if an app can use the archive.
@@ -49,6 +71,13 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.2.4]: https://github.com/sfborg/sflib/compare/v0.2.3...v0.2.4
+[v0.2.3]: https://github.com/sfborg/sflib/compare/v0.2.2...v0.2.3
+[v0.2.2]: https://github.com/sfborg/sflib/compare/v0.2.1...v0.2.2
+[v0.2.1]: https://github.com/sfborg/sflib/compare/v0.2.0...v0.2.1
+[v0.2.0]: https://github.com/sfborg/sflib/compare/v0.1.8...v0.2.0
+[v0.1.8]: https://github.com/sfborg/sflib/compare/v0.1.7...v0.1.8
+[v0.1.7]: https://github.com/sfborg/sflib/compare/v0.1.6...v0.1.7
 [v0.1.6]: https://github.com/sfborg/sflib/compare/v0.1.5...v0.1.6
 [v0.1.5]: https://github.com/sfborg/sflib/compare/v0.1.4...v0.1.5
 [v0.1.4]: https://github.com/sfborg/sflib/compare/v0.1.3...v0.1.4

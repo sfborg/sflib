@@ -19,12 +19,12 @@ func (s *sfgaio) InsertNameRelations(data []coldp.NameRelation) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO name_relation
-		(
-		name_id, related_name_id, source_id, type_id, page,
-		reference_id, remarks, modified, modified_by
-		)
-	VALUES (?,?,?,?,?, ?,?,?,?)
+  INSERT INTO name_relation
+    (
+    col__name_id, col__related_name_id, col__source_id, col__type_id,
+    col__page, col__reference_id, col__remarks, col__modified, col__modified_by
+    )
+  VALUES (?,?,?,?, ?,?,?,?,?)
 `)
 	if err != nil {
 		return err

@@ -13,9 +13,15 @@ import (
 
 func (s *sfgaio) Import(src, dstDir string) error {
 	var err error
+	var dlDir string
 	if strings.HasPrefix(src, "http") {
-		s.downloadDir, err = os.MkdirTemp("", "sfga-download")
-		src, err = gnsys.Download(src, s.downloadDir, true)
+		dlDir, err = os.MkdirTemp("", "sfga-download")
+		if err != nil {
+			return &sfga.ErrDownload{URL: src, Err: err}
+		}
+		defer os.RemoveAll(dlDir)
+
+		src, err = gnsys.Download(src, dlDir, true)
 		if err != nil {
 			return &sfga.ErrDownload{URL: src, Err: err}
 		}

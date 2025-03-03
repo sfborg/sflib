@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/ent/sfga"
 )
@@ -104,7 +105,16 @@ func (s *sfgaio) Version() string {
 	return version
 }
 
-// TODO: implement IsCompatible
+// IsCompatible checks if the provided version is compatible with the current version of sfgaio.
+// It compares the given version string with the version of the sfgaio instance using gnlib.CmpVersion.
+// If the given version is greater than or equal to the current version, it returns true; otherwise, it returns false.
+//
+// Parameters:
+//   - version: A string representing the version to be checked.
+//
+// Returns:
+//   - bool: true if the provided version is compatible, false otherwise.
 func (s *sfgaio) IsCompatible(version string) bool {
-	return false
+	res := gnlib.CmpVersion(version, s.Version()) != -1
+	return res
 }

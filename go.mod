@@ -4,8 +4,10 @@ go 1.23.6
 
 require (
 	github.com/gnames/coldp v0.3.10
+	github.com/gnames/gnlib v0.45.0
+	github.com/gnames/gnparser v1.11.2
 	github.com/gnames/gnsys v0.3.8
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	modernc.org/sqlite v1.36.0
 )
 
@@ -16,7 +18,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/gnames/gnfmt v0.5.4 // indirect
-	github.com/gnames/gnlib v0.45.0 // indirect
+	github.com/gnames/tribool v0.1.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

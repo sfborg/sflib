@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.5] - 2025-03-04 Tue
+
+Add: move to sfga v0.3.26
+
 ## [v0.2.4] - 2025-03-01 Sat
 
 Add: move to sfga v0.3.25

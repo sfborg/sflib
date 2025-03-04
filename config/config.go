@@ -7,10 +7,10 @@ var (
 	repoURL = "https://github.com/sfborg/sfga"
 
 	// tag of the sfga repo to get correct schema version.
-	repoTag = "v0.3.25"
+	repoTag = "v0.3.26"
 
 	// schemaHash is the sha256 sum of the correponding schema version.
-	schemaHash = "bdab0c86c9fa"
+	schemaHash = "b5c872db824d3"
 )
 
 type Config struct {

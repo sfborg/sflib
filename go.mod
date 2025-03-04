@@ -2,9 +2,11 @@ module github.com/sfborg/sflib
 
 go 1.23.6
 
+replace github.com/gnmaes/coldp => ../coldp
+
 require (
-	github.com/gnames/coldp v0.3.10
-	github.com/gnames/gnlib v0.45.0
+	github.com/gnames/coldp v0.3.11
+	github.com/gnames/gnlib v0.46.0
 	github.com/gnames/gnparser v1.11.2
 	github.com/gnames/gnsys v0.3.8
 	github.com/stretchr/testify v1.10.0
@@ -18,6 +20,8 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/gnames/gnfmt v0.5.4 // indirect
+	github.com/gnames/gnuuid v0.2.0 // indirect
+	github.com/gnames/organizer v0.1.1 // indirect
 	github.com/gnames/tribool v0.1.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -32,6 +36,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 // indirect
+	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

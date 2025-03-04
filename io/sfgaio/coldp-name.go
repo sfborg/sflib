@@ -54,6 +54,18 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 	defer relStmt.Close()
 
 	for _, n := range data {
+
+		p := s.p
+		if n.Code == coldp.Botanical {
+			p = s.pb
+		}
+		parsed := p.ParseName(n.ScientificNameString)
+		if parsed.Parsed {
+			n.CanonicalSimple = parsed.Canonical.Simple
+			n.CanonicalFull = parsed.Canonical.Full
+			n.CanonicalStemmed = parsed.Canonical.Stemmed
+		}
+
 		_, err = stmt.Exec(
 			n.ID, n.AlternativeID, n.SourceID, n.ScientificName, n.Authorship,
 			n.Rank.ID(), n.Uninomial, n.Genus, n.InfragenericEpithet,

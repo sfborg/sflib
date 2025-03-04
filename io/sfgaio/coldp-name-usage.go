@@ -136,6 +136,17 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 			}
 		}
 
+		p := s.p
+		if d.Code == coldp.Botanical {
+			p = s.pb
+		}
+		parsed := p.ParseName(d.ScientificNameString)
+		if parsed.Parsed {
+			d.CanonicalSimple = parsed.Canonical.Simple
+			d.CanonicalFull = parsed.Canonical.Full
+			d.CanonicalStemmed = parsed.Canonical.Stemmed
+		}
+
 		_, err = nStmt.Exec(
 			d.ID, d.NameAlternativeID, d.SourceID, d.ScientificName, d.Authorship,
 			d.Rank.ID(), d.Uninomial, d.GenericName, d.InfragenericEpithet,

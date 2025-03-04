@@ -1,4 +1,4 @@
-package parser
+package sfga
 
 import (
 	"strings"
@@ -6,8 +6,8 @@ import (
 	"github.com/gnames/gnparser/ent/parsed"
 )
 
-// Data represents the parsed scientific name data.
-type Data struct {
+// FlatParsed represents the parsed scientific name data.
+type FlatParsed struct {
 	// Quality indicates the quality score of the parsed name.
 	Quality int
 	// NameID is a UUID v5 generated from the name verbatim string.
@@ -40,13 +40,13 @@ type Data struct {
 	UnparsedTail string
 }
 
-func ToParserData(parsedName parsed.Parsed) Data {
-	result := Data{NameID: parsedName.VerbatimID}
+func ToFlatParsed(parsedName parsed.Parsed) FlatParsed {
+	result := FlatParsed{NameID: parsedName.VerbatimID}
 	if !parsedName.Parsed {
 		return result
 	}
 
-	result = Data{
+	result = FlatParsed{
 		NameID:          parsedName.VerbatimID,
 		Quality:         parsedName.ParseQuality,
 		CanonicalFull:   parsedName.Canonical.Full,
@@ -76,7 +76,6 @@ func ToParserData(parsedName parsed.Parsed) Data {
 		}
 	}
 	return result
-	return Data{}
 }
 
 func formatAuthors(authorship []string) string {

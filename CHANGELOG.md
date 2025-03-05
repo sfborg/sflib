@@ -5,9 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.6] - 2025-03-05 Wed
+
+Add: move to sfta v0.3.27: name_match table.
+
 ## [v0.2.5] - 2025-03-04 Tue
 
-Add: move to sfga v0.3.26
+Add: move to sfga v0.3.26: canonical forms in name table.
 
 ## [v0.2.4] - 2025-03-01 Sat
 

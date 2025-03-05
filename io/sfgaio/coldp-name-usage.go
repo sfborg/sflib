@@ -58,10 +58,11 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
     col__reference_id, col__published_in_year, col__published_in_page,
     col__published_in_page_link, col__gender_id, col__gender_agreement,
     col__etymology, col__link, col__remarks, col__modified, col__modified_by,
-    gn__scientific_name_string
+    gn__scientific_name_string, gn__canonical_simple,
+		gn__canonical_full, gn__canonical_stemmed
     )
   VALUES (?,?,?,?, ?,?,?,?, ?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?, ?,?,?,
-    ?,?,?, ?,?,?,?,?, ?) 
+    ?,?,?, ?,?,?,?,?, ?,?,?,?) 
 `)
 	if err != nil {
 		return err
@@ -159,7 +160,8 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 			d.NameStatus.ID(), d.NameReferenceID, d.PublishedInYear,
 			d.PublishedInPage, d.PublishedInPageLink, d.Gender.ID(),
 			d.GenderAgreement, d.Etymology, d.Link, d.NameRemarks, d.Modified,
-			d.ModifiedBy, d.ScientificNameString,
+			d.ModifiedBy, d.ScientificNameString, d.CanonicalSimple,
+			d.CanonicalFull, d.CanonicalStemmed,
 		)
 
 		if d.BasionymID == "" {

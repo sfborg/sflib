@@ -34,9 +34,10 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
     col__reference_id, col__published_in_year, col__published_in_page,
     col__published_in_page_link, col__gender_id, col__gender_agreement,
     col__etymology, col__link, col__remarks, col__modified,
-    col__modified_by, gn__scientific_name_string)
+    col__modified_by, gn__scientific_name_string,
+		gn__canonical_simple, gn__canonical_full, gn__canonical_stemmed)
   VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?, ?,?,?,
-    ?,?,?, ?,?,?,?, ?) 
+    ?,?,?, ?,?,?,?, ?,?,?,?) 
 `)
 	if err != nil {
 		return err
@@ -79,7 +80,8 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 			n.PublishedInYear, n.PublishedInPage, n.PublishedInPageLink,
 			n.Gender.ID(), n.GenderAgreement, n.Etymology,
 			n.Link, n.Remarks, n.Modified, n.ModifiedBy,
-			n.ScientificNameString,
+			n.ScientificNameString, n.CanonicalSimple, n.CanonicalFull,
+			n.CanonicalStemmed,
 		)
 		if err != nil {
 			return err

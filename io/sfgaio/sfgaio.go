@@ -43,6 +43,11 @@ func New() sfga.Archive {
 	return &res
 }
 
+func (s *sfgaio) SetDb(path string) {
+	_ = s.Close()
+	s.dbPath = path
+}
+
 func (s *sfgaio) Connect() (*sql.DB, error) {
 	var err error
 	var db *sql.DB

@@ -49,6 +49,9 @@ type Accessor interface {
 	// database handle or an error if the connection fails.
 	Connect() (*sql.DB, error)
 
+	// SetDb allows to change database of the archive.
+	SetDb(path string)
+
 	// Db returns connector to the database.
 	Db() *sql.DB
 

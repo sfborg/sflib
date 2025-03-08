@@ -100,7 +100,14 @@ func (d *sfgaio) Ping() bool {
 }
 
 func (s *sfgaio) Close() error {
-	return s.db.Close()
+	var err error
+	if s.db != nil {
+		err = s.db.Close()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *sfgaio) DbPath() string {

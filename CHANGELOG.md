@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.7] - 2025-03-08 Sat
+
+Fix: sfga.Close implementation does not break if sfga database connection
+is null.
+
 ## [v0.2.6] - 2025-03-05 Wed
 
 Add: move to sfta v0.3.27: name_match table.
@@ -79,6 +84,9 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.2.7]: https://github.com/sfborg/sflib/compare/v0.2.6...v0.2.7
+[v0.2.6]: https://github.com/sfborg/sflib/compare/v0.2.5...v0.2.6
+[v0.2.5]: https://github.com/sfborg/sflib/compare/v0.2.4...v0.2.5
 [v0.2.4]: https://github.com/sfborg/sflib/compare/v0.2.3...v0.2.4
 [v0.2.3]: https://github.com/sfborg/sflib/compare/v0.2.2...v0.2.3
 [v0.2.2]: https://github.com/sfborg/sflib/compare/v0.2.1...v0.2.2

@@ -5,8 +5,6 @@ import (
 	"errors"
 
 	"github.com/gnames/gnlib"
-	"github.com/gnames/gnparser"
-	"github.com/gnames/gnparser/ent/nomcode"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/ent/sfga"
 )
@@ -24,22 +22,11 @@ type sfgaio struct {
 
 	// connection to SQLite database.
 	db *sql.DB
-
-	// general parser
-	p gnparser.GNparser
-
-	// botanical parser
-	pb gnparser.GNparser
 }
 
 // New creates an empty instance
 func New() sfga.Archive {
-	det := gnparser.OptWithDetails(true)
-	bot := gnparser.OptCode(nomcode.Botanical)
-	res := sfgaio{
-		p:  gnparser.New(gnparser.NewConfig(det)),
-		pb: gnparser.New(gnparser.NewConfig(det, bot)),
-	}
+	res := sfgaio{}
 	return &res
 }
 

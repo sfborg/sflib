@@ -2,7 +2,6 @@ package sfgaio
 
 import (
 	"log/slog"
-	"strconv"
 
 	"github.com/gnames/coldp/ent/coldp"
 )
@@ -58,24 +57,6 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 	defer relStmt.Close()
 
 	for _, n := range data {
-
-		p := s.p
-		if n.Code == coldp.Botanical {
-			p = s.pb
-		}
-		parsed := p.ParseName(n.ScientificNameString).Flatten()
-		if parsed.Parsed {
-			n.ParseQuality = coldp.ToInt(strconv.Itoa(parsed.ParseQuality))
-			n.CanonicalSimple = parsed.CanonicalSimple
-			n.CanonicalFull = parsed.CanonicalFull
-			n.CanonicalStemmed = parsed.CanonicalStemmed
-			n.Cardinality = coldp.ToInt(strconv.Itoa(parsed.Cardinality))
-			n.Virus = coldp.ToBool(strconv.FormatBool(parsed.Virus))
-			n.Bacteria = coldp.ToBool(strconv.FormatBool(parsed.Bacteria == "yes"))
-			n.Surrogate = coldp.ToBool(parsed.Surrogate)
-			n.Authors = parsed.Authors
-			n.GnID = parsed.VerbatimID
-		}
 
 		_, err = stmt.Exec(
 			n.ID, n.AlternativeID, n.SourceID, n.ScientificName, n.Authorship,

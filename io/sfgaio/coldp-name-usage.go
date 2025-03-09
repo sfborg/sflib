@@ -2,7 +2,6 @@ package sfgaio
 
 import (
 	"log/slog"
-	"strconv"
 
 	"github.com/gnames/coldp/ent/coldp"
 )
@@ -137,24 +136,6 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 			if err != nil {
 				return err
 			}
-		}
-
-		p := s.p
-		if d.Code == coldp.Botanical {
-			p = s.pb
-		}
-		parsed := p.ParseName(d.ScientificNameString).Flatten()
-		if parsed.Parsed {
-			d.ParseQuality = coldp.ToInt(strconv.Itoa(parsed.ParseQuality))
-			d.CanonicalSimple = parsed.CanonicalSimple
-			d.CanonicalFull = parsed.CanonicalFull
-			d.CanonicalStemmed = parsed.CanonicalStemmed
-			d.Cardinality = coldp.ToInt(strconv.Itoa(parsed.Cardinality))
-			d.Virus = coldp.ToBool(strconv.FormatBool(parsed.Virus))
-			d.Bacteria = coldp.ToBool(strconv.FormatBool(parsed.Bacteria == "yes"))
-			d.Surrogate = coldp.ToBool(parsed.Surrogate)
-			d.Authors = parsed.Authors
-			d.GnID = parsed.VerbatimID
 		}
 
 		_, err = nStmt.Exec(

@@ -2,6 +2,7 @@ package sfgaio
 
 import (
 	"log/slog"
+	"strconv"
 
 	"github.com/gnames/coldp/ent/coldp"
 )
@@ -34,10 +35,12 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
     col__reference_id, col__published_in_year, col__published_in_page,
     col__published_in_page_link, col__gender_id, col__gender_agreement,
     col__etymology, col__link, col__remarks, col__modified,
-    col__modified_by, gn__scientific_name_string,
-		gn__canonical_simple, gn__canonical_full, gn__canonical_stemmed)
-  VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?, ?,?,?,
-    ?,?,?, ?,?,?,?, ?,?,?,?) 
+    col__modified_by, gn__scientific_name_string, gn__parse_quality,
+		gn__canonical_simple, gn__canonical_full, gn__canonical_stemmed,
+		gn__cardinality, gn__virus, gn__bacteria, gn__surrogate, gn__authors,
+		gn__id)
+  VALUES (?,?,?,?, ?,?,?,?, ?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?, ?,?,?,
+    ?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?,?,?,?, ?) 
 `)
 	if err != nil {
 		return err
@@ -60,11 +63,18 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 		if n.Code == coldp.Botanical {
 			p = s.pb
 		}
-		parsed := p.ParseName(n.ScientificNameString)
+		parsed := p.ParseName(n.ScientificNameString).Flatten()
 		if parsed.Parsed {
-			n.CanonicalSimple = parsed.Canonical.Simple
-			n.CanonicalFull = parsed.Canonical.Full
-			n.CanonicalStemmed = parsed.Canonical.Stemmed
+			n.ParseQuality = coldp.ToInt(strconv.Itoa(parsed.ParseQuality))
+			n.CanonicalSimple = parsed.CanonicalSimple
+			n.CanonicalFull = parsed.CanonicalFull
+			n.CanonicalStemmed = parsed.CanonicalStemmed
+			n.Cardinality = coldp.ToInt(strconv.Itoa(parsed.Cardinality))
+			n.Virus = coldp.ToBool(strconv.FormatBool(parsed.Virus))
+			n.Bacteria = coldp.ToBool(strconv.FormatBool(parsed.Bacteria == "yes"))
+			n.Surrogate = coldp.ToBool(parsed.Surrogate)
+			n.Authors = parsed.Authors
+			n.GnID = parsed.VerbatimID
 		}
 
 		_, err = stmt.Exec(
@@ -80,8 +90,9 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 			n.PublishedInYear, n.PublishedInPage, n.PublishedInPageLink,
 			n.Gender.ID(), n.GenderAgreement, n.Etymology,
 			n.Link, n.Remarks, n.Modified, n.ModifiedBy,
-			n.ScientificNameString, n.CanonicalSimple, n.CanonicalFull,
-			n.CanonicalStemmed,
+			n.ScientificNameString, n.ParseQuality, n.CanonicalSimple,
+			n.CanonicalFull, n.CanonicalStemmed, n.Cardinality, n.Virus,
+			n.Bacteria, n.Surrogate, n.Authors, n.GnID,
 		)
 		if err != nil {
 			return err

@@ -2,6 +2,10 @@ module github.com/sfborg/sflib
 
 go 1.23.6
 
+replace github.com/gnames/coldp => ../coldp
+
+replace github.com/gnames/gnparser => ../gnparser
+
 require (
 	github.com/gnames/coldp v0.3.12
 	github.com/gnames/gnlib v0.46.0

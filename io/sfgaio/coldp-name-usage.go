@@ -2,6 +2,7 @@ package sfgaio
 
 import (
 	"log/slog"
+	"strconv"
 
 	"github.com/gnames/coldp/ent/coldp"
 )
@@ -58,11 +59,12 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
     col__reference_id, col__published_in_year, col__published_in_page,
     col__published_in_page_link, col__gender_id, col__gender_agreement,
     col__etymology, col__link, col__remarks, col__modified, col__modified_by,
-    gn__scientific_name_string, gn__canonical_simple,
-		gn__canonical_full, gn__canonical_stemmed
-    )
+    gn__scientific_name_string, gn__parse_quality,
+		gn__canonical_simple, gn__canonical_full, gn__canonical_stemmed,
+		gn__cardinality, gn__virus, gn__bacteria, gn__surrogate, gn__authors,
+		gn__id)
   VALUES (?,?,?,?, ?,?,?,?, ?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?, ?,?,?,
-    ?,?,?, ?,?,?,?,?, ?,?,?,?) 
+    ?,?,?, ?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?) 
 `)
 	if err != nil {
 		return err
@@ -141,11 +143,18 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 		if d.Code == coldp.Botanical {
 			p = s.pb
 		}
-		parsed := p.ParseName(d.ScientificNameString)
+		parsed := p.ParseName(d.ScientificNameString).Flatten()
 		if parsed.Parsed {
-			d.CanonicalSimple = parsed.Canonical.Simple
-			d.CanonicalFull = parsed.Canonical.Full
-			d.CanonicalStemmed = parsed.Canonical.Stemmed
+			d.ParseQuality = coldp.ToInt(strconv.Itoa(parsed.ParseQuality))
+			d.CanonicalSimple = parsed.CanonicalSimple
+			d.CanonicalFull = parsed.CanonicalFull
+			d.CanonicalStemmed = parsed.CanonicalStemmed
+			d.Cardinality = coldp.ToInt(strconv.Itoa(parsed.Cardinality))
+			d.Virus = coldp.ToBool(strconv.FormatBool(parsed.Virus))
+			d.Bacteria = coldp.ToBool(strconv.FormatBool(parsed.Bacteria == "yes"))
+			d.Surrogate = coldp.ToBool(parsed.Surrogate)
+			d.Authors = parsed.Authors
+			d.GnID = parsed.VerbatimID
 		}
 
 		_, err = nStmt.Exec(
@@ -160,8 +169,9 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 			d.NameStatus.ID(), d.NameReferenceID, d.PublishedInYear,
 			d.PublishedInPage, d.PublishedInPageLink, d.Gender.ID(),
 			d.GenderAgreement, d.Etymology, d.Link, d.NameRemarks, d.Modified,
-			d.ModifiedBy, d.ScientificNameString, d.CanonicalSimple,
-			d.CanonicalFull, d.CanonicalStemmed,
+			d.ModifiedBy, d.ScientificNameString, d.ParseQuality, d.CanonicalSimple,
+			d.CanonicalFull, d.CanonicalStemmed, d.Cardinality, d.Virus,
+			d.Bacteria, d.Surrogate, d.Authors, d.GnID,
 		)
 
 		if d.BasionymID == "" {

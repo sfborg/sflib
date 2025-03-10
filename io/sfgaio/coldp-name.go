@@ -36,7 +36,7 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
     col__etymology, col__link, col__remarks, col__modified,
     col__modified_by, gn__scientific_name_string, gn__parse_quality,
 		gn__canonical_simple, gn__canonical_full, gn__canonical_stemmed,
-		gn__cardinality, gn__virus, gn__bacteria, gn__surrogate, gn__authors,
+		gn__cardinality, gn__virus, gn__hybrid, gn__surrogate, gn__authors,
 		gn__id)
   VALUES (?,?,?,?, ?,?,?,?, ?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?, ?,?,?,
     ?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?,?,?,?, ?) 
@@ -73,7 +73,7 @@ func (s *sfgaio) InsertNames(data []coldp.Name) error {
 			n.Link, n.Remarks, n.Modified, n.ModifiedBy,
 			n.ScientificNameString, n.ParseQuality, n.CanonicalSimple,
 			n.CanonicalFull, n.CanonicalStemmed, n.Cardinality, n.Virus,
-			n.Bacteria, n.Surrogate, n.Authors, n.GnID,
+			n.Hybrid, n.Surrogate, n.Authors, n.GnID,
 		)
 		if err != nil {
 			return err

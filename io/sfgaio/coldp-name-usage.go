@@ -60,7 +60,7 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
     col__etymology, col__link, col__remarks, col__modified, col__modified_by,
     gn__scientific_name_string, gn__parse_quality,
 		gn__canonical_simple, gn__canonical_full, gn__canonical_stemmed,
-		gn__cardinality, gn__virus, gn__bacteria, gn__surrogate, gn__authors,
+		gn__cardinality, gn__virus, gn__hybrid, gn__surrogate, gn__authors,
 		gn__id)
   VALUES (?,?,?,?, ?,?,?,?, ?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?, ?,?,?,
     ?,?,?, ?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?) 
@@ -152,7 +152,7 @@ func (s *sfgaio) InsertNameUsages(data []coldp.NameUsage) error {
 			d.GenderAgreement, d.Etymology, d.Link, d.NameRemarks, d.Modified,
 			d.ModifiedBy, d.ScientificNameString, d.ParseQuality, d.CanonicalSimple,
 			d.CanonicalFull, d.CanonicalStemmed, d.Cardinality, d.Virus,
-			d.Bacteria, d.Surrogate, d.Authors, d.GnID,
+			d.Hybrid, d.Surrogate, d.Authors, d.GnID,
 		)
 
 		if d.BasionymID == "" {

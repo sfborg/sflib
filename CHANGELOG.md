@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.8] - 2025-03-10 Mon
+
+Add: add more GN fields to coldp inserts.
+
 ## [v0.2.7] - 2025-03-08 Sat
 
 Fix: sfga.Close implementation does not break if sfga database connection
@@ -84,6 +88,7 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.2.8]: https://github.com/sfborg/sflib/compare/v0.2.7...v0.2.8
 [v0.2.7]: https://github.com/sfborg/sflib/compare/v0.2.6...v0.2.7
 [v0.2.6]: https://github.com/sfborg/sflib/compare/v0.2.5...v0.2.6
 [v0.2.5]: https://github.com/sfborg/sflib/compare/v0.2.4...v0.2.5

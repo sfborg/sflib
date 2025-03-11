@@ -3,7 +3,7 @@ module github.com/sfborg/sflib
 go 1.23.6
 
 require (
-	github.com/gnames/coldp v0.3.14
+	github.com/gnames/coldp v0.3.15
 	github.com/gnames/gnlib v0.46.0
 	github.com/gnames/gnsys v0.3.8
 	github.com/stretchr/testify v1.10.0

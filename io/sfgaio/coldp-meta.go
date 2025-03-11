@@ -85,15 +85,15 @@ VALUES
 func (s *sfgaio) addActor(cnt *coldp.Actor, metaID int, table string) error {
 	q := `INSERT INTO ` + table + `
       (
-      col__metadata_id, col__orcid, col__given, col__family, col__rorid,
-      col__organisation, col__email, col__url, col__note
+      col__metadata_id, col__orcid, col__given, col__family, col__rorid, col__city,
+	  col__state, col__country, col__organisation, col__email, col__url, col__note
       )
       VALUES
-      (?,?,?,?,?,?,?,?,?)`
+      (?,?,?,?,?,?,?,?,?,?,?,?)`
 
 	_, err := s.db.Exec(q,
-		metaID, cnt.Orcid, cnt.Given, cnt.Family, cnt.RorID,
-		cnt.Organization, cnt.Email, cnt.URL, cnt.Note,
+		metaID, cnt.Orcid, cnt.Given, cnt.Family, cnt.RorID, cnt.City, cnt.State,
+		cnt.Country, cnt.Organization, cnt.Email, cnt.URL, cnt.Note,
 	)
 	if err != nil {
 		slog.Error("Error inserting metadata contact", "error", err)

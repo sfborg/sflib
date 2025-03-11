@@ -9,10 +9,8 @@ github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkp
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
 github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
-github.com/gnames/coldp v0.3.14 h1:HHl5Hx0Q/oPfKJeaY9vuaaY9/G2+EBlTo3GHN+2uZlA=
-github.com/gnames/coldp v0.3.14/go.mod h1:sX8nDky11N56FGkXZ4c0+Z+rp0ikK+rJ6U9+/o+yWxo=
-github.com/gnames/gnfmt v0.5.4 h1:oT3qL/VILqdSCUuD8lgWBc+C79VZUSEUffq7zV1b0SI=
-github.com/gnames/gnfmt v0.5.4/go.mod h1:fAX78TlB0ECBRiZRQ2HTpVPwzWkwkIe32Pf/rUu7QmM=
+github.com/gnames/coldp v0.3.15 h1:bX79W2NYCM1wGa7h2JT4dfVnYNMqPi929daZXNRFLj8=
+github.com/gnames/coldp v0.3.15/go.mod h1:sX8nDky11N56FGkXZ4c0+Z+rp0ikK+rJ6U9+/o+yWxo=
 github.com/gnames/gnfmt v0.5.5 h1:3icAaM9F7kQKo47jTKQFw8su/dkBZvWGLw8M05vg9x4=
 github.com/gnames/gnfmt v0.5.5/go.mod h1:fAX78TlB0ECBRiZRQ2HTpVPwzWkwkIe32Pf/rUu7QmM=
 github.com/gnames/gnlib v0.46.0 h1:lmxS5fyTVcTeuQzF44GgI9bJGi46mUh466Pqb+SC8O8=

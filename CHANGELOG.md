@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.2.9] - 2025-03-11 Tue
+
+Add: move to coldp v0.3.15: add city, state, country to actor
+
 ## [v0.2.8] - 2025-03-10 Mon
 
 Add: add more GN fields to coldp inserts.
@@ -16,7 +20,7 @@ is null.
 
 ## [v0.2.6] - 2025-03-05 Wed
 
-Add: move to sfta v0.3.27: name_match table.
+Add: move to sfga v0.3.27: name_match table.
 
 ## [v0.2.5] - 2025-03-04 Tue
 

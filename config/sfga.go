@@ -13,17 +13,17 @@ var (
 	schemaHash = "944e70cb8486fd"
 )
 
-type SFGAConfig struct {
+type ConfigSFGA struct {
 	sfga.GitRepo
 }
 
-func New() *SFGAConfig {
-	res := SFGAConfig{
+func NewSFGA() ConfigSFGA {
+	res := ConfigSFGA{
 		GitRepo: sfga.GitRepo{
 			URL:          repoURL,
 			Tag:          repoTag,
 			ShaSchemaSQL: schemaHash,
 		},
 	}
-	return &res
+	return res
 }

@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Add [#5]: migrate SFGA library to new structure.
+Add [#4]: refactor code to accomodate CoLDP and DwCA archives.
+
 ## [v0.2.9] - 2025-03-11 Tue
 
 Add: move to coldp v0.3.15: add city, state, country to actor
@@ -92,6 +95,8 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.3.0]: https://github.com/sfborg/sflib/compare/v0.2.9...v0.3.0
+[v0.2.9]: https://github.com/sfborg/sflib/compare/v0.2.8...v0.2.9
 [v0.2.8]: https://github.com/sfborg/sflib/compare/v0.2.7...v0.2.8
 [v0.2.7]: https://github.com/sfborg/sflib/compare/v0.2.6...v0.2.7
 [v0.2.6]: https://github.com/sfborg/sflib/compare/v0.2.5...v0.2.6

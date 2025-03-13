@@ -1,10 +1,10 @@
 package icoldp
 
-import "github.com/sfborg/sflib/pkg/sflib"
+import "github.com/sfborg/sflib/pkg/arch"
 
 type icoldp struct{}
 
-func New() sflib.CoLDP {
+func New() arch.CoLDP {
 	res := icoldp{}
 	return &res
 }

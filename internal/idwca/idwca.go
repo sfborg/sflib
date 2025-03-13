@@ -1,10 +1,10 @@
 package idwca
 
-import "github.com/sfborg/sflib/pkg/sflib"
+import "github.com/sfborg/sflib/pkg/arch"
 
 type idwca struct{}
 
-func New() sflib.Packager {
+func New() arch.DwCA {
 	res := idwca{}
 	return &res
 }

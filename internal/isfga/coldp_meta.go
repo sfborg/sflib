@@ -1,4 +1,4 @@
-package sfgaio
+package isfga
 
 import (
 	"log/slog"
@@ -7,7 +7,7 @@ import (
 	"github.com/gnames/coldp/ent/coldp"
 )
 
-func (s *sfgaio) InsertMeta(m *coldp.Meta) error {
+func (a *isfga) InsertMeta(m *coldp.Meta) error {
 	var id int
 	q := `
 INSERT INTO metadata
@@ -28,7 +28,7 @@ VALUES
 		private = 1
 	}
 
-	_, err := s.db.Exec(q,
+	_, err := a.db.Exec(q,
 		m.DOI, m.Title, m.Alias, m.Description, m.Issued, m.Version,
 		keywords, m.GeographicScope, m.TaxonomicScope, m.TemporalScope,
 		m.Confidence, m.Completeness, m.License, m.URL, m.Logo,
@@ -39,41 +39,41 @@ VALUES
 		return err
 	}
 
-	err = s.db.QueryRow("SELECT last_insert_rowid()").Scan(&id)
+	err = a.db.QueryRow("SELECT last_insert_rowid()").Scan(&id)
 	if err != nil {
 		slog.Error("Error getting ID for inserted metadata", "error", err)
 		return err
 	}
 
 	if m.Contact != nil {
-		err = s.addActor(m.Contact, id, "contact")
+		err = a.addActor(m.Contact, id, "contact")
 		if err != nil {
 			return err
 		}
 	}
 	if m.Publisher != nil {
-		err = s.addActor(m.Publisher, id, "publisher")
+		err = a.addActor(m.Publisher, id, "publisher")
 		if err != nil {
 			return err
 		}
 	}
 
 	for _, v := range m.Editors {
-		err = s.addActor(&v, id, "editor")
+		err = a.addActor(&v, id, "editor")
 		if err != nil {
 			return err
 		}
 	}
 
 	for _, v := range m.Creators {
-		err = s.addActor(&v, id, "creator")
+		err = a.addActor(&v, id, "creator")
 		if err != nil {
 			return err
 		}
 	}
 
 	for _, v := range m.Contributors {
-		err = s.addActor(&v, id, "contributor")
+		err = a.addActor(&v, id, "contributor")
 		if err != nil {
 			return err
 		}
@@ -82,7 +82,7 @@ VALUES
 	return nil
 }
 
-func (s *sfgaio) addActor(cnt *coldp.Actor, metaID int, table string) error {
+func (a *isfga) addActor(cnt *coldp.Actor, metaID int, table string) error {
 	q := `INSERT INTO ` + table + `
       (
       col__metadata_id, col__orcid, col__given, col__family, col__rorid, col__city,
@@ -91,7 +91,7 @@ func (s *sfgaio) addActor(cnt *coldp.Actor, metaID int, table string) error {
       VALUES
       (?,?,?,?,?,?,?,?,?,?,?,?)`
 
-	_, err := s.db.Exec(q,
+	_, err := a.db.Exec(q,
 		metaID, cnt.Orcid, cnt.Given, cnt.Family, cnt.RorID, cnt.City, cnt.State,
 		cnt.Country, cnt.Organization, cnt.Email, cnt.URL, cnt.Note,
 	)

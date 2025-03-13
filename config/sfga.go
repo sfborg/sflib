@@ -1,6 +1,6 @@
 package config
 
-import "github.com/sfborg/sflib/ent/sfga"
+import "github.com/sfborg/sflib/pkg/sfga"
 
 var (
 	// repoURL is the URL to the SFGA schema repository.
@@ -13,12 +13,12 @@ var (
 	schemaHash = "944e70cb8486fd"
 )
 
-type Config struct {
+type SFGAConfig struct {
 	sfga.GitRepo
 }
 
-func New() *Config {
-	res := Config{
+func New() *SFGAConfig {
+	res := SFGAConfig{
 		GitRepo: sfga.GitRepo{
 			URL:          repoURL,
 			Tag:          repoTag,

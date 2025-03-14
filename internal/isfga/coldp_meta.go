@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/gnames/coldp/ent/coldp"
+	"github.com/sfborg/sflib/pkg/coldp"
 )
 
 func (a *isfga) InsertMeta(m *coldp.Meta) error {

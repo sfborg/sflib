@@ -8,16 +8,17 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/pkg/arch"
 	"github.com/sfborg/sflib/pkg/sfga"
 	_ "modernc.org/sqlite"
 )
 
 type schema struct {
-	repo sfga.GitRepo
+	repo config.GitRepo
 }
 
-func NewSchema(repo sfga.GitRepo) arch.SchemaSFGA {
+func NewSchema(repo config.GitRepo) sfga.Schema {
 	res := schema{repo: repo}
 	return &res
 }

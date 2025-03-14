@@ -31,7 +31,7 @@ func (a *isfga) Import(src, dstDir string) error {
 
 	err = a.extract(src, dstDir)
 	if err != nil {
-		return &arch.ErrExtractArchive{File: src, Err: err}
+		return &arch.ErrImportArchive{File: src, Err: err}
 	}
 
 	err = a.setDb(dstDir)
@@ -54,8 +54,12 @@ func (a *isfga) extract(src, dstDir string) error {
 		a.copy(src, dstDir)
 	default:
 		err = errors.New("unknown file type")
-		return &arch.ErrExtractArchive{File: src, Err: err}
+		return &arch.ErrImportArchive{File: src, Err: err}
 	}
+	if err != nil {
+		return &arch.ErrImportArchive{File: src, Err: err}
+	}
+
 	return nil
 }
 

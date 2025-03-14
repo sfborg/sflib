@@ -9,6 +9,7 @@ import (
 	"github.com/gnames/gnsys"
 	"github.com/sfborg/sflib/internal/isfga"
 	"github.com/sfborg/sflib/pkg/arch"
+	"github.com/sfborg/sflib/pkg/sfga"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,6 +28,19 @@ func TestCreate(t *testing.T) {
 	exists, _ = gnsys.FileExists(filepath.Join(tempDir, "schema.sqlite"))
 	assert.True(exists)
 	assert.True(s.Ping())
+}
+
+func TestNotZip(t *testing.T) {
+	assert := assert.New(t)
+	tmpDir, err := os.MkdirTemp("", "coldp-test")
+	assert.Nil(err)
+	defer os.RemoveAll(tmpDir)
+
+	path := filepath.Join("..", "..", "testdata", "notzip.zip")
+	coldp := isfga.New()
+	err = coldp.Import(path, tmpDir)
+	assert.NotNil(err)
+	assert.IsType(&arch.ErrImportArchive{}, err)
 }
 
 func TestExport(t *testing.T) {
@@ -71,7 +85,7 @@ func TestDownload(t *testing.T) {
 	assert.Nil(err)
 	defer os.RemoveAll(tempDir)
 
-	var a arch.SFGA
+	var a sfga.Archive
 	sf := "http://opendata.globalnames.org/sfga/147-vascan-2025-01-31.sql.zip"
 	a = isfga.New()
 	assert.Nil(err)
@@ -85,9 +99,9 @@ func TestDownload(t *testing.T) {
 	assert.True(strings.HasSuffix(ents[0].Name(), ".sql"))
 }
 
-func TestExtract(t *testing.T) {
+func TestImport(t *testing.T) {
 	assert := assert.New(t)
-	var a arch.SFGA
+	var a sfga.Archive
 	var err error
 
 	tempDir, err := os.MkdirTemp("", "test-create")
@@ -145,7 +159,7 @@ func TestExtract(t *testing.T) {
 
 func TestConnect(t *testing.T) {
 	assert := assert.New(t)
-	var a arch.SFGA
+	var a sfga.Archive
 	var err error
 
 	tempDir, err := os.MkdirTemp("", "test-create")
@@ -186,7 +200,7 @@ func TestConnect(t *testing.T) {
 
 func TestVersion(t *testing.T) {
 	assert := assert.New(t)
-	var a arch.SFGA
+	var a sfga.Archive
 	var err error
 
 	tempDir, err := os.MkdirTemp("", "test-create")

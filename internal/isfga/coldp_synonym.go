@@ -3,7 +3,7 @@ package isfga
 import (
 	"log/slog"
 
-	"github.com/gnames/coldp/ent/coldp"
+	"github.com/sfborg/sflib/pkg/coldp"
 )
 
 func (a *isfga) InsertSynonyms(data []coldp.Synonym) error {

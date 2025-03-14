@@ -7,6 +7,7 @@ import (
 	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/pkg/arch"
+	"github.com/sfborg/sflib/pkg/sfga"
 )
 
 type isfga struct {
@@ -24,7 +25,7 @@ type isfga struct {
 	db *sql.DB
 }
 
-func New() arch.SFGA {
+func New() sfga.Archive {
 	res := isfga{
 		cfg: config.NewSFGA(),
 	}

@@ -4,14 +4,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gnames/coldp/ent/coldp"
 	"github.com/sfborg/sflib/internal/isfga"
-	"github.com/sfborg/sflib/pkg/arch"
+	"github.com/sfborg/sflib/pkg/coldp"
+	"github.com/sfborg/sflib/pkg/sfga"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	a       arch.SFGA
+	a       sfga.Archive
 	testDir string
 )
 

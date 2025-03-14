@@ -73,12 +73,12 @@ func (e *ErrDownload) Error() string {
 	return e.Err.Error()
 }
 
-type ErrExtractArchive struct {
+type ErrImportArchive struct {
 	File string
 	Err  error
 }
 
-func (e *ErrExtractArchive) Error() string {
+func (e *ErrImportArchive) Error() string {
 	return e.Err.Error()
 }
 

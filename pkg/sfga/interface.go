@@ -1,23 +1,24 @@
-package arch
+package sfga
 
 import (
 	"database/sql"
 
-	"github.com/gnames/coldp/ent/coldp"
+	"github.com/sfborg/sflib/pkg/arch"
+	"github.com/sfborg/sflib/pkg/coldp"
 )
 
-// SchemaSFGA defines methods for managing the SFGA database schema.
+// Schema defines methods for managing the SFGA database schema.
 // Specific data required for methods is taken from the configuraion of
-// the SchemaSFGA instance.
-type SchemaSFGA interface {
+// the Schema instance.
+type Schema interface {
 	// Fetch retrieves the SFGA schema based on the configured Git repository.
 	// Returns the schema in bytes, and an error if retrieval fails or the
 	// downloaded schema's SHA256 hash doesn't match the expected value.
 	Fetch() ([]byte, error)
 }
 
-type SFGA interface {
-	Packager
+type Archive interface {
+	arch.Packager
 	AccessorSFGA
 	CoLDPInserter
 }

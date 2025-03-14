@@ -3,7 +3,7 @@ package isfga
 import (
 	"log/slog"
 
-	"github.com/gnames/coldp/ent/coldp"
+	"github.com/sfborg/sflib/pkg/coldp"
 )
 
 func (a *isfga) InsertTypeMaterials(data []coldp.TypeMaterial) error {

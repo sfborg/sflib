@@ -2,16 +2,16 @@ package sflib
 
 import (
 	"github.com/sfborg/sflib/internal/isfga"
-	"github.com/sfborg/sflib/pkg/arch"
+	"github.com/sfborg/sflib/pkg/sfga"
 )
 
-type sfga struct {
-	arch.SFGA
+type sfgaArc struct {
+	sfga.Archive
 }
 
-func NewSFGA() arch.SFGA {
-	res := sfga{
-		SFGA: isfga.New(),
+func NewSFGA() sfga.Archive {
+	res := sfgaArc{
+		Archive: isfga.New(),
 	}
 	return &res
 }

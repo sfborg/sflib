@@ -1,9 +1,5 @@
 package arch
 
-type CoLDP interface {
-	Packager
-}
-
 type DwCA interface {
 	Packager
 }

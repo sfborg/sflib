@@ -36,9 +36,9 @@ func TestNotZip(t *testing.T) {
 	assert.Nil(err)
 	defer os.RemoveAll(tmpDir)
 
-	path := filepath.Join("..", "..", "testdata", "notzip.zip")
+	path := filepath.Join("../../testdata/", "notzip.zip")
 	coldp := isfga.New()
-	err = coldp.Import(path, tmpDir)
+	err = coldp.Fetch(path, tmpDir)
 	assert.NotNil(err)
 	assert.IsType(&arch.ErrImportArchive{}, err)
 }
@@ -89,7 +89,7 @@ func TestDownload(t *testing.T) {
 	sf := "http://opendata.globalnames.org/sfga/147-vascan-2025-01-31.sql.zip"
 	a = isfga.New()
 	assert.Nil(err)
-	err = a.Import(sf, tempDir)
+	err = a.Fetch(sf, tempDir)
 	assert.Nil(err)
 
 	ents, err := os.ReadDir(tempDir)
@@ -125,7 +125,7 @@ func TestImport(t *testing.T) {
 	for _, v := range tests {
 		src := filepath.Join("..", "..", "testdata", "sfga", v.file)
 		a = isfga.New()
-		err = a.Import(src, tempDir)
+		err = a.Fetch(src, tempDir)
 		assert.Nil(err)
 
 		ents, err := os.ReadDir(tempDir)
@@ -189,7 +189,7 @@ func TestConnect(t *testing.T) {
 			err = a.Create(tempDir)
 			assert.Nil(err)
 		} else {
-			err = a.Import(src, tempDir)
+			err = a.Fetch(src, tempDir)
 			assert.Nil(err)
 		}
 
@@ -230,7 +230,7 @@ func TestVersion(t *testing.T) {
 			err = a.Create(tempDir)
 			assert.Nil(err)
 		} else {
-			err = a.Import(src, tempDir)
+			err = a.Fetch(src, tempDir)
 			assert.Nil(err)
 		}
 		vers := a.Version()

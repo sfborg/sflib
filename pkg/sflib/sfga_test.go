@@ -10,7 +10,7 @@ import (
 
 func TestNewSFGA(t *testing.T) {
 	assert := assert.New(t)
-	res := sflib.NewSFGA()
+	res := sflib.NewSfga()
 	_, ok := res.(sfga.Archive)
 	assert.True(ok)
 }

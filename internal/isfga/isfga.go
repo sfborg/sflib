@@ -12,6 +12,7 @@ import (
 
 type isfga struct {
 	cfg config.ConfigSFGA
+
 	// extractDir is the place where the content of SFGA is extracted to.
 	extractDir string
 

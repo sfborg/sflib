@@ -1,15 +1,9 @@
 package arch
 
-type DwCA interface {
-	Packager
-}
-
 // Packager provides methods for interacting with an archive packages.
 // It can extract files or create a new package.
 type Packager interface {
-	// Import decompresses the an archive file and stores it in a cache
-	// directory, making it accessible for querying.
-	Import(src, dst string) error
+	Fetch(src, dst string) error
 
 	// Create a cached version of an archive from scratch.
 	Create(dir string) error

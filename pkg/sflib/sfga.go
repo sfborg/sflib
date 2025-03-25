@@ -9,7 +9,7 @@ type sfgaArc struct {
 	sfga.Archive
 }
 
-func NewSFGA() sfga.Archive {
+func NewSfga() sfga.Archive {
 	res := sfgaArc{
 		Archive: isfga.New(),
 	}

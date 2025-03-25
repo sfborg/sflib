@@ -85,7 +85,7 @@ func createZip(outFile string) error {
 
 	w, err := os.Open(outFile)
 	if err != nil {
-		return &arch.ErrFileOpen{File: outFile, Err: err}
+		return &arch.ErrFileOpen{Path: outFile, Err: err}
 	}
 	defer w.Close()
 

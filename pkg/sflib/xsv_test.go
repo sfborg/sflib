@@ -3,14 +3,14 @@ package sflib_test
 import (
 	"testing"
 
-	"github.com/sfborg/sflib/pkg/sfga"
 	"github.com/sfborg/sflib/pkg/sflib"
+	"github.com/sfborg/sflib/pkg/xsv"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewSfga(t *testing.T) {
+func TestNewXsv(t *testing.T) {
 	assert := assert.New(t)
-	res := sflib.NewSfga()
-	_, ok := res.(sfga.Archive)
+	sfga := sflib.NewXsv()
+	_, ok := sfga.(xsv.Archive)
 	assert.True(ok)
 }

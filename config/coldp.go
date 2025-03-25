@@ -29,7 +29,7 @@ func OptWithQuotes(b bool) OptionCoLDP {
 	}
 }
 
-func NewCoLDP(opts ...OptionCoLDP) ConfigCoLDP {
+func NewColdp(opts ...OptionCoLDP) ConfigCoLDP {
 	res := ConfigCoLDP{}
 	for _, opt := range opts {
 		opt(&res)

@@ -24,12 +24,12 @@ type GitRepo struct {
 	ShaSchemaSQL string
 }
 
-type ConfigSFGA struct {
+type ConfigSfga struct {
 	GitRepo
 }
 
-func NewSFGA() ConfigSFGA {
-	res := ConfigSFGA{
+func NewSFGA() ConfigSfga {
+	res := ConfigSfga{
 		GitRepo: GitRepo{
 			URL:          repoURL,
 			Tag:          repoTag,

@@ -8,17 +8,18 @@ import (
 	"testing"
 
 	"github.com/sfborg/sflib/internal/itext"
+	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestText(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
-		msg, file, name string
-		errNil          bool
+		msg, file string
+		errNil    bool
 	}{
-		{"real", "names.txt", "Plagiognathus chrysanthemi Wolff 1804", true},
-		{"fake", "fake", "", false},
+		{"real", "names.txt", true},
+		{"fake", "fake", false},
 	}
 
 	testDir, err := os.MkdirTemp("", "sflib-text")
@@ -34,11 +35,11 @@ func TestText(t *testing.T) {
 			continue
 		}
 
-		ch := make(chan string)
+		ch := make(chan coldp.NameUsage)
 		var wg sync.WaitGroup
 		wg.Add(1)
 
-		var res []string
+		var res []coldp.NameUsage
 
 		go func() {
 			defer wg.Done()
@@ -47,12 +48,12 @@ func TestText(t *testing.T) {
 			}
 		}()
 
-		err = a.Load(context.Background(), ch)
+		err = a.Load(context.Background(), ch, 10, coldp.Cultivars)
 		assert.Nil(err)
 		close(ch)
 
 		wg.Wait()
 		assert.Equal(1000, len(res))
-		assert.Equal(v.name, res[0])
+		assert.Equal(coldp.Cultivars, res[0].Code)
 	}
 }

@@ -3,10 +3,13 @@ module github.com/sfborg/sflib
 go 1.24.1
 
 require (
-	github.com/gnames/gnfmt v0.5.5
+	github.com/gnames/gnfmt v0.5.6
 	github.com/gnames/gnlib v0.46.0
+	github.com/gnames/gnparser v1.11.4
 	github.com/gnames/gnsys v0.3.8
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/sync v0.12.0
+	gopkg.in/yaml.v2 v2.4.0
 	modernc.org/sqlite v1.36.0
 )
 
@@ -16,6 +19,9 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
+	github.com/gnames/gnuuid v0.1.2 // indirect
+	github.com/gnames/organizer v0.1.1 // indirect
+	github.com/gnames/tribool v0.1.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
@@ -29,6 +35,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	golang.org/x/exp v0.0.0-20230315142452-642cacee5cc0 // indirect
+	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

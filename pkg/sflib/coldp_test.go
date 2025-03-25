@@ -3,14 +3,14 @@ package sflib_test
 import (
 	"testing"
 
-	"github.com/sfborg/sflib/pkg/sfga"
+	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/sflib"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewSfga(t *testing.T) {
+func TestNewColdp(t *testing.T) {
 	assert := assert.New(t)
-	res := sflib.NewSfga()
-	_, ok := res.(sfga.Archive)
+	res := sflib.NewColdp()
+	_, ok := res.(coldp.Archive)
 	assert.True(ok)
 }

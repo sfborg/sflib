@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.3.1] - 2025-03-26 Wed
+
+Add [#9]: add XSV to library.
+
+## [v0.3.0] - 2025-03-25 Tue
+
+Add [#8]: add text to library.
+Add [#6]: migrate CoLDP to new structure.
 Add [#5]: migrate SFGA library to new structure.
 Add [#4]: refactor code to accomodate CoLDP and DwCA archives.
 

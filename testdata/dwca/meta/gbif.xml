@@ -1,0 +1,110 @@
+<archive xmlns="http://rs.tdwg.org/dwc/text/" metadata="eml.xml">
+  <core encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Taxon">
+    <files>
+      <location>Taxon.tsv</location>
+    </files>
+    <id index="0" />
+    <field index="1" term="http://rs.tdwg.org/dwc/terms/datasetID"/>
+    <field index="2" term="http://rs.tdwg.org/dwc/terms/parentNameUsageID"/>
+    <field index="3" term="http://rs.tdwg.org/dwc/terms/acceptedNameUsageID"/>
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/originalNameUsageID"/>
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/scientificName"/>
+    <field index="6" term="http://rs.tdwg.org/dwc/terms/scientificNameAuthorship"/>
+    <field index="7" term="http://rs.gbif.org/terms/1.0/canonicalName"/>
+    <field index="8" term="http://rs.tdwg.org/dwc/terms/genericName"/>
+    <field index="9" term="http://rs.tdwg.org/dwc/terms/specificEpithet"/>
+    <field index="10" term="http://rs.tdwg.org/dwc/terms/infraspecificEpithet"/>
+    <field index="11" term="http://rs.tdwg.org/dwc/terms/taxonRank"/>
+    <field index="12" term="http://rs.tdwg.org/dwc/terms/nameAccordingTo"/>
+    <field index="13" term="http://rs.tdwg.org/dwc/terms/namePublishedIn"/>
+    <field index="14" term="http://rs.tdwg.org/dwc/terms/taxonomicStatus"/>
+    <field index="15" term="http://rs.tdwg.org/dwc/terms/nomenclaturalStatus"/>
+    <field index="16" term="http://rs.tdwg.org/dwc/terms/taxonRemarks"/>
+    <field index="17" term="http://rs.tdwg.org/dwc/terms/kingdom"/>
+    <field index="18" term="http://rs.tdwg.org/dwc/terms/phylum"/>
+    <field index="19" term="http://rs.tdwg.org/dwc/terms/class"/>
+    <field index="20" term="http://rs.tdwg.org/dwc/terms/order"/>
+    <field index="21" term="http://rs.tdwg.org/dwc/terms/family"/>
+    <field index="22" term="http://rs.tdwg.org/dwc/terms/genus"/>
+  </core>
+  <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/TypesAndSpecimen">
+    <files>
+      <location>TypesAndSpecimen.tsv</location>
+    </files>
+    <coreid index="0" />
+    <field index="1" term="http://rs.gbif.org/terms/1.0/typeDesignationType"/>
+    <field index="2" term="http://rs.gbif.org/terms/1.0/typeDesignatedBy"/>
+    <field index="3" term="http://rs.tdwg.org/dwc/terms/scientificName"/>
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/taxonRank"/>
+    <field index="5" term="http://purl.org/dc/terms/source"/>
+  </extension>
+  <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Description">
+    <files>
+      <location>Description.tsv</location>
+    </files>
+    <coreid index="0" />
+    <field index="1" term="http://purl.org/dc/terms/type"/>
+    <field index="2" term="http://purl.org/dc/terms/language"/>
+    <field index="3" term="http://purl.org/dc/terms/description"/>
+    <field index="4" term="http://purl.org/dc/terms/source"/>
+    <field index="5" term="http://purl.org/dc/terms/creator"/>
+    <field index="6" term="http://purl.org/dc/terms/contributor"/>
+    <field index="7" term="http://purl.org/dc/terms/license"/>
+  </extension>
+  <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Reference">
+    <files>
+      <location>Reference.tsv</location>
+    </files>
+    <coreid index="0" />
+    <field index="1" term="http://purl.org/dc/terms/bibliographicCitation"/>
+    <field index="2" term="http://purl.org/dc/terms/identifier"/>
+    <field index="3" term="http://purl.org/dc/terms/references"/>
+    <field index="4" term="http://purl.org/dc/terms/source"/>
+  </extension>
+  <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Multimedia">
+    <files>
+      <location>Multimedia.tsv</location>
+    </files>
+    <coreid index="0" />
+    <field index="1" term="http://purl.org/dc/terms/identifier"/>
+    <field index="2" term="http://purl.org/dc/terms/references"/>
+    <field index="3" term="http://purl.org/dc/terms/title"/>
+    <field index="4" term="http://purl.org/dc/terms/description"/>
+    <field index="5" term="http://purl.org/dc/terms/license"/>
+    <field index="6" term="http://purl.org/dc/terms/creator"/>
+    <field index="7" term="http://purl.org/dc/terms/created"/>
+    <field index="8" term="http://purl.org/dc/terms/contributor"/>
+    <field index="9" term="http://purl.org/dc/terms/publisher"/>
+    <field index="10" term="http://purl.org/dc/terms/rightsHolder"/>
+    <field index="11" term="http://purl.org/dc/terms/source"/>
+  </extension>
+  <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/VernacularName">
+    <files>
+      <location>VernacularName.tsv</location>
+    </files>
+    <coreid index="0" />
+    <field index="1" term="http://rs.tdwg.org/dwc/terms/vernacularName"/>
+    <field index="2" term="http://purl.org/dc/terms/language"/>
+    <field index="3" term="http://rs.tdwg.org/dwc/terms/country"/>
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/countryCode"/>
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/sex"/>
+    <field index="6" term="http://rs.tdwg.org/dwc/terms/lifeStage"/>
+    <field index="7" term="http://purl.org/dc/terms/source"/>
+  </extension>
+  <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Distribution">
+    <files>
+      <location>Distribution.tsv</location>
+    </files>
+    <coreid index="0" />
+    <field index="1" term="http://rs.tdwg.org/dwc/terms/locationID"/>
+    <field index="2" term="http://rs.tdwg.org/dwc/terms/locality"/>
+    <field index="3" term="http://rs.tdwg.org/dwc/terms/country"/>
+    <field index="4" term="http://rs.tdwg.org/dwc/terms/countryCode"/>
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/locationRemarks"/>
+    <field index="6" term="http://rs.tdwg.org/dwc/terms/establishmentMeans"/>
+    <field index="7" term="http://rs.tdwg.org/dwc/terms/lifeStage"/>
+    <field index="8" term="http://rs.tdwg.org/dwc/terms/occurrenceStatus"/>
+    <field index="9" term="http://iucn.org/terms/threatStatus"/>
+    <field index="10" term="http://purl.org/dc/terms/source"/>
+  </extension>
+</archive>

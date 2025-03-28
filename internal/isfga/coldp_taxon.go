@@ -2,7 +2,9 @@ package isfga
 
 import (
 	"log/slog"
+	"strings"
 
+	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/pkg/coldp"
 )
 
@@ -48,13 +50,16 @@ func (a *isfga) InsertTaxa(data []coldp.Taxon) error {
 		if t.Provisional.Bool {
 			status = coldp.ProvisionallyAcceptedTS
 		}
+		env := gnlib.Map(t.Environment, func(env coldp.Environment) string {
+			return env.ID()
+		})
 		_, err = stmt.Exec(
 			t.ID, t.AlternativeID, t.SourceID, t.ParentID, t.Ordinal, t.BranchLength,
 			t.NameID, t.NamePhrase, t.AccordingToID, t.AccordingToPage,
 			t.AccordingToPageLink, t.Scrutinizer, t.ScrutinizerID,
 			t.ScrutinizerDate, status.ID(), t.ReferenceID, t.Extinct,
 			t.TemporalRangeStart.ID(), t.TemporalRangeEnd.ID(),
-			t.Environment, t.Species, t.Section, t.Subgenus, t.Genus, t.Subtribe,
+			strings.Join(env, ","), t.Species, t.Section, t.Subgenus, t.Genus, t.Subtribe,
 			t.Tribe, t.Subfamily, t.Family, t.Superfamily, t.Suborder, t.Order,
 			t.Subclass, t.Class, t.Subphylum, t.Phylum, t.Kingdom,
 			t.Link, t.Remarks, t.Modified, t.ModifiedBy,

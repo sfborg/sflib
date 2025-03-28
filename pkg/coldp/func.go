@@ -329,3 +329,20 @@ func ToStr(s string) string {
 	s = strings.ToLower(s)
 	return strings.ReplaceAll(s, "_", " ")
 }
+
+func GetEnvironments(env string) []Environment {
+	envs := strings.Split(env, ",")
+	envs = gnlib.Map(envs, func(s string) string {
+		return strings.TrimSpace(s)
+	})
+	var res []Environment
+	for _, v := range envs {
+		env := NewEnvironment(v)
+		if env == UnknownEnv {
+			slog.Warn("Unknown environment", "env", v)
+			continue
+		}
+		res = append(res, env)
+	}
+	return res
+}

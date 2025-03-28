@@ -1,6 +1,8 @@
 package coldp
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 // Taxon represents a taxonomic data in the CoLDP.
 type Taxon struct {
@@ -76,7 +78,7 @@ type Taxon struct {
 
 	// Environment is the environments where this taxon lives. Uses Environment
 	// controlled vocabulary (comma-separated).
-	Environment Environment
+	Environment []Environment
 
 	// Species is the species name within this taxon.
 	Species string
@@ -203,7 +205,7 @@ func (t Taxon) Load(headers, data []string) (DataLoader, error) {
 	t.Extinct = ToBool(row["extinct"])
 	t.TemporalRangeStart = NewGeoTime(row["temporalrangestart"])
 	t.TemporalRangeEnd = NewGeoTime(row["temporalrangeend"])
-	t.Environment = NewEnvironment(row["environment"])
+	t.Environment = GetEnvironments(row["environment"])
 	t.Species = row["species"]
 	t.Section = row["section"]
 	t.Subgenus = row["subgenus"]

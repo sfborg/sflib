@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v[v0.3.2] - 2025-03-28 Fri
+
+Fix: environment data in coldp.Taxon
+
 ## [v0.3.1] - 2025-03-26 Wed
 
 Add [#9]: add XSV to library.
@@ -103,6 +107,8 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.3.2]: https://github.com/sfborg/sflib/compare/v0.3.1...v0.3.2
+[v0.3.1]: https://github.com/sfborg/sflib/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/sfborg/sflib/compare/v0.2.9...v0.3.0
 [v0.2.9]: https://github.com/sfborg/sflib/compare/v0.2.8...v0.2.9
 [v0.2.8]: https://github.com/sfborg/sflib/compare/v0.2.7...v0.2.8

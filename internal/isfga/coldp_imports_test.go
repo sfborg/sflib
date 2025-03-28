@@ -274,7 +274,7 @@ func TestInsertNameUsage(t *testing.T) {
 			Scrutinizer:          "James Bond",
 			ScrutinizerDate:      "2020-12-12",
 			Extinct:              coldp.ToBool("false"),
-			Environment:          coldp.NewEnvironment("terrestrial"),
+			Environment:          coldp.GetEnvironments("terrestrial"),
 			Link:                 "http://example.org",
 			NameRemarks:          "name rem",
 			Remarks:              "rem",
@@ -500,32 +500,32 @@ func TestInsertTaxon(t *testing.T) {
 	assert := assert.New(t)
 	tx := []coldp.Taxon{
 		{
-			ID:                  "123",                               // string
-			AlternativeID:       "321",                               // string
-			LocalID:             "111",                               // string
-			GlobalID:            "222",                               // string
-			SourceID:            "123",                               // string
-			ParentID:            "543",                               // string
-			NameID:              "333",                               // string
-			AccordingToID:       "555",                               // string
-			AccordingToPage:     "66",                                // string
-			AccordingToPageLink: "http://example.org",                // string
-			Scrutinizer:         "Li Xi",                             // string
-			ScrutinizerID:       "88",                                // string
-			ScrutinizerDate:     "2020-02-21",                        // string
-			Provisional:         coldp.ToBool("false"),               // sql.NullBool
-			ReferenceID:         "44",                                // string
-			Extinct:             coldp.ToBool("false"),               // sql.NullBool
-			Environment:         coldp.NewEnvironment("terrestrial"), // Environment
-			Species:             "Bubo",                              // string
-			Family:              "Strigidae",                         // string
-			Order:               "Strigiformes",                      // string
-			Class:               "Aves",                              // string
-			Kingdom:             "Animalia",                          // string
-			Link:                "http://example.org",                // string
-			Remarks:             "rem",                               // string
-			Modified:            "2022-02-03",                        // string
-			ModifiedBy:          "Xin Min",                           // string
+			ID:                  "123",                                // string
+			AlternativeID:       "321",                                // string
+			LocalID:             "111",                                // string
+			GlobalID:            "222",                                // string
+			SourceID:            "123",                                // string
+			ParentID:            "543",                                // string
+			NameID:              "333",                                // string
+			AccordingToID:       "555",                                // string
+			AccordingToPage:     "66",                                 // string
+			AccordingToPageLink: "http://example.org",                 // string
+			Scrutinizer:         "Li Xi",                              // string
+			ScrutinizerID:       "88",                                 // string
+			ScrutinizerDate:     "2020-02-21",                         // string
+			Provisional:         coldp.ToBool("false"),                // sql.NullBool
+			ReferenceID:         "44",                                 // string
+			Extinct:             coldp.ToBool("false"),                // sql.NullBool
+			Environment:         coldp.GetEnvironments("terrestrial"), // []Environment
+			Species:             "Bubo",                               // string
+			Family:              "Strigidae",                          // string
+			Order:               "Strigiformes",                       // string
+			Class:               "Aves",                               // string
+			Kingdom:             "Animalia",                           // string
+			Link:                "http://example.org",                 // string
+			Remarks:             "rem",                                // string
+			Modified:            "2022-02-03",                         // string
+			ModifiedBy:          "Xin Min",                            // string
 		},
 	}
 

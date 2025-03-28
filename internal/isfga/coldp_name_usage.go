@@ -2,7 +2,9 @@ package isfga
 
 import (
 	"log/slog"
+	"strings"
 
+	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/pkg/coldp"
 )
 
@@ -96,13 +98,16 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 	for _, d := range data {
 		switch d.TaxonomicStatus {
 		case coldp.AcceptedTS, coldp.ProvisionallyAcceptedTS:
+			env := gnlib.Map(d.Environment, func(e coldp.Environment) string {
+				return e.ID()
+			})
 			_, err = tStmt.Exec(
 				d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal, d.BranchLength,
 				d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
 				d.AccordingToPageLink, d.Scrutinizer, d.ScrutinizerID,
 				d.ScrutinizerDate, d.TaxonomicStatus.ID(), d.ReferenceID, d.Extinct,
 				d.TemporalRangeStart.ID(), d.TemporalRangeEnd.ID(),
-				d.Environment, d.Species, d.Section, d.Subgenus, d.Genus, d.Subtribe,
+				strings.Join(env, ","), d.Species, d.Section, d.Subgenus, d.Genus, d.Subtribe,
 				d.Tribe, d.Subfamily, d.Family, d.Superfamily, d.Suborder, d.Order,
 				d.Subclass, d.Class, d.Subphylum, d.Phylum, d.Kingdom,
 				d.Link, d.Remarks, d.Modified, d.ModifiedBy,

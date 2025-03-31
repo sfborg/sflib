@@ -146,6 +146,14 @@ func (e *ErrSQLitePragma) Error() string {
 	return e.Err.Error()
 }
 
+type ErrSQLiteExec struct {
+	Err error
+}
+
+func (e *ErrSQLiteExec) Error() string {
+	return e.Err.Error()
+}
+
 type ErrSQLiteQuery struct {
 	Err error
 }

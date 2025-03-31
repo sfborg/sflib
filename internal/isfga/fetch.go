@@ -1,15 +1,15 @@
 package isfga
 
 import (
+	"database/sql"
 	"errors"
-	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/arch"
+	_ "modernc.org/sqlite"
 )
 
 func (a *isfga) Fetch(src, dstDir string) error {
@@ -80,15 +80,22 @@ func (a *isfga) setDb(dbDir string) error {
 
 // makeDb creates SQLite file from SFGArchive's SQL dump.
 func makeDb(workDir, schFile string) (string, error) {
-	var err error
 	dbPath := filepath.Join(workDir, "schema.sqlite")
 
-	read := fmt.Sprintf(".read %s", schFile)
-
-	cmd := exec.Command("sqlite3", dbPath, read)
-	err = cmd.Run()
+	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
-		return "", &arch.ErrSQLiteLoadSQL{Err: err}
+		return "", &arch.ErrSQLiteConnect{Err: err}
+	}
+	defer db.Close()
+
+	schema, err := os.ReadFile(schFile)
+	if err != nil {
+		return "", &arch.ErrFileOpen{Path: schFile, Err: err}
+	}
+
+	_, err = db.Exec(string(schema))
+	if err != nil {
+		return "", &arch.ErrSQLiteExec{Err: err}
 	}
 	return dbPath, nil
 }

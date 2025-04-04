@@ -360,7 +360,7 @@ var geotimeToString = map[GeoTime]string{
 	Pleistocene:         "PLEISTOCENE",
 	Calabrian:           "CALABRIAN",
 	MiddlePleistocene:   "MIDDLE_PLEISTOCENE",
-	UpperPleistocene:    "UPPERP_LEISTOCENE",
+	UpperPleistocene:    "UPPER_PLEISTOCENE",
 	Holocene:            "HOLOCENE",
 	Greenlandian:        "GREENLANDIAN",
 	Northgrippian:       "NORTHGRIPPIAN",

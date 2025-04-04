@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"unicode"
 
 	"github.com/gnames/gnfmt/gncsv"
 	csvConfig "github.com/gnames/gnfmt/gncsv/config"
@@ -328,6 +329,22 @@ func RowToMap(headers, row []string) (map[string]string, error) {
 func ToStr(s string) string {
 	s = strings.ToLower(s)
 	return strings.ReplaceAll(s, "_", " ")
+}
+
+func ToTitleCase(s string) string {
+	words := strings.Split(s, "_")
+	var result strings.Builder
+	for i, word := range words {
+		if len(word) > 0 {
+			runes := []rune(word)
+			runes[0] = unicode.ToUpper(runes[0])
+			result.WriteString(string(runes))
+			if i < len(words)-1 {
+				result.WriteString(" ")
+			}
+		}
+	}
+	return result.String()
 }
 
 func GetEnvironments(env string) []Environment {

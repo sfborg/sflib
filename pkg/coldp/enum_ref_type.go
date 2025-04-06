@@ -104,7 +104,7 @@ func (rg ReferenceType) String() string {
 
 func NewReferenceType(s string) ReferenceType {
 	s = strings.ToUpper(s)
-	s = strings.ReplaceAll(s, "", "_")
+	s = strings.ReplaceAll(s, " ", "_")
 	if res, ok := stringToReferenceType[s]; ok {
 		return res
 	}

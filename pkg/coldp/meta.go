@@ -13,8 +13,8 @@ type Meta struct {
 	TaxonomicScope    string   `yaml:"taxonomicScope,omitempty"    json:"taxonomicScope,omitempty"`
 	TemporalScope     string   `yaml:"temporalScope,omitempty"     json:"temporalScope,omitempty"`
 	Keywords          []string `yaml:"keywords,omitempty"          json:"keywords,omitempty"`
-	Confidence        *int     `yaml:"confidence,omitempty"        json:"confidence,omitempty"`
-	Completeness      *int     `yaml:"completeness,omitempty"      json:"completeness,omitempty"`
+	Confidence        int      `yaml:"confidence,omitzero"         json:"confidence,omitzero"`
+	Completeness      int      `yaml:"completeness,omitzero"       json:"completeness,omitzero"`
 	License           string   `yaml:"license,omitempty"           json:"license,omitempty"`
 	URL               string   `yaml:"url,omitempty"               json:"url,omitempty"`
 	Logo              string   `yaml:"logo,omitempty"              json:"logo,omitempty"`
@@ -29,6 +29,7 @@ type Meta struct {
 	Creators          []Actor  `yaml:"creator,omitempty"           json:"creator,omitempty"`
 	Contributors      []Actor  `yaml:"contributor,omitempty"       json:"contributor,omitempty"`
 	Sources           []Source `yaml:"source,omitempty"            json:"source,omitempty"`
+	Notes             string   `yaml:"notes,omitempty"             json:"notes,omitempty"`
 }
 
 // Actor represents an individual or organization.

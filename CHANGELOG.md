@@ -5,10 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Remove: dependency on sqlite3 executable.j:w
-Fix: geo-temporal IDs
+## [v0.3.3] - 2025-04-06 Sun
 
-## v[v0.3.2] - 2025-03-28 Fri
+Remove: dependency on sqlite3 executable.
+Fix: geo-temporal IDs, other small fixes.
+
+## [v0.3.2] - 2025-03-28 Fri
 
 Fix: environment data in coldp.Taxon
 

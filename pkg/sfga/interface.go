@@ -1,6 +1,7 @@
 package sfga
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/sfborg/sflib/pkg/arch"
@@ -20,7 +21,30 @@ type Schema interface {
 type Archive interface {
 	arch.Packager
 	AccessorSFGA
+	Reader
 	CoLDPInserter
+}
+
+// Reader provides methods to feed data from SFGA tables to a channel with
+// the corresponding CoLDP objects.
+type Reader interface {
+	LoadMeta() (*coldp.Meta, error)
+	LoadAuthors(context.Context, chan<- coldp.Author) error
+	LoadDistributions(context.Context, chan<- coldp.Distribution) error
+	LoadMedia(context.Context, chan<- coldp.Media) error
+	LoadNames(context.Context, chan<- coldp.Name) error
+	LoadNameUsages(context.Context, chan<- coldp.NameUsage) error
+	LoadNameRelationships(context.Context, chan<- coldp.NameRelation) error
+	LoadReferences(context.Context, chan<- coldp.Reference) error
+	LoadSpeciesEstimates(context.Context, chan<- coldp.SpeciesEstimate) error
+	LoadSpeciesInteractions(context.Context, chan<- coldp.SpeciesInteraction) error
+	LoadSynonyms(context.Context, chan<- coldp.Synonym) error
+	LoadTaxonConceptRelations(context.Context, chan<- coldp.TaxonConceptRelation) error
+	LoadTaxonProperties(context.Context, chan<- coldp.TaxonProperty) error
+	LoadTaxa(context.Context, chan<- coldp.Taxon) error
+	LoadTreatments(context.Context, chan<- coldp.Treatment) error
+	LoadTypeMaterials(context.Context, chan<- coldp.TypeMaterial) error
+	LoadVernaculars(context.Context, chan<- coldp.Vernacular) error
 }
 
 // AccessorSFGA defines methods for establishing and managing a connection to the

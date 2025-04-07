@@ -38,6 +38,14 @@ func (t TaxonConceptRelation) Headers() []string {
 	}
 }
 
+func (t TaxonConceptRelation) Row() []string {
+	res := []string{
+		t.TaxonID, t.RelatedTaxonID, t.SourceID, t.Type.String(), t.ReferenceID,
+		t.Remarks, t.Modified, t.ModifiedBy,
+	}
+	return res
+}
+
 func (t TaxonConceptRelation) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)
 	t.TaxonID = row["taxonid"]

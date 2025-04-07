@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.3.4] - 2025-04-09 Wed
+
+Add [#12] writer to CoLDP.
+Add [#11] reader from SFGA.
+
 ## [v0.3.3] - 2025-04-06 Sun
 
 Remove: dependency on sqlite3 executable.

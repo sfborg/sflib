@@ -2,12 +2,14 @@ package util
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/dustin/go-humanize"
 	"github.com/gnames/gnsys"
 	"github.com/sfborg/sflib/pkg/arch"
 )
@@ -93,4 +95,18 @@ func copy(src, dstDir string) error {
 	}
 
 	return nil
+}
+
+func Progress(count int, recordType string) {
+	fmt.Fprintf(os.Stderr, "\r%s\r", strings.Repeat(" ", 50))
+	fmt.Fprintf(
+		os.Stderr,
+		"Processed %s %s records\r",
+		humanize.Comma(int64(count)),
+		recordType,
+	)
+}
+
+func ProgressEnd() {
+	fmt.Fprintf(os.Stderr, "\r%s\r", strings.Repeat(" ", 50))
 }

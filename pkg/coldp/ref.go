@@ -144,6 +144,18 @@ func (r Reference) Headers() []string {
 	}
 }
 
+func (r Reference) Row() []string {
+	res := []string{
+		r.ID, r.AlternativeID, r.SourceID, r.Citation, r.Type.String(),
+		r.Author, r.AuthorID, r.Editor, r.EditorID, r.Title, r.TitleShort,
+		r.ContainerAuthor, r.ContainerTitle, r.ContainerTitleShort,
+		r.Issued, r.Accessed, r.CollectionTitle, r.CollectionEditor,
+		r.Volume, r.Issue, r.Edition, r.Page, r.Publisher, r.PublisherPlace,
+		r.Version, r.ISBN, r.ISSN, r.DOI, r.Link, r.Remarks, r.Modified, r.ModifiedBy,
+	}
+	return res
+}
+
 func (r Reference) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)
 	r.ID = row["id"]

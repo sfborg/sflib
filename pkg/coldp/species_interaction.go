@@ -44,6 +44,14 @@ func (s SpeciesInteraction) Headers() []string {
 	}
 }
 
+func (s SpeciesInteraction) Row() []string {
+	res := []string{
+		s.TaxonID, s.RelatedTaxonID, s.SourceID, s.Type.String(),
+		s.ReferenceID, s.Remarks, s.Modified, s.ModifiedBy,
+	}
+	return res
+}
+
 func (s SpeciesInteraction) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)
 	s.TaxonID = row["taxonid"]

@@ -1,6 +1,9 @@
 package coldp
 
-import "database/sql"
+import (
+	"database/sql"
+	"strconv"
+)
 
 // SpeciesEstimate provides estimation of how many species are children of
 // the taxon.
@@ -41,6 +44,19 @@ func (s SpeciesEstimate) Headers() []string {
 		"col:modified",
 		"col:modified_by",
 	}
+}
+
+func (s SpeciesEstimate) Row() []string {
+	var est string
+	if s.Estimate.Valid {
+		est = strconv.Itoa(int(s.Estimate.Int64))
+	}
+
+	res := []string{
+		s.TaxonID, s.SourceID, est, s.Type.String(), s.ReferenceID,
+		s.Remarks, s.Modified, s.ModifiedBy,
+	}
+	return res
 }
 
 func (s SpeciesEstimate) Load(headers, data []string) (DataLoader, error) {

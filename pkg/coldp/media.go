@@ -60,6 +60,14 @@ func (m Media) Headers() []string {
 	}
 }
 
+func (m Media) Row() []string {
+	res := []string{
+		m.TaxonID, m.SourceID, m.URL, m.Type, m.Format, m.Title, m.Created,
+		m.Creator, m.License, m.Link, m.Remarks, m.Modified, m.ModifiedBy,
+	}
+	return res
+}
+
 // Load populates the Media object from a row of data.
 func (m Media) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)

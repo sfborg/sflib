@@ -1,6 +1,9 @@
 package coldp
 
-import "database/sql"
+import (
+	"database/sql"
+	"strconv"
+)
 
 // TaxonProperty allows to add arbitrary properties that further describe
 // a taxon.
@@ -49,6 +52,19 @@ func (t TaxonProperty) Headers() []string {
 		"col:modified",
 		"col:modifiedBy",
 	}
+}
+
+func (t TaxonProperty) Row() []string {
+	var ord string
+	if t.Ordinal.Valid {
+		ord = strconv.Itoa(int(t.Ordinal.Int64))
+	}
+
+	res := []string{
+		t.TaxonID, t.SourceID, t.Property, t.Value, t.ReferenceID,
+		t.Page, ord, t.Remarks, t.Modified, t.ModifiedBy,
+	}
+	return res
 }
 
 func (t TaxonProperty) Load(headers, data []string) (DataLoader, error) {

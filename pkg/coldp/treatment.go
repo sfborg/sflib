@@ -31,6 +31,13 @@ func (t Treatment) Headers() []string {
 	}
 }
 
+func (t Treatment) Row() []string {
+	res := []string{
+		t.TaxonID, t.SourceID, t.Document, t.Format, t.Modified, t.ModifiedBy,
+	}
+	return res
+}
+
 // Load populates the Treatment object from a row of data.
 func (t Treatment) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)

@@ -23,8 +23,16 @@ type Archive interface {
 	// Meta returns coldp.Meta struct. If the struct is empty it populates
 	// it with data from meta file first.
 	Meta() (*Meta, error)
+
+	// WriteMeta writes Meta data to the given path as JSON.
+	WriteMeta(meta *Meta, path string) error
 }
 
 type DataLoader interface {
 	Load(header, row []string) (DataLoader, error)
+}
+
+type DataWriter interface {
+	Headers() []string
+	Row() []string
 }

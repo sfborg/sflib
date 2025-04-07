@@ -53,6 +53,16 @@ func (d Distribution) Headers() []string {
 		"col:modifiedBy",
 	}
 }
+
+func (d Distribution) Row() []string {
+	res := []string{
+		d.TaxonID, d.SourceID, d.Area, d.AreaID, d.Gazetteer.String(),
+		d.Status.String(), d.ReferenceID, d.Remarks, d.Modified,
+		d.ModifiedBy,
+	}
+	return res
+}
+
 func (d Distribution) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)
 	d.TaxonID = row["taxonid"]

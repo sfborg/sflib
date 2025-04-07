@@ -1,4 +1,4 @@
-package util
+package parser
 
 import (
 	"sync"
@@ -8,12 +8,7 @@ import (
 	"github.com/sfborg/sflib/pkg/coldp"
 )
 
-func newParser(opts ...gnparser.Option) gnparser.GNparser {
-	cfg := gnparser.NewConfig(opts...)
-	return gnparser.New(cfg)
-}
-
-func ParserPool(jobsNum int) map[coldp.NomCode]*sync.Pool {
+func Pool(jobsNum int) map[coldp.NomCode]*sync.Pool {
 	res := make(map[coldp.NomCode]*sync.Pool)
 
 	opts := []gnparser.Option{
@@ -39,4 +34,9 @@ func ParserPool(jobsNum int) map[coldp.NomCode]*sync.Pool {
 		res[coldp.Botanical].Put(newParser(optsBot...))
 	}
 	return res
+}
+
+func newParser(opts ...gnparser.Option) gnparser.GNparser {
+	cfg := gnparser.NewConfig(opts...)
+	return gnparser.New(cfg)
 }

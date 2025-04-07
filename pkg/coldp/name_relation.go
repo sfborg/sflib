@@ -48,6 +48,14 @@ func (n NameRelation) Headers() []string {
 	}
 }
 
+func (n NameRelation) Row() []string {
+	res := []string{
+		n.NameID, n.RelatedNameID, n.SourceID, n.Type.String(),
+		n.ReferenceID, n.Remarks, n.Modified, n.ModifiedBy,
+	}
+	return res
+}
+
 // Load populates a NameRelation object with data from a parsed row.
 func (n NameRelation) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)

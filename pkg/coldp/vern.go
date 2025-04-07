@@ -1,6 +1,9 @@
 package coldp
 
-import "database/sql"
+import (
+	"database/sql"
+	"strconv"
+)
 
 // Vernacular name of a taxon.
 type Vernacular struct {
@@ -62,6 +65,19 @@ func (v Vernacular) Headers() []string {
 		"col:modified",
 		"col:modifiedBy",
 	}
+}
+
+func (v Vernacular) Row() []string {
+	var pref string
+	if v.Preferred.Valid {
+		pref = strconv.FormatBool(v.Preferred.Bool)
+	}
+	res := []string{
+		v.TaxonID, v.SourceID, v.Name, v.Transliteration, v.Language,
+		pref, v.Country, v.Area, v.Sex.String(), v.ReferenceID,
+		v.Remarks, v.Modified, v.ModifiedBy,
+	}
+	return res
 }
 
 // Load populates a Vernacular object from a row of data.

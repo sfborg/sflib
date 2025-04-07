@@ -2,19 +2,21 @@ package coldp
 
 // Meta represents metadata for a dataset.
 type Meta struct {
-	Key               string   `yaml:"key,omitempty"               json:"key,omitempty"`
-	Title             string   `yaml:"title"                       json:"title"`
-	Alias             string   `yaml:"alias,omitempty"             json:"alias,omitempty"`
-	Description       string   `yaml:"description,omitempty"       json:"description,omitempty"`
-	DOI               string   `yaml:"doi,omitempty"               json:"doi,omitempty"`
-	Issued            string   `yaml:"issued,omitempty"            json:"issued,omitempty"`
-	Version           string   `yaml:"version,omitempty"           json:"version,omitempty"`
-	GeographicScope   string   `yaml:"geographicScope,omitempty"   json:"geographicScope,omitempty"`
-	TaxonomicScope    string   `yaml:"taxonomicScope,omitempty"    json:"taxonomicScope,omitempty"`
-	TemporalScope     string   `yaml:"temporalScope,omitempty"     json:"temporalScope,omitempty"`
-	Keywords          []string `yaml:"keywords,omitempty"          json:"keywords,omitempty"`
-	Confidence        int      `yaml:"confidence,omitzero"         json:"confidence,omitzero"`
-	Completeness      int      `yaml:"completeness,omitzero"       json:"completeness,omitzero"`
+	Key             string   `yaml:"key,omitempty"               json:"key,omitempty"`
+	Title           string   `yaml:"title"                       json:"title"`
+	Alias           string   `yaml:"alias,omitempty"             json:"alias,omitempty"`
+	Description     string   `yaml:"description,omitempty"       json:"description,omitempty"`
+	DOI             string   `yaml:"doi,omitempty"               json:"doi,omitempty"`
+	Issued          string   `yaml:"issued,omitempty"            json:"issued,omitempty"`
+	Version         string   `yaml:"version,omitempty"           json:"version,omitempty"`
+	GeographicScope string   `yaml:"geographicScope,omitempty"   json:"geographicScope,omitempty"`
+	TaxonomicScope  string   `yaml:"taxonomicScope,omitempty"    json:"taxonomicScope,omitempty"`
+	TemporalScope   string   `yaml:"temporalScope,omitempty"     json:"temporalScope,omitempty"`
+	Keywords        []string `yaml:"keywords,omitempty"          json:"keywords,omitempty"`
+	// TODO change yaml to omitzero, when it is supported
+	Confidence int `yaml:"confidence,omitempty"        json:"confidence,omitzero"`
+	// TODO change yaml to omitzero, when it is supported
+	Completeness      int      `yaml:"completeness,omitempty"      json:"completeness,omitzero"`
 	License           string   `yaml:"license,omitempty"           json:"license,omitempty"`
 	URL               string   `yaml:"url,omitempty"               json:"url,omitempty"`
 	Logo              string   `yaml:"logo,omitempty"              json:"logo,omitempty"`

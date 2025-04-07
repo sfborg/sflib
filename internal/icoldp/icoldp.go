@@ -41,10 +41,7 @@ func New(opts ...config.OptionCoLDP) coldp.Archive {
 }
 
 func (a *icoldp) Create(dir string) error {
-	return nil
-}
-
-func (a *icoldp) Export(output string, isZip bool) error {
+	a.rootDir = dir
 	return nil
 }
 

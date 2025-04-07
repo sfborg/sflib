@@ -58,6 +58,15 @@ func (s Synonym) Headers() []string {
 	}
 }
 
+func (s Synonym) Row() []string {
+	res := []string{
+		s.ID, s.TaxonID, s.SourceID, s.NameID, s.NamePhrase, s.AccordingToID,
+		s.Status.String(), s.ReferenceID, s.Link, s.Remarks, s.Modified,
+		s.ModifiedBy,
+	}
+	return res
+}
+
 // Load populates a Synonym object from a row of data.
 func (s Synonym) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)

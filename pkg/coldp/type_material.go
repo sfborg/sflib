@@ -1,6 +1,9 @@
 package coldp
 
-import "database/sql"
+import (
+	"database/sql"
+	"strconv"
+)
 
 // Type material designated to names. Type material should only be
 // associated with the original name, not with a recombination.
@@ -101,6 +104,27 @@ func (t TypeMaterial) Headers() []string {
 		"col:modified",
 		"col:modifiedBy",
 	}
+}
+
+func (t TypeMaterial) Row() []string {
+	var lat, long, alt string
+	if t.Latitude.Valid {
+		lat = strconv.FormatFloat(t.Latitude.Float64, 'f', 6, 64)
+	}
+	if t.Longitude.Valid {
+		long = strconv.FormatFloat(t.Longitude.Float64, 'f', 6, 64)
+	}
+	if t.Altitude.Valid {
+		alt = strconv.Itoa(int(t.Altitude.Int64))
+	}
+	res := []string{
+		t.ID, t.SourceID, t.NameID, t.Citation, t.Status.String(),
+		t.InstitutionCode, t.CatalogNumber, t.ReferenceID, t.Locality,
+		t.Country, lat, long, alt, t.Host, t.Sex.String(),
+		t.Date, t.Collector, t.AssociatedSequences, t.Link, t.Remarks,
+		t.Modified, t.ModifiedBy,
+	}
+	return res
 }
 
 // Load populates the TypeMaterial object from a row of data.

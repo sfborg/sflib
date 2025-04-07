@@ -2,7 +2,10 @@ package coldp
 
 import (
 	"database/sql"
+	"strconv"
 	"strings"
+
+	"github.com/gnames/gnlib"
 )
 
 // NameUsage combines fields of Name, Taxon and Synonym.
@@ -169,6 +172,56 @@ func (n NameUsage) Headers() []string {
 		"col:modified",
 		"col:modifiedBy",
 	}
+}
+
+func (n NameUsage) Row() []string {
+	var orig, genAgr, extinct, ordinal, brLen string
+	if n.OriginalSpelling.Valid {
+		orig = strconv.FormatBool(n.OriginalSpelling.Bool)
+	}
+	if n.GenderAgreement.Valid {
+		genAgr = strconv.FormatBool(n.GenderAgreement.Bool)
+	}
+	if n.Extinct.Valid {
+		extinct = strconv.FormatBool(n.Extinct.Bool)
+	}
+	if n.Ordinal.Valid {
+		ordinal = strconv.Itoa(int(n.Ordinal.Int64))
+	}
+	if n.BranchLength.Valid {
+		brLen = strconv.Itoa(int(n.BranchLength.Int64))
+	}
+
+	envs := gnlib.Map(n.Environment, func(e Environment) string {
+		return e.String()
+	})
+	envs = gnlib.FilterFunc(envs, func(s string) bool {
+		return s != ""
+	})
+
+	res := []string{
+		n.ID, n.AlternativeID, n.NameAlternativeID, n.SourceID, n.ParentID,
+		n.BasionymID, n.TaxonomicStatus.String(), n.ScientificName,
+		n.Authorship, n.Rank.String(), n.Notho.String(), orig, n.Uninomial,
+		n.GenericName, n.InfragenericEpithet, n.SpecificEpithet,
+		n.InfragenericEpithet, n.CultivarEpithet, n.CombinationAuthorship,
+		n.CombinationAuthorshipID, n.CombinationExAuthorship,
+		n.CombinationExAuthorshipID, n.CombinationAuthorshipYear,
+		n.BasionymAuthorship, n.BasionymAuthorshipID, n.BasionymExAuthorship,
+		n.BasionymExAuthorshipID, n.BasionymAuthorshipYear, n.NamePhrase,
+		n.NameReferenceID, n.PublishedInYear, n.PublishedInPage,
+		n.PublishedInPageLink, n.Gender.String(), genAgr, n.Etymology,
+		n.Code.String(), n.NameStatus.String(), n.AccordingToID,
+		n.AccordingToPage, n.AccordingToPageLink, n.ReferenceID,
+		n.Scrutinizer, n.ScrutinizerID, n.ScrutinizerDate, extinct,
+		n.TemporalRangeStart.String(), n.TemporalRangeEnd.String(),
+		strings.Join(envs, ","), n.Species, n.Section, n.Subgenus,
+		n.Genus, n.Subtribe, n.Tribe, n.Subfamily, n.Family, n.Superfamily,
+		n.Suborder, n.Order, n.Subclass, n.Class, n.Subphylum, n.Phylum,
+		n.Kingdom, ordinal, brLen, n.Link, n.NameRemarks, n.Remarks, n.Modified,
+		n.ModifiedBy,
+	}
+	return res
 }
 
 func (n NameUsage) Load(headers, data []string) (DataLoader, error) {

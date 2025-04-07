@@ -7,32 +7,32 @@ import (
 type CSLRecords []CSL
 
 type CSL struct {
-	ID                  string       `json:"id"`
-	Publisher           string       `json:"publisher,omitempty"`
-	Issue               string       `json:"issue,omitempty"`
-	PublishedPrint      Date         `json:"published-print,omitempty"`
-	DOI                 string       `json:"DOI,omitempty"`
-	Type                string       `json:"type,omitempty"`
-	Created             Date         `json:"created,omitempty"`
-	Page                string       `json:"page,omitempty"`
-	Source              string       `json:"source,omitempty"`
-	Title               string       `json:"title,omitempty"`
-	Prefix              string       `json:"prefix,omitempty"`
-	Volume              string       `json:"volume,omitempty"`
-	Authors             []AuthorCSL  `json:"author,omitempty"`
-	ContainerTitle      string       `json:"container-title,omitempty"`
-	ContainerTitleShort any          `json:"container-title-short,omitempty"`
-	OriginalTitle       any          `json:"original-title,omitempty"`
-	Language            string       `json:"language,omitempty"`
-	Links               []Link       `json:"link,omitempty"`
-	Deposited           Date         `json:"deposited,omitempty"`
-	Subtitle            any          `json:"subtitle,omitempty"`
-	ShortTitle          any          `json:"short-title,omitempty"`
-	Issued              Date         `json:"issued,omitempty"`
-	JournalIssue        JournalIssue `json:"journal-issue,omitempty"`
-	URL                 string       `json:"URL,omitempty"`
-	ISSN                any          `json:"ISSN,omitempty"`
-	Subject             any          `json:"subject,omitempty"`
+	ID                  string        `json:"id"`
+	Publisher           string        `json:"publisher,omitempty"`
+	Issue               string        `json:"issue,omitempty"`
+	PublishedPrint      *Date         `json:"published-print,omitempty"`
+	DOI                 string        `json:"DOI,omitempty"`
+	Type                string        `json:"type,omitempty"`
+	Created             *Date         `json:"created,omitempty"`
+	Page                string        `json:"page,omitempty"`
+	Source              string        `json:"source,omitempty"`
+	Title               string        `json:"title,omitempty"`
+	Prefix              string        `json:"prefix,omitempty"`
+	Volume              string        `json:"volume,omitempty"`
+	Authors             []AuthorCSL   `json:"author,omitempty"`
+	ContainerTitle      string        `json:"container-title,omitempty"`
+	ContainerTitleShort any           `json:"container-title-short,omitempty"`
+	OriginalTitle       any           `json:"original-title,omitempty"`
+	Language            string        `json:"language,omitempty"`
+	Links               []Link        `json:"link,omitempty"`
+	Deposited           *Date         `json:"deposited,omitempty"`
+	Subtitle            any           `json:"subtitle,omitempty"`
+	ShortTitle          any           `json:"short-title,omitempty"`
+	Issued              *Date         `json:"issued,omitempty"`
+	JournalIssue        *JournalIssue `json:"journal-issue,omitempty"`
+	URL                 string        `json:"URL,omitempty"`
+	ISSN                any           `json:"ISSN,omitempty"`
+	Subject             any           `json:"subject,omitempty"`
 }
 
 type Date struct {
@@ -63,7 +63,7 @@ type Link struct {
 }
 
 type JournalIssue struct {
-	PublishedPrint Date   `json:"published-print,omitempty"`
+	PublishedPrint *Date  `json:"published-print,omitempty"`
 	Issue          string `json:"issue,omitempty"`
 }
 
@@ -76,7 +76,7 @@ func (c CSL) ToReference() DataLoader {
 		TitleShort:          fromAny(c.ShortTitle),
 		ContainerTitle:      c.ContainerTitle,
 		ContainerTitleShort: fromAny(c.ContainerTitleShort),
-		Issued:              fromDate(c.Issued),
+		Issued:              fromDate(*c.Issued),
 		Volume:              c.Volume,
 		Issue:               c.Issue,
 		Page:                c.Page,

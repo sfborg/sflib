@@ -8,7 +8,7 @@ import (
 	"github.com/gnames/gnfmt/gncsv"
 	"github.com/gnames/gnfmt/gncsv/config"
 	"github.com/gnames/gnparser"
-	"github.com/sfborg/sflib/internal/util"
+	"github.com/sfborg/sflib/internal/parser"
 	"github.com/sfborg/sflib/pkg/coldp"
 	"golang.org/x/sync/errgroup"
 )
@@ -28,7 +28,7 @@ func (a *ixsv) Load(
 	a.headers = coldp.NormalizeHeaders(a.reader.Headers())
 	a.code = nomCode
 	a.jobsNum = jobsNum
-	a.parserPool = util.ParserPool(jobsNum)
+	a.parserPool = parser.Pool(jobsNum)
 
 	g, ctx2 := errgroup.WithContext(ctx)
 	chIn := make(chan []string)

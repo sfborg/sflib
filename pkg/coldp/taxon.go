@@ -2,6 +2,10 @@ package coldp
 
 import (
 	"database/sql"
+	"strconv"
+	"strings"
+
+	"github.com/gnames/gnlib"
 )
 
 // Taxon represents a taxonomic data in the CoLDP.
@@ -183,6 +187,42 @@ func (t Taxon) Headers() []string {
 		"col:modified",
 		"col:modifiedBy",
 	}
+}
+
+func (t Taxon) Row() []string {
+	var ordinal, brLen, prov, extinct string
+	if t.Ordinal.Valid {
+		ordinal = strconv.Itoa(int(t.Ordinal.Int64))
+	}
+	if t.BranchLength.Valid {
+		brLen = strconv.Itoa(int(t.BranchLength.Int64))
+	}
+	if t.Provisional.Valid {
+		prov = strconv.FormatBool(t.Provisional.Bool)
+	}
+	if t.Extinct.Valid {
+		extinct = strconv.FormatBool(t.Extinct.Bool)
+	}
+
+	envs := gnlib.Map(t.Environment, func(e Environment) string {
+		return e.String()
+	})
+	envs = gnlib.FilterFunc(envs, func(s string) bool {
+		return s != ""
+	})
+
+	res := []string{
+		t.ID, t.AlternativeID, t.SourceID, t.ParentID, ordinal, brLen,
+		t.NameID, t.NamePhrase, t.AccordingToID, t.AccordingToPage,
+		t.AccordingToPageLink, t.Scrutinizer, t.ScrutinizerID, prov, extinct,
+		t.TemporalRangeStart.String(), t.TemporalRangeEnd.String(),
+		strings.Join(envs, ","), t.Species, t.Section, t.Subgenus, t.Genus,
+		t.Subtribe, t.Tribe, t.Subfamily, t.Family, t.Superfamily,
+		t.Suborder, t.Order, t.Subclass, t.Class, t.Subphylum, t.Phylum,
+		t.Kingdom, t.ReferenceID, t.Link, t.Remarks, t.Modified,
+		t.ModifiedBy,
+	}
+	return res
 }
 
 // Load populates the Taxon object from a row of data.

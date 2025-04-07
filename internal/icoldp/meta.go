@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/sfborg/sflib/pkg/coldp"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func (a *icoldp) Meta() (*coldp.Meta, error) {
@@ -40,6 +40,15 @@ func (a *icoldp) Meta() (*coldp.Meta, error) {
 	a.meta = &meta
 
 	return a.meta, nil
+}
+
+func (a *icoldp) WriteMeta(meta *coldp.Meta, path string) error {
+	bs, err := json.MarshalIndent(meta, "", " ")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(path, bs, 0644)
+	return nil
 }
 
 func isJSON(path string) bool {

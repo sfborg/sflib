@@ -2,6 +2,7 @@ package coldp
 
 import (
 	"database/sql"
+	"strconv"
 	"strings"
 )
 
@@ -228,6 +229,31 @@ func (n Name) Headers() []string {
 		"col:modified",
 		"col:modifiedBy",
 	}
+}
+
+func (n Name) Row() []string {
+	var origSpelling, gndrAgr string
+	if n.OriginalSpelling.Valid {
+		origSpelling = strconv.FormatBool(n.OriginalSpelling.Bool)
+	}
+	if n.GenderAgreement.Valid {
+		gndrAgr = strconv.FormatBool(n.GenderAgreement.Bool)
+	}
+	res := []string{
+		n.ID, n.AlternativeID, n.SourceID, n.BasionymID, n.ScientificName,
+		n.Authorship, n.Rank.String(), n.Uninomial, n.Genus,
+		n.InfragenericEpithet, n.SpecificEpithet, n.InfraspecificEpithet,
+		n.CultivarEpithet, n.Notho.String(), origSpelling,
+		n.CombinationAuthorship, n.CombinationAuthorshipID,
+		n.CombinationExAuthorship, n.CombinationExAuthorshipID,
+		n.CombinationAuthorshipYear, n.BasionymAuthorship,
+		n.BasionymAuthorshipID, n.BasionymExAuthorship, n.BasionymExAuthorshipID,
+		n.BasionymAuthorshipYear, n.Code.String(), n.Status.String(),
+		n.ReferenceID, n.PublishedInYear, n.PublishedInPage,
+		n.PublishedInPageLink, n.Gender.String(), gndrAgr, n.Etymology, n.Link,
+		n.Remarks, n.Modified, n.ModifiedBy,
+	}
+	return res
 }
 
 // Load processes a slice of strings into Name object using

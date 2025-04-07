@@ -69,6 +69,18 @@ func (a Author) Headers() []string {
 	}
 }
 
+// Row returns the Author data as a slice of strings.
+func (a Author) Row() []string {
+	res := []string{
+		a.ID, a.SourceID, a.AlternativeID, a.Given, a.Family,
+		a.Suffix, a.AbbreviationBotany, a.AlternativeNames, a.Sex.String(),
+		a.Country, a.Birth, a.BirthPlace, a.Death, a.Affiliation,
+		a.Interest, a.ReferenceID, a.Link, a.Remarks,
+		a.Modified, a.ModifiedBy,
+	}
+	return res
+}
+
 // Load populates the Author data from a row of data.
 func (a Author) Load(headers, data []string) (DataLoader, error) {
 	row, warning := RowToMap(headers, data)

@@ -19,7 +19,41 @@ import (
 	csvConfig "github.com/gnames/gnfmt/gncsv/config"
 	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/config"
+	"github.com/sfborg/sflib/internal/util"
 )
+
+func Write[T DataWriter](
+	ctx context.Context,
+	ch <-chan T,
+	path string,
+) error {
+	w, err := util.NewWriter(path, '\t')
+	if err != nil {
+		return err
+	}
+
+	defer w.Close()
+
+	for t := range ch {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			if w.Count == 0 {
+				err = w.Write(t.Headers())
+				if err != nil {
+					return err
+				}
+			}
+			w.Count++
+			err = w.Write(t.Row())
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
 
 // NormalizeHeaders attempts to normalize DarwinCore and ColDP terms to
 // headers that correspond to ColDP.
@@ -356,7 +390,6 @@ func GetEnvironments(env string) []Environment {
 	for _, v := range envs {
 		env := NewEnvironment(v)
 		if env == UnknownEnv {
-			slog.Warn("Unknown environment", "env", v)
 			continue
 		}
 		res = append(res, env)

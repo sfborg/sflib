@@ -7,7 +7,8 @@ type Packager interface {
 	// path.
 	Fetch(src, dst string) error
 
-	// Create generates an empty archive at the given directory.
+	// Create generates an empty archive at the given directory. It the dir path
+	// internally to use in Export.
 	Create(dir string) error
 
 	// Export writes an archive from the cache to the specified output path. The

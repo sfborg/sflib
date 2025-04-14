@@ -1,6 +1,8 @@
 package isfga_test
 
 import (
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -13,47 +15,78 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	testDir string
+)
+
+func TestMain(m *testing.M) {
+	setupGlobal()
+	code := m.Run() // Run all tests
+	teardownGlobal()
+	os.Exit(code)
+}
+
+func setupGlobal() {
+	var err error
+	testDir, err = os.MkdirTemp("", "sfga-test")
+	if err != nil {
+		panic(err)
+	}
+	slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
+}
+
+func teardownGlobal() {
+	var err error
+	err = os.RemoveAll(testDir)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func TestCreate(t *testing.T) {
 	assert := assert.New(t)
-	tempDir, err := os.MkdirTemp("", "test-create")
+	dir := filepath.Join(testDir, "create")
+	err := os.Mkdir(dir, 0755)
 	assert.Nil(err)
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(dir)
 
 	s := isfga.New()
-	err = s.Create(tempDir)
+	err = s.Create(dir)
 	assert.Nil(err)
 
-	exists, _ := gnsys.FileExists(filepath.Join(tempDir, "schema.sql"))
+	exists, _ := gnsys.FileExists(filepath.Join(dir, "schema.sql"))
 	assert.True(exists)
-	exists, _ = gnsys.FileExists(filepath.Join(tempDir, "schema.sqlite"))
+	exists, _ = gnsys.FileExists(filepath.Join(dir, "schema.sqlite"))
 	assert.True(exists)
 	assert.True(s.Ping())
 }
 
 func TestNotZip(t *testing.T) {
 	assert := assert.New(t)
-	tmpDir, err := os.MkdirTemp("", "coldp-test")
+	dir := filepath.Join(testDir, "nozip")
+	err := os.Mkdir(dir, 0755)
 	assert.Nil(err)
-	defer os.RemoveAll(tmpDir)
+	defer os.RemoveAll(dir)
 
 	path := filepath.Join("../../testdata/", "notzip.zip")
-	coldp := isfga.New()
-	err = coldp.Fetch(path, tmpDir)
+	sfga := isfga.New()
+	err = sfga.Fetch(path, dir)
 	assert.NotNil(err)
 	assert.IsType(&arch.ErrImportArchive{}, err)
 }
 
 func TestExport(t *testing.T) {
 	assert := assert.New(t)
-	tempDir, err := os.MkdirTemp("", "test-create")
+	dir := filepath.Join(testDir, "export")
+	err := os.Mkdir(dir, 0755)
 	assert.Nil(err)
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(dir)
 
 	s := isfga.New()
-	err = s.Create(tempDir)
+	err = s.Create(dir)
 	assert.Nil(err)
 
-	sfgaFile := filepath.Join(tempDir, "tmp")
+	sfgaFile := filepath.Join(dir, "tmp")
 
 	err = s.Export(sfgaFile, true)
 	assert.Nil(err)
@@ -80,19 +113,19 @@ func TestDownload(t *testing.T) {
 		return
 	}
 	assert := assert.New(t)
-
-	tempDir, err := os.MkdirTemp("", "test-create")
+	dir := filepath.Join(testDir, "dl")
+	err := os.Mkdir(dir, 0755)
 	assert.Nil(err)
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(dir)
 
 	var a sfga.Archive
 	sf := "http://opendata.globalnames.org/sfga/147-vascan-2025-01-31.sql.zip"
 	a = isfga.New()
 	assert.Nil(err)
-	err = a.Fetch(sf, tempDir)
+	err = a.Fetch(sf, dir)
 	assert.Nil(err)
 
-	ents, err := os.ReadDir(tempDir)
+	ents, err := os.ReadDir(dir)
 	assert.Nil(err)
 	// sqlite should be created from sql, therefore 2 fiels
 	assert.Equal(2, len(ents))
@@ -104,9 +137,10 @@ func TestImport(t *testing.T) {
 	var a sfga.Archive
 	var err error
 
-	tempDir, err := os.MkdirTemp("", "test-create")
+	dir := filepath.Join(testDir, "import")
+	err = os.Mkdir(dir, 0755)
 	assert.Nil(err)
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(dir)
 
 	tests := []struct {
 		msg    string
@@ -125,10 +159,10 @@ func TestImport(t *testing.T) {
 	for _, v := range tests {
 		src := filepath.Join("..", "..", "testdata", "sfga", v.file)
 		a = isfga.New()
-		err = a.Fetch(src, tempDir)
+		err = a.Fetch(src, dir)
 		assert.Nil(err)
 
-		ents, err := os.ReadDir(tempDir)
+		ents, err := os.ReadDir(dir)
 		assert.Nil(err)
 
 		var sql, sqlite, other int
@@ -142,7 +176,7 @@ func TestImport(t *testing.T) {
 				other++
 			}
 		}
-		gnsys.CleanDir(tempDir)
+		gnsys.CleanDir(dir)
 
 		assert.Equal(0, other, v.msg)
 		if v.isSql {
@@ -162,9 +196,10 @@ func TestConnect(t *testing.T) {
 	var a sfga.Archive
 	var err error
 
-	tempDir, err := os.MkdirTemp("", "test-create")
+	dir := filepath.Join(testDir, "create")
+	err = os.Mkdir(dir, 0755)
 	assert.Nil(err)
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(dir)
 
 	tests := []struct {
 		msg  string
@@ -181,15 +216,15 @@ func TestConnect(t *testing.T) {
 
 	for _, v := range tests {
 		src := filepath.Join("..", "..", "testdata", "sfga", v.file)
-		gnsys.CleanDir(tempDir)
+		gnsys.CleanDir(dir)
 
 		a = isfga.New()
 
 		if v.file == "" {
-			err = a.Create(tempDir)
+			err = a.Create(dir)
 			assert.Nil(err)
 		} else {
-			err = a.Fetch(src, tempDir)
+			err = a.Fetch(src, dir)
 			assert.Nil(err)
 		}
 
@@ -203,9 +238,10 @@ func TestVersion(t *testing.T) {
 	var a sfga.Archive
 	var err error
 
-	tempDir, err := os.MkdirTemp("", "test-create")
+	dir := filepath.Join(testDir, "ver")
+	err = os.Mkdir(dir, 0755)
 	assert.Nil(err)
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(dir)
 
 	tests := []struct {
 		msg  string
@@ -222,15 +258,15 @@ func TestVersion(t *testing.T) {
 
 	for _, v := range tests {
 		src := filepath.Join("..", "..", "testdata", "sfga", v.file)
-		gnsys.CleanDir(tempDir)
+		gnsys.CleanDir(dir)
 
 		a = isfga.New()
 
 		if v.file == "" {
-			err = a.Create(tempDir)
+			err = a.Create(dir)
 			assert.Nil(err)
 		} else {
-			err = a.Fetch(src, tempDir)
+			err = a.Fetch(src, dir)
 			assert.Nil(err)
 		}
 		vers := a.Version()

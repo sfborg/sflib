@@ -5,10 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.3.6] - 2025-04-15 Tue
+
+Add [#13]: update old SFGA to current schema.
+
+## [v0.3.5] - 2025-04-10 Thu
+
+Add: update schema to v0.3.32.
+
 ## [v0.3.4] - 2025-04-09 Wed
 
-Add [#12] writer to CoLDP.
-Add [#11] reader from SFGA.
+Add [#12]: writer to CoLDP.
+Add [#11]: reader from SFGA.
 
 ## [v0.3.3] - 2025-04-06 Sun
 
@@ -117,6 +125,10 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.3.6]: https://github.com/sfborg/sflib/compare/v0.3.5...v0.3.6
+[v0.3.5]: https://github.com/sfborg/sflib/compare/v0.3.4...v0.3.5
+[v0.3.4]: https://github.com/sfborg/sflib/compare/v0.3.3...v0.3.4
+[v0.3.3]: https://github.com/sfborg/sflib/compare/v0.3.2...v0.3.3
 [v0.3.2]: https://github.com/sfborg/sflib/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/sfborg/sflib/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/sfborg/sflib/compare/v0.2.9...v0.3.0

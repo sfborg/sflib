@@ -22,7 +22,19 @@ type Archive interface {
 	arch.Packager
 	AccessorSFGA
 	Reader
-	CoLDPInserter
+	Writer
+	Updater
+}
+
+// Updater provides methods for upgrading SFGA data from old schemas to
+// the last one. It does require schemas to be compatible, meaning that the
+// new schema only adds information, and does not remove/modify fields.
+type Updater interface {
+	// Update takes the URL or local path of an old SFGA file and the output
+	// path, which will be used for the SFGA file with the lates schema.
+	// Optional flag would create a Zip version of the file. It returns error
+	// in case if a problem arises.
+	Update(oldSfga Archive) error
 }
 
 // Reader provides methods to feed data from SFGA tables to a channel with
@@ -78,7 +90,7 @@ type AccessorSFGA interface {
 	IsCompatible(version string) bool
 }
 
-type CoLDPInserter interface {
+type Writer interface {
 	// InsertMeta saves data from *coldp.Meta object to SFGA DB.
 	InsertMeta(meta *coldp.Meta) error
 

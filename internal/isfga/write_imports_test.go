@@ -2,6 +2,7 @@ package isfga_test
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/sfborg/sflib/internal/isfga"
@@ -10,47 +11,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	a       sfga.Archive
-	testDir string
-)
+func createSfga(t *testing.T, dir string) sfga.Archive {
+	assert := assert.New(t)
+	err := os.Mkdir(dir, 0755)
+	assert.Nil(err)
 
-func TestMain(m *testing.M) {
-	setupGlobal()
-	code := m.Run() // Run all tests
-	teardownGlobal()
-	os.Exit(code)
-}
-
-func setupGlobal() {
-	var err error
-	a = isfga.New()
-	testDir, err = os.MkdirTemp("", "sfga-test")
-	if err != nil {
-		panic(err)
-	}
-	err = a.Create(testDir)
-	if err != nil {
-		panic(err)
-	}
+	a := isfga.New()
+	err = a.Create(dir)
+	assert.Nil(err)
 	_, err = a.Connect()
-}
-
-func teardownGlobal() {
-	var err error
-	err = a.Close()
-	if err != nil {
-		panic(err)
-	}
-	err = os.RemoveAll(testDir)
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(err)
+	assert.True(a.Ping())
+	return a
 }
 
 func TestInsertAuthors(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "au")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	authors := []coldp.Author{
 		{
 			ID:                 "au1",
@@ -78,6 +59,11 @@ func TestInsertAuthors(t *testing.T) {
 
 func TestInsertDistributions(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "distr")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	distr := []coldp.Distribution{
 		{
 			TaxonID:     "tx1",
@@ -117,6 +103,11 @@ func TestInsertDistributions(t *testing.T) {
 
 func TestInsertMedia(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "media")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	media := []coldp.Media{
 		{
 			TaxonID:  "tx1",
@@ -155,6 +146,11 @@ func TestInsertMedia(t *testing.T) {
 
 func TestInsertMeta(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "meta")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	meta := coldp.Meta{
 		DOI:         "doi1",
 		Title:       "title1",
@@ -213,7 +209,11 @@ func TestInsertMeta(t *testing.T) {
 
 func TestInsertNameRelations(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "name_rel")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	rel := []coldp.NameRelation{
 		{
 			NameID:        "nm1",
@@ -245,7 +245,11 @@ func TestInsertNameRelations(t *testing.T) {
 
 func TestInsertNameUsage(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "name_use")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	nu := []coldp.NameUsage{
 		{
 			ID:                   "123",
@@ -303,7 +307,11 @@ func TestInsertNameUsage(t *testing.T) {
 
 func TestInsertNames(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "name")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	name := []coldp.Name{
 		{
 			ID:                   "123",
@@ -345,7 +353,11 @@ func TestInsertNames(t *testing.T) {
 
 func TestInsertReferences(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "ref")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	ref := []coldp.Reference{
 		{
 			ID:        "ref1",
@@ -371,7 +383,11 @@ func TestInsertReferences(t *testing.T) {
 
 func TestInsertSpeciesEstimate(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "sp_est")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	se := []coldp.SpeciesEstimate{
 		{
 			TaxonID:     "tx1",
@@ -397,7 +413,11 @@ func TestInsertSpeciesEstimate(t *testing.T) {
 
 func TestInsertSpeciesInteractions(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "sp_inter")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	si := []coldp.SpeciesInteraction{
 		{
 			TaxonID:                    "tx1",
@@ -424,7 +444,11 @@ func TestInsertSpeciesInteractions(t *testing.T) {
 
 func TestInsertSynonyms(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "synonym")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	syn := []coldp.Synonym{
 		{
 			ID:            "syn1",
@@ -452,7 +476,11 @@ func TestInsertSynonyms(t *testing.T) {
 
 func TestInsertTxConcRelations(t *testing.T) {
 	assert := assert.New(t)
-	assert.True(a.Ping())
+	dir := filepath.Join(testDir, "tx_con_rel")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	tcr := []coldp.TaxonConceptRelation{
 		{
 			TaxonID:        "tx1",
@@ -477,6 +505,11 @@ func TestInsertTxConcRelations(t *testing.T) {
 
 func TestInsertTxProperties(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "tx_prop")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	tp := []coldp.TaxonProperty{
 		{
 			TaxonID:     "tx1",
@@ -498,6 +531,11 @@ func TestInsertTxProperties(t *testing.T) {
 
 func TestInsertTaxon(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "taxon")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	tx := []coldp.Taxon{
 		{
 			ID:                  "123",                                // string
@@ -529,24 +567,22 @@ func TestInsertTaxon(t *testing.T) {
 		},
 	}
 
-	// we need to trim taxon table, because InsertNameUsage also inserts into
-	// it
-	db := a.Db()
-	_, err := db.Exec("delete from taxon")
+	err := a.InsertTaxa(tx)
 	assert.Nil(err)
-
-	err = a.InsertTaxa(tx)
-	assert.Nil(err)
-	assert.NotNil(db)
 
 	var res int
-	err = db.QueryRow("select count(*) from taxon").Scan(&res)
+	err = a.Db().QueryRow("select count(*) from taxon").Scan(&res)
 	assert.Nil(err)
 	assert.Equal(1, res)
 }
 
 func TestInsertTreatment(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "treatment")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	tr := []coldp.Treatment{
 		{
 			TaxonID:  "tr1",
@@ -568,6 +604,11 @@ func TestInsertTreatment(t *testing.T) {
 
 func TestInsertTypeMaterials(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "type_mat")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	tm := []coldp.TypeMaterial{
 		{
 			ID:          "tx1",
@@ -595,6 +636,11 @@ func TestInsertTypeMaterials(t *testing.T) {
 
 func TestInsertVernaculars(t *testing.T) {
 	assert := assert.New(t)
+	dir := filepath.Join(testDir, "vern")
+	a := createSfga(t, dir)
+	defer os.RemoveAll(dir)
+	defer a.Close()
+
 	vrn := []coldp.Vernacular{
 		{
 			SourceID:    "src1",

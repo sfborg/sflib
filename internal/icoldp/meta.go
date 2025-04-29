@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	yaml "github.com/goccy/go-yaml"
 	"github.com/sfborg/sflib/pkg/coldp"
-	"gopkg.in/yaml.v3"
 )
 
 func (a *icoldp) Meta() (*coldp.Meta, error) {
@@ -43,7 +43,7 @@ func (a *icoldp) Meta() (*coldp.Meta, error) {
 }
 
 func (a *icoldp) WriteMeta(meta *coldp.Meta, path string) error {
-	bs, err := json.MarshalIndent(meta, "", " ")
+	bs, err := yaml.Marshal(meta)
 	if err != nil {
 		return err
 	}

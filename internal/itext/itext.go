@@ -5,16 +5,16 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/sfborg/sflib/internal/util"
-	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/text"
 )
 
 type itext struct {
 	filePath   string
-	code       coldp.NomCode
+	code       nomcode.Code
 	jobsNum    int
-	parserPool map[coldp.NomCode]*sync.Pool
+	parserPool map[nomcode.Code]*sync.Pool
 }
 
 func New() text.Archive {

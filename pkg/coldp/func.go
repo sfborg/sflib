@@ -161,7 +161,7 @@ func ReadJSONL[T DataLoader](
 }
 
 func Read[T DataLoader](
-	cfg config.ConfigCoLDP,
+	cfg config.Config,
 	path string,
 	chOut chan T) error {
 	chIn := make(chan []string)
@@ -395,4 +395,11 @@ func GetEnvironments(env string) []Environment {
 		res = append(res, env)
 	}
 	return res
+}
+
+func pick(a, b string) string {
+	if a != "" {
+		return a
+	}
+	return b
 }

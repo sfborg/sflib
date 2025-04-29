@@ -2,6 +2,7 @@ package diagn
 
 import (
 	"log/slog"
+	"slices"
 	"strings"
 
 	"github.com/gnames/gnparser"
@@ -14,16 +15,17 @@ type Diagnostics struct {
 }
 
 func New(
-	d []map[string]string,
+	// data from core file
+	data []map[string]string,
 	exts map[string]string,
 ) *Diagnostics {
 	res := Diagnostics{}
 	slog.Info("Checking if ScientificName contains authorship.")
-	res.SciNameType = sciNameType(d)
+	res.SciNameType = sciNameType(data)
 	slog.Info("Finding where synonyms are.")
-	res.SynonymType = synonymType(d, exts)
-	slog.Info("Checking if hierarchy is flat, parent/child or none.")
-	res.HierType = hierType(d)
+	res.SynonymType = synonymType(data, exts)
+	slog.Info("Checking if hierarchy is flat, parent/child, both or none.")
+	res.HierType = hierType(data)
 	return &res
 }
 
@@ -36,31 +38,44 @@ func hierType(d []map[string]string) HierType {
 	var count int
 	var isTree bool
 	for k := range row {
-		if k == "kingdom" || k == "phylum" ||
-			k == "class" || k == "order" || k == "family" ||
-			k == "genus" || k == "species" {
+		if isRank(k) {
 			count++
 		}
 		if k == "parentnameusageid" || k == "highertaxonid" {
 			isTree = true
 		}
 	}
-	if count > 5 {
-		return HierFlat
-	}
 
+	if isTree && count > 3 {
+		return HierBoth
+	}
 	if isTree {
 		return HierTree
+	}
+	if count > 3 {
+		return HierFlat
 	}
 
 	return HierUnknown
 }
 
+func isRank(fld string) bool {
+	ranks := []string{
+		"kingdom", "phylum", "class", "order", "superfamily",
+		"family", "subfamily", "genus", "subgenus",
+		"specificepithet", "infraspecificepithet",
+	}
+	if slices.Contains(ranks, fld) {
+		return true
+	}
+	return false
+}
+
 func synonymType(
-	cs []map[string]string,
+	coreData []map[string]string,
 	exts map[string]string,
 ) SynonymType {
-	if len(cs) == 0 {
+	if len(coreData) == 0 {
 		return SynUnknown
 	}
 
@@ -70,21 +85,21 @@ func synonymType(
 		}
 	}
 
-	if _, ok := cs[0]["acceptednameusageid"]; ok {
+	if _, ok := coreData[0]["acceptednameusageid"]; ok {
 		return SynAcceptedID
 	}
 
-	for _, v := range cs {
-		isHier := checkHierarchy(v)
-		if isHier {
+	for _, v := range coreData {
+		synHierarchy := checkSynHierarchy(v)
+		if synHierarchy {
 			return SynHierarchy
 		}
 	}
 
-	return SynUnknown
+	return SynNone
 }
 
-func checkHierarchy(v map[string]string) bool {
+func checkSynHierarchy(v map[string]string) bool {
 	st := v["taxonomicstatus"]
 	var syn bool
 	for _, k := range []string{"synonym", "miss", "invalid", "unavailable"} {
@@ -106,8 +121,16 @@ func checkHierarchy(v map[string]string) bool {
 
 func sciNameType(d []map[string]string) SciNameType {
 	p := gnparser.New(gnparser.NewConfig())
+
 	if len(d) == 0 {
+		slog.Warn("Cannot find scientific name data")
 		return SciNameUnknown
+	}
+	count := 100
+	if len(d) < count {
+		// we decrease the number assuming that at at least half
+		// of existing records should give a hint of the name type.
+		count = len(d) / 2
 	}
 
 	row0 := d[0]
@@ -121,7 +144,7 @@ func sciNameType(d []map[string]string) SciNameType {
 	for _, v := range d {
 		if v["scientificname"] == "" && v["specificepithet"] != "" {
 			compositeNum++
-			if compositeNum > 100 {
+			if compositeNum > count {
 				break
 			}
 			continue
@@ -134,29 +157,33 @@ func sciNameType(d []map[string]string) SciNameType {
 		authField := strings.TrimSpace(v["scientificnameauthorship"])
 		if parsed.Authorship == nil && authField != "" {
 			canonicalNum++
-			if canonicalNum > 100 {
-				break
-			}
 			continue
 		}
 
 		if parsed.Authorship != nil {
 			fullNum++
-			if fullNum > 100 {
-				break
-			}
 			continue
 		}
 	}
 
-	if fullNum > 0 && canonicalNum+compositeNum == 0 {
-		return SciNameFull
-	}
-	if canonicalNum > 0 && fullNum+compositeNum == 0 {
-		return SciNameCanonical
-	}
-	if compositeNum > 0 && canonicalNum+fullNum == 0 {
+	if compositeNum > max(canonicalNum, fullNum) {
 		return SciNameComposite
 	}
+
+	if fullNum > max(canonicalNum, compositeNum) {
+		return SciNameFull
+	}
+	if canonicalNum > max(fullNum, compositeNum) {
+		return SciNameCanonical
+	}
+	slog.Warn("Cannot determine scientific name type")
 	return SciNameUnknown
+}
+
+func max(a, b int) int {
+	res := a
+	if b > a {
+		res = b
+	}
+	return res
 }

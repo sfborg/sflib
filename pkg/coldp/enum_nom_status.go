@@ -45,9 +45,9 @@ func NewNomStatus(s string) NomStatus {
 		return Conserved
 	case "nomrej", "nomenrejiciendum", "rejected":
 		return Rejected
-	case "nomdub", "nomeddubium", "doubtful":
+	case "nomdub", "nomendubium", "doubtful":
 		return Doubtful
-	case "manuscript name", "manuscript":
+	case "manuscriptname", "manuscript":
 		return Manuscript
 	case "chresonym":
 		return Chresonym

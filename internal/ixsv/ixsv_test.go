@@ -7,6 +7,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnsys"
 	"github.com/sfborg/sflib/internal/ixsv"
 	"github.com/sfborg/sflib/pkg/coldp"
@@ -77,13 +78,13 @@ func TestXsv(t *testing.T) {
 			}
 		}()
 
-		err = a.Load(context.Background(), ch, 10, coldp.Cultivars)
+		err = a.Load(context.Background(), ch, 10, nomcode.Cultivars)
 		assert.Nil(err)
 		close(ch)
 
 		wg.Wait()
 		assert.Equal(v.rowsNum, len(res), v.msg)
-		assert.Equal(coldp.Zoological, res[0].Code)
+		assert.Equal(nomcode.Zoological, res[0].Code)
 
 	}
 }

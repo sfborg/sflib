@@ -11,7 +11,7 @@ import (
 )
 
 type isfga struct {
-	cfg config.ConfigSfga
+	cfg config.Config
 
 	// extractDir is the place where the content of SFGA is extracted to.
 	extractDir string
@@ -26,9 +26,9 @@ type isfga struct {
 	db *sql.DB
 }
 
-func New() sfga.Archive {
+func New(opts ...config.Option) sfga.Archive {
 	res := isfga{
-		cfg: config.NewSFGA(),
+		cfg: config.New(opts...),
 	}
 	return &res
 }

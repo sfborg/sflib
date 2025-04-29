@@ -7,6 +7,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/sfborg/sflib/internal/itext"
 	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/stretchr/testify/assert"
@@ -48,12 +49,12 @@ func TestText(t *testing.T) {
 			}
 		}()
 
-		err = a.Load(context.Background(), ch, 10, coldp.Cultivars)
+		err = a.Load(context.Background(), ch, 10, nomcode.Cultivars)
 		assert.Nil(err)
 		close(ch)
 
 		wg.Wait()
 		assert.Equal(1000, len(res))
-		assert.Equal(coldp.Cultivars, res[0].Code)
+		assert.Equal(nomcode.Cultivars, res[0].Code)
 	}
 }

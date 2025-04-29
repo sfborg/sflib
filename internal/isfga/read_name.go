@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/coldp"
 )
@@ -61,7 +62,7 @@ FROM name
 
 		n.Rank = coldp.NewRank(rank)
 		n.Notho = coldp.NewNamePart(notho)
-		n.Code = coldp.NewNomCode(code)
+		n.Code = nomcode.New(code)
 		n.Status = coldp.NewNomStatus(status)
 		n.Gender = coldp.NewGender(gender)
 

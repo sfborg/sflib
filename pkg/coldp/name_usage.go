@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/gnames/gnlib"
+	"github.com/gnames/gnlib/ent/nomcode"
+	"github.com/gnames/gnparser"
 )
 
 // NameUsage combines fields of Name, Taxon and Synonym.
@@ -59,7 +61,7 @@ type NameUsage struct {
 	Gender                    Gender          // n
 	GenderAgreement           sql.NullBool    // n
 	Etymology                 string          // n
-	Code                      NomCode         // n
+	Code                      nomcode.Code    // n
 	NameStatus                NomStatus       // n
 	AccordingToID             string          // t
 	AccordingToPage           string          // t
@@ -266,7 +268,7 @@ func (n NameUsage) Load(headers, data []string) (DataLoader, error) {
 	n.Gender = NewGender(row["gender"])
 	n.GenderAgreement = ToBool(row["genderagreement"])
 	n.Etymology = row["etymology"]
-	n.Code = NewNomCode(row["code"])
+	n.Code = nomcode.New(row["code"])
 	n.NameStatus = NewNomStatus(row["namestatus"])
 	n.AccordingToID = row["accordingtoid"]
 	n.AccordingToPage = row["accordingtopage"]
@@ -303,4 +305,61 @@ func (n NameUsage) Load(headers, data []string) (DataLoader, error) {
 	n.Modified = row["modified"]
 	n.ModifiedBy = row["modifiedby"]
 	return n, warning
+}
+
+func (n *NameUsage) Amend(p gnparser.GNparser) {
+	prsd := p.ParseName(n.ScientificNameString).Flatten()
+
+	if prsd.Parsed {
+		n.ParseQuality = ToInt(prsd.ParseQuality)
+		if prsd.ParseQuality > 2 {
+			return
+		}
+		n.CanonicalSimple = prsd.CanonicalSimple
+		n.CanonicalFull = prsd.CanonicalFull
+		n.CanonicalStemmed = prsd.CanonicalStemmed
+		n.Cardinality = ToInt(prsd.Cardinality)
+		n.Virus = ToBool(prsd.Virus)
+		n.Hybrid = prsd.Hybrid
+		n.Surrogate = prsd.Surrogate
+		n.Authors = prsd.Authors
+		n.GnID = prsd.VerbatimID
+
+		n.Authorship = pick(n.Authorship, prsd.Authorship)
+		n.Rank = NewRank(pick(n.Rank.String(), prsd.Rank))
+		n.Uninomial = pick(n.Uninomial, prsd.Uninomial)
+		n.GenericName = pick(n.GenericName, prsd.Genus)
+		n.InfragenericEpithet = pick(n.InfragenericEpithet, prsd.Subgenus)
+		n.SpecificEpithet = pick(n.SpecificEpithet, prsd.Species)
+		n.InfraspecificEpithet = pick(
+			n.InfraspecificEpithet,
+			prsd.Infraspecies,
+		)
+		n.CultivarEpithet = pick(n.CultivarEpithet, prsd.CultivarEpithet)
+
+		n.CombinationAuthorship = pick(
+			n.CombinationAuthorship,
+			prsd.CombinationAuthorship,
+		)
+		n.CombinationExAuthorship = pick(
+			n.CombinationExAuthorship,
+			prsd.CombinationExAuthorship,
+		)
+		n.CombinationAuthorshipYear = pick(
+			n.CombinationAuthorshipYear,
+			prsd.CombinationAuthorshipYear,
+		)
+		n.BasionymAuthorship = pick(
+			n.BasionymAuthorship,
+			prsd.BasionymAuthorship,
+		)
+		n.BasionymExAuthorship = pick(
+			n.BasionymExAuthorship,
+			prsd.BasionymExAuthorship,
+		)
+		n.BasionymAuthorshipYear = pick(
+			n.BasionymAuthorshipYear,
+			prsd.BasionymAuthorshipYear,
+		)
+	}
 }

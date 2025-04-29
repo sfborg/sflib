@@ -1,16 +1,17 @@
 module github.com/sfborg/sflib
 
-go 1.24.1
+go 1.24.3
 
 require (
 	github.com/dustin/go-humanize v1.0.1
-	github.com/gnames/gnfmt v0.5.7
-	github.com/gnames/gnlib v0.47.0
-	github.com/gnames/gnparser v1.11.5
+	github.com/gnames/gnfmt v0.6.1
+	github.com/gnames/gnlib v0.48.0
+	github.com/gnames/gnparser v1.11.7
 	github.com/gnames/gnsys v0.3.8
+	github.com/gnames/gnuuid v0.2.0
+	github.com/goccy/go-yaml v1.17.1
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/sync v0.12.0
-	gopkg.in/yaml.v3 v3.0.1
+	golang.org/x/sync v0.14.0
 	modernc.org/sqlite v1.37.0
 )
 
@@ -19,7 +20,6 @@ require (
 	github.com/cheggaaa/pb/v3 v3.1.7 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/gnames/gnuuid v0.2.0 // indirect
 	github.com/gnames/organizer v0.1.1 // indirect
 	github.com/gnames/tribool v0.1.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -34,11 +34,12 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/ulikunitz/xz v0.5.12 // indirect
-	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
-	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/sys v0.31.0 // indirect
-	golang.org/x/text v0.23.0 // indirect
-	modernc.org/libc v1.62.1 // indirect
+	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+	modernc.org/libc v1.65.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
-	modernc.org/memory v1.9.1 // indirect
+	modernc.org/memory v1.10.0 // indirect
 )

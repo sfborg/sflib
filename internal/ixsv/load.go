@@ -7,6 +7,7 @@ import (
 
 	"github.com/gnames/gnfmt/gncsv"
 	"github.com/gnames/gnfmt/gncsv/config"
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/internal/parser"
 	"github.com/sfborg/sflib/pkg/coldp"
@@ -17,7 +18,7 @@ func (a *ixsv) Load(
 	ctx context.Context,
 	ch chan<- coldp.NameUsage,
 	jobsNum int,
-	nomCode coldp.NomCode,
+	nomCode nomcode.Code,
 ) error {
 	opt := config.OptPath(a.filePath)
 	cfg, err := config.New(opt)
@@ -34,8 +35,8 @@ func (a *ixsv) Load(
 	chIn := make(chan []string)
 
 	g.Go(func() error {
+		defer close(chIn)
 		_, err := a.reader.Read(ctx2, chIn)
-		close(chIn)
 		return err
 	})
 
@@ -75,7 +76,7 @@ func (a *ixsv) processRow(
 	row []string,
 	chOut chan<- coldp.NameUsage,
 ) {
-	rowCode := coldp.NewNomCode(a.getVal(row, "code"))
+	rowCode := nomcode.New(a.getVal(row, "code"))
 	code := a.getNomCode(rowCode)
 
 	p := a.parserPool[code].Get().(gnparser.GNparser)
@@ -94,15 +95,15 @@ func (a *ixsv) getVal(row []string, field string) string {
 	return ""
 }
 
-func (a *ixsv) getNomCode(rowCode coldp.NomCode) coldp.NomCode {
-	res := coldp.UnknownNomCode
+func (a *ixsv) getNomCode(rowCode nomcode.Code) nomcode.Code {
+	res := nomcode.Unknown
 	switch a.code {
-	case coldp.Botanical, coldp.Cultivars:
-		res = coldp.Botanical
+	case nomcode.Botanical, nomcode.Cultivars:
+		res = nomcode.Botanical
 	}
 	switch rowCode {
-	case coldp.Botanical, coldp.Cultivars:
-		res = coldp.Botanical
+	case nomcode.Botanical, nomcode.Cultivars:
+		res = nomcode.Botanical
 	}
 	return res
 }
@@ -151,7 +152,7 @@ func (a *ixsv) getNameUsage(
 		PublishedInPageLink:       a.getVal(row, "publishedinpagelink"),
 		Gender:                    coldp.NewGender(a.getVal(row, "gender")),
 		Etymology:                 a.getVal(row, "etymology"),
-		Code:                      coldp.NewNomCode(a.getVal(row, "code")),
+		Code:                      nomcode.New(a.getVal(row, "code")),
 		NameStatus: coldp.NewNomStatus(
 			a.getVal(row, "namestatus"),
 		),
@@ -192,63 +193,6 @@ func (a *ixsv) getNameUsage(
 		!strings.HasSuffix(res.ScientificName, res.Authorship) {
 		res.ScientificNameString += " " + res.Authorship
 	}
-	prsd := p.ParseName(res.ScientificNameString).Flatten()
-	if prsd.Parsed {
-		res.ParseQuality = coldp.ToInt(prsd.ParseQuality)
-		res.CanonicalSimple = prsd.CanonicalSimple
-		res.CanonicalFull = prsd.CanonicalFull
-		res.CanonicalStemmed = prsd.CanonicalStemmed
-		res.Cardinality = coldp.ToInt(prsd.Cardinality)
-		res.Virus = coldp.ToBool(prsd.Virus)
-		res.Hybrid = prsd.Hybrid
-		res.Surrogate = prsd.Surrogate
-		res.Authors = prsd.Authors
-		res.GnID = prsd.VerbatimID
-
-		res.Authorship = pick(res.Authorship, prsd.Authorship)
-		res.Rank = coldp.NewRank(pick(res.Rank.String(), prsd.Rank))
-		res.Uninomial = pick(res.Uninomial, prsd.Uninomial)
-		res.GenericName = pick(res.GenericName, prsd.Genus)
-		res.InfragenericEpithet = pick(res.InfragenericEpithet, prsd.Subgenus)
-		res.SpecificEpithet = pick(res.SpecificEpithet, prsd.Species)
-		res.InfraspecificEpithet = pick(
-			res.InfraspecificEpithet,
-			prsd.Infraspecies,
-		)
-		res.CultivarEpithet = pick(res.CultivarEpithet, prsd.CultivarEpithet)
-
-		res.CombinationAuthorship = pick(
-			res.CombinationAuthorship,
-			prsd.CombinationAuthorship,
-		)
-		res.CombinationExAuthorship = pick(
-			res.CombinationExAuthorship,
-			prsd.CombinationExAuthorship,
-		)
-		res.CombinationAuthorshipYear = pick(
-			res.CombinationAuthorshipYear,
-			prsd.CombinationAuthorshipYear,
-		)
-
-		res.BasionymAuthorship = pick(
-			res.BasionymAuthorship,
-			prsd.BasionymAuthorship,
-		)
-		res.BasionymExAuthorship = pick(
-			res.BasionymExAuthorship,
-			prsd.BasionymExAuthorship,
-		)
-		res.BasionymAuthorshipYear = pick(
-			res.BasionymAuthorshipYear,
-			prsd.BasionymAuthorshipYear,
-		)
-	}
+	res.Amend(p)
 	return res
-}
-
-func pick(a, b string) string {
-	if a != "" {
-		return a
-	}
-	return b
 }

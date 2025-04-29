@@ -43,6 +43,7 @@
 package sflib
 
 import (
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/icoldp"
 	"github.com/sfborg/sflib/internal/idwca"
 	"github.com/sfborg/sflib/internal/isfga"
@@ -105,9 +106,9 @@ func NewXsv() xsv.Archive {
 	return &res
 }
 
-func NewDwca() dwca.Archive {
+func NewDwca(opts ...config.Option) dwca.Archive {
 	res := dwcaArc{
-		Archive: idwca.New(),
+		Archive: idwca.New(opts...),
 	}
 	return &res
 }
@@ -119,9 +120,9 @@ func NewDwca() dwca.Archive {
 //
 //	coldpArchive := sflib.NewColdp()
 //	// ... use coldpArchive to manage the archive ...
-func NewColdp() coldp.Archive {
+func NewColdp(opts ...config.Option) coldp.Archive {
 	res := coldpArc{
-		Archive: icoldp.New(),
+		Archive: icoldp.New(opts...),
 	}
 	return &res
 }
@@ -134,9 +135,9 @@ func NewColdp() coldp.Archive {
 //
 //	sfgaArchive := sflib.NewSfga()
 //	// ... use sfgaArchive to manage the archive ...
-func NewSfga() sfga.Archive {
+func NewSfga(opts ...config.Option) sfga.Archive {
 	res := sfgaArc{
-		Archive: isfga.New(),
+		Archive: isfga.New(opts...),
 	}
 	return &res
 }

@@ -7,7 +7,7 @@ import (
 
 type icoldp struct {
 	// cfg is the configuration for CoLDP archive.
-	cfg config.ConfigCoLDP
+	cfg config.Config
 
 	// rootDir is the path where extracted archive resides.
 	rootDir string
@@ -31,8 +31,8 @@ type icoldp struct {
 	dataType coldp.ArchiveType
 }
 
-func New(opts ...config.OptionCoLDP) coldp.Archive {
-	cfg := config.NewColdp(opts...)
+func New(opts ...config.Option) coldp.Archive {
+	cfg := config.New(opts...)
 	res := icoldp{
 		cfg:       cfg,
 		dataPaths: make(map[coldp.DataType]string),
@@ -45,7 +45,7 @@ func (a *icoldp) Create(dir string) error {
 	return nil
 }
 
-func (a *icoldp) Config() config.ConfigCoLDP {
+func (a *icoldp) Config() config.Config {
 	return a.cfg
 }
 

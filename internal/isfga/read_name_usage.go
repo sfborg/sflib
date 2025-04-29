@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gnames/gnlib"
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/coldp"
 )
@@ -126,7 +127,7 @@ SELECT
 
 		n.Rank = coldp.NewRank(rank)
 		n.Notho = coldp.NewNamePart(notho)
-		n.Code = coldp.NewNomCode(code)
+		n.Code = nomcode.New(code)
 		n.NameStatus = coldp.NewNomStatus(nomStatus)
 		n.Gender = coldp.NewGender(gender)
 

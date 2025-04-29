@@ -2,61 +2,6 @@ package coldp
 
 import "strings"
 
-// NomCode provides types of nomenclatural Codes.
-type NomCode int
-
-// Constants for different nomenclatural codes.
-const (
-	UnknownNomCode    NomCode = iota
-	Bacterial                 // Bacteriological Code
-	Botanical                 // Botanical Code
-	Cultivars                 // Cultivated Plant Code
-	PhytoSociological         // Phytosociological Code
-	Virus                     // Virus Code
-	Zoological                // Zoological Code
-)
-
-// NewNomCode converts a string (number or word) to NomCode.
-func NewNomCode(s string) NomCode {
-	s = strings.ToLower(s)
-	switch s {
-	case "1", "bacterial", "icnp":
-		return Bacterial
-	case "2", "botanical", "icn", "icnafp", "icbn":
-		return Botanical
-	case "3", "cultivars", "icncp":
-		return Cultivars
-	case "4", "phytosociological", "icpn":
-		return PhytoSociological
-	case "5", "virus", "icvcn":
-		return Virus
-	case "6", "zoological", "iczn":
-		return Zoological
-	default:
-		return UnknownNomCode
-	}
-}
-
-var nomCodeToString = map[NomCode]string{
-	Bacterial:         "BACTERIAL",
-	Botanical:         "BOTANICAL",
-	Cultivars:         "CULTIVARS",
-	PhytoSociological: "PHYTOSOCIOLOGICAL",
-	Virus:             "VIRUS",
-	Zoological:        "ZOOLOGICAL",
-}
-
-func (nc NomCode) ID() string {
-	if res, ok := nomCodeToString[nc]; ok {
-		return res
-	}
-	return ""
-}
-
-func (nc NomCode) String() string {
-	return ToStr(nc.ID())
-}
-
 type NomRelType int
 
 const (

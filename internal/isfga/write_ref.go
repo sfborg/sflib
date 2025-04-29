@@ -19,7 +19,7 @@ func (a *isfga) InsertReferences(data []coldp.Reference) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-	INSERT INTO reference
+	INSERT OR IGNORE INTO reference
 		(	
 		col__id, col__alternative_id, col__source_id, col__citation, col__type_id,
 		col__author, col__author_id, col__editor, col__editor_id, col__title,

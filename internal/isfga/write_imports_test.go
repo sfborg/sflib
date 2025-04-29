@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/sfborg/sflib/internal/isfga"
 	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/sfga"
@@ -272,7 +273,7 @@ func TestInsertNameUsage(t *testing.T) {
 			PublishedInYear:      "1758",
 			PublishedInPage:      "123",
 			PublishedInPageLink:  "http://example.org",
-			Code:                 coldp.NewNomCode("zoological"),
+			Code:                 nomcode.New("zoological"),
 			NameStatus:           coldp.NewNomStatus("acceptable"),
 			ReferenceID:          "123",
 			Scrutinizer:          "James Bond",
@@ -324,7 +325,7 @@ func TestInsertNames(t *testing.T) {
 			Rank:                 coldp.NewRank("species"),
 			Genus:                "Bubo",
 			SpecificEpithet:      "bubo",
-			Code:                 coldp.NewNomCode("zoological"),
+			Code:                 nomcode.New("zoological"),
 			Status:               coldp.NewNomStatus("acceptable"),
 			ReferenceID:          "123",
 			PublishedInYear:      "1758",

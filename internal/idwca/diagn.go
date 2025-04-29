@@ -7,6 +7,8 @@ import (
 	"github.com/sfborg/sflib/pkg/dwca/diagn"
 )
 
+// getDiagnostics provides an idea how DwCA organizes scientific names,
+// synonyms and hieararchy.
 func (a *idwca) getDiagnostics() (*diagn.Diagnostics, error) {
 	cs, exts, err := a.coreSample()
 	if err != nil {
@@ -30,11 +32,12 @@ func (a *idwca) coreSample() (
 		return nil, nil, err
 	}
 	m := a.metaSimple
-	coreRows := make([]map[string]string, len(dt))
+
 	exts := make(map[string]string)
 	for k, v := range m.ExtensionsData {
 		exts[k] = strings.ToLower(v.Location)
 	}
+	coreRows := make([]map[string]string, len(dt))
 	for i, row := range dt {
 		coreRows[i] = make(map[string]string)
 		for j, val := range row {

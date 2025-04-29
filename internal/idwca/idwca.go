@@ -1,11 +1,17 @@
 package idwca
 
 import (
+	"sync"
+
+	"github.com/gnames/gnlib/ent/nomcode"
+	"github.com/sfborg/sflib/config"
+	"github.com/sfborg/sflib/internal/parser"
 	"github.com/sfborg/sflib/pkg/dwca"
 	"github.com/sfborg/sflib/pkg/dwca/diagn"
 )
 
 type idwca struct {
+	cfg config.Config
 	// rootDir is the directory where meta.xml file is resided.
 	// it is not always the 'root' directory of extracted archive.
 	rootDir string
@@ -19,10 +25,16 @@ type idwca struct {
 	eml *dwca.EML
 	// diagn provides types of ScientificName, Hieararchy, Synonymy.
 	diagn *diagn.Diagnostics
+	// parserPool contains parsers for names in botanical and zoological codes.
+	parserPool map[nomcode.Code]*sync.Pool
 }
 
-func New() dwca.Archive {
-	res := idwca{}
+func New(opts ...config.Option) dwca.Archive {
+	cfg := config.New(opts...)
+	res := idwca{
+		cfg:        cfg,
+		parserPool: parser.Pool(cfg.JobsNum),
+	}
 	return &res
 }
 
@@ -41,4 +53,8 @@ func (a *idwca) EML() *dwca.EML {
 
 func (a *idwca) Meta() *dwca.Meta {
 	return a.meta
+}
+
+func (a *idwca) Diagnostics() *diagn.Diagnostics {
+	return a.diagn
 }

@@ -49,12 +49,12 @@ func (a *idwca) ExtensionStream(
 	if err != nil {
 		return 0, err
 	}
+	cfg.BadRowMode = a.cfg.BadRow
 	csv := gncsv.New(cfg)
 	rowsNum, err := csv.Read(ctx, extCh)
 	if err != nil {
 		return 0, err
 	}
-
 	return rowsNum, nil
 }
 
@@ -63,12 +63,20 @@ func getCsvConfigExt(
 	ext dwca.Extension,
 ) (config.Config, error) {
 	path := filepath.Join(rootDir, ext.Files.Location)
-	colSep := ext.FieldsTerminatedBy
+	var colSep rune
+	switch ext.FieldsTerminatedBy {
+	case ",":
+		colSep = ','
+	case "\\t":
+		colSep = '\t'
+	case "|":
+		colSep = '|'
+	}
 	skipHeaders := ext.IgnoreHeaderLines == "1"
 	headers := getHeadersExt(ext)
 	opts := []config.Option{
 		config.OptPath(path),
-		config.OptColSep(rune(colSep[0])),
+		config.OptColSep(colSep),
 		config.OptSkipHeaders(skipHeaders),
 		config.OptHeaders(headers),
 	}
@@ -93,8 +101,8 @@ func getHeadersExt(ext dwca.Extension) []string {
 			maxIdx = k
 		}
 	}
-	res := make([]string, maxIdx)
-	for i := range maxIdx {
+	res := make([]string, maxIdx+1)
+	for i := range maxIdx + 1 {
 		if header, ok := fieldsMap[i]; ok {
 			res[i] = header
 		} else {

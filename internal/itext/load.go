@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/internal/parser"
 	"github.com/sfborg/sflib/pkg/coldp"
@@ -16,9 +17,9 @@ func (a *itext) Load(
 	ctx context.Context,
 	ch chan<- coldp.NameUsage,
 	jobsNum int,
-	nomCode coldp.NomCode,
+	nomcode nomcode.Code,
 ) error {
-	a.code = nomCode
+	a.code = nomcode
 	a.jobsNum = jobsNum
 	a.parserPool = parser.Pool(jobsNum)
 
@@ -78,10 +79,10 @@ func (a *itext) process(
 	chIn <-chan string,
 	chOut chan<- coldp.NameUsage,
 ) error {
-	code := coldp.UnknownNomCode
+	code := nomcode.Unknown
 	switch a.code {
-	case coldp.Botanical, coldp.Cultivars:
-		code = coldp.Botanical
+	case nomcode.Botanical, nomcode.Cultivars:
+		code = nomcode.Botanical
 	}
 
 	p := a.parserPool[code].Get().(gnparser.GNparser)

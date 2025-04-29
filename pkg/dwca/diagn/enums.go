@@ -12,13 +12,13 @@ const (
 func (s SciNameType) String() string {
 	switch s {
 	case SciNameFull:
-		return "full"
+		return "full name with authorship"
 	case SciNameCanonical:
-		return "canonical"
+		return "canonical name, no authorship"
 	case SciNameComposite:
-		return "composite"
+		return "name split by several fields"
 	default:
-		return "unknown"
+		return "unknown type of scientific name"
 	}
 }
 
@@ -29,18 +29,21 @@ const (
 	SynAcceptedID
 	SynHierarchy
 	SynExtension
+	SynNone
 )
 
 func (st SynonymType) String() string {
 	switch st {
 	case SynAcceptedID:
-		return "accepted ID"
+		return "synonymy by accepted ID"
 	case SynHierarchy:
-		return "hierarchy"
+		return "synonymy by parent ID"
 	case SynExtension:
-		return "extension"
+		return "synonymy in an extension file"
+	case SynNone:
+		return "synonymy not found"
 	default:
-		return "unknown"
+		return "unknown synonymy"
 	}
 }
 
@@ -50,14 +53,17 @@ const (
 	HierUnknown HierType = iota
 	HierTree
 	HierFlat
+	HierBoth
 )
 
 func (h HierType) String() string {
 	switch h {
 	case HierTree:
-		return "tree"
+		return "tree hierarhcy"
 	case HierFlat:
-		return "flat"
+		return "flat hierarchy"
+	case HierBoth:
+		return "both tree and flat hierarchies"
 	default:
 		return "unknown"
 	}

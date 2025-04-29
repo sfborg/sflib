@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.3.8] - 2025-05-12 Mon
+
+Add [#7]: import DwCA.
+
+## [v0.3.7] - 2025-04-29 Tue
+
+Add: 'department' to actors.
+
 ## [v0.3.6] - 2025-04-15 Tue
 
 Add [#13]: update old SFGA to current schema.

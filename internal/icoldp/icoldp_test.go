@@ -1,6 +1,8 @@
 package icoldp_test
 
 import (
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"testing"
@@ -27,6 +29,7 @@ func setupGlobal() {
 	if err != nil {
 		panic(err)
 	}
+	slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
 }
 
 func teardownGlobal() {

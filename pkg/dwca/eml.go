@@ -111,9 +111,10 @@ type Address struct {
 }
 
 type IndividualName struct {
-	XMLName   xml.Name `xml:"individualName"`
-	GivenName string   `xml:"givenName"`
-	SurName   string   `xml:"surName"`
+	XMLName xml.Name `xml:"individualName"`
+
+	GivenName string `xml:"givenName"`
+	SurName   string `xml:"surName"`
 }
 
 type Abstract struct {

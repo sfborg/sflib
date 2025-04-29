@@ -7,49 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNomCodeNew(t *testing.T) {
-	assert := assert.New(t)
-	tests := []struct {
-		msg, inp string
-		out      coldp.NomCode
-	}{
-		{"bad", "smth", coldp.UnknownNomCode},
-		{"zoo1", "zoological", coldp.Zoological},
-		{"zoo2", "ICZN", coldp.Zoological},
-		{"zoo3", "iczn", coldp.Zoological},
-		{"zoo4", "Zoological", coldp.Zoological},
-		{"bot1", "Botanical", coldp.Botanical},
-		{"bot2", "ICN", coldp.Botanical},
-		{"bot3", "ICNafp", coldp.Botanical},
-		{"vir", "ICVCN", coldp.Virus},
-		{"phyto", "ICPN", coldp.PhytoSociological},
-		{"phyto", "ICNcp", coldp.Cultivars},
-	}
-
-	for _, v := range tests {
-		res := coldp.NewNomCode(v.inp)
-		assert.Equal(v.out, res, v.msg)
-	}
-}
-
-func TestNomCodeString(t *testing.T) {
-	assert := assert.New(t)
-	tests := []struct {
-		msg string
-		inp coldp.NomCode
-		out string
-	}{
-		{"bad", coldp.UnknownNomCode, ""},
-		{"vir", coldp.Virus, "VIRUS"},
-		{"bot", coldp.NewNomCode("icn"), "BOTANICAL"},
-	}
-
-	for _, v := range tests {
-		res := v.inp.ID()
-		assert.Equal(v.out, res, v.msg)
-	}
-}
-
 func TestNomRelType(t *testing.T) {
 	assert := assert.New(t)
 	testCases := []struct {

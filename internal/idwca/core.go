@@ -12,7 +12,7 @@ import (
 )
 
 func (a *idwca) CoreSlice(offset, limit int) ([][]string, error) {
-	cfg, err := getCsvConfigCore(a.rootDir, *a.meta.Core)
+	cfg, err := a.getCsvConfigCore()
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (a *idwca) CoreStream(
 	ctx context.Context,
 	coreChan chan<- []string,
 ) (int, error) {
-	cfg, err := getCsvConfigCore(a.rootDir, *a.meta.Core)
+	cfg, err := a.getCsvConfigCore()
 	if err != nil {
 		return 0, err
 	}
@@ -42,16 +42,42 @@ func (a *idwca) CoreStream(
 	return rowsNum, nil
 }
 
-func getCsvConfigCore(rootDir string, core dwca.Core) (config.Config, error) {
-	path := filepath.Join(rootDir, core.Files.Location)
-	colSep := core.FieldsTerminatedBy
+func (a *idwca) getCsvConfigCore() (config.Config, error) {
+	var cfg config.Config
+	core := a.meta.Core
+	path := filepath.Join(a.rootDir, core.Files.Location)
+	var colSep rune
+	switch core.FieldsTerminatedBy {
+	case "\\t":
+		colSep = '\t'
+	case "|":
+		colSep = '|'
+	case ",":
+		colSep = ','
+	default:
+		colSep = 0
+		return cfg, fmt.Errorf("Unexpected field separator: '%s'", core.FieldsTerminatedBy)
+	}
+
+	var quotes bool
+	switch core.FieldsEnclosedBy {
+	case "\"":
+		quotes = true
+	case "":
+		quotes = false
+	default:
+		return cfg, fmt.Errorf("Unexpected fields enclosure: '%s'", core.FieldsEnclosedBy)
+	}
+
 	skipHeaders := core.IgnoreHeaderLines == "1"
-	headers := getHeadersCore(core)
+	headers := getHeadersCore(*core)
 	opts := []config.Option{
 		config.OptPath(path),
-		config.OptColSep(rune(colSep[0])),
+		config.OptColSep(colSep),
 		config.OptSkipHeaders(skipHeaders),
 		config.OptHeaders(headers),
+		config.OptWithQuotes(quotes),
+		config.OptBadRowMode(a.cfg.BadRow),
 	}
 	cfg, err := config.New(opts...)
 	if err != nil {

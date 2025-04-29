@@ -18,7 +18,7 @@ type Archive interface {
 	DataPaths() map[DataType]string
 
 	// Config returns configuration settings of archive.
-	Config() config.ConfigCoLDP
+	Config() config.Config
 
 	// Meta returns coldp.Meta struct. If the struct is empty it populates
 	// it with data from meta file first.

@@ -3,6 +3,7 @@ package text
 import (
 	"context"
 
+	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/sfborg/sflib/pkg/arch"
 	"github.com/sfborg/sflib/pkg/coldp"
 )
@@ -23,7 +24,7 @@ type Archive interface {
 		ctx context.Context,
 		ch chan<- coldp.NameUsage,
 		jobsNum int,
-		nomCode coldp.NomCode,
+		nomCode nomcode.Code,
 	) error
 
 	// FilePath returns the path to the file with scientific names.

@@ -6,38 +6,18 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/gnames/gnfmt"
 	"github.com/gnames/gnsys"
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/idwca"
 	"github.com/sfborg/sflib/pkg/arch"
+	"github.com/sfborg/sflib/pkg/dwca/diagn"
 	"github.com/stretchr/testify/assert"
 )
 
 var testDir string
 
-func TestMain(m *testing.M) {
-	setupGlobal()
-	code := m.Run() // Run all tests
-	teardownGlobal()
-	os.Exit(code)
-}
-
-func setupGlobal() {
-	var err error
-	testDir, err = os.MkdirTemp("", "dwca-test")
-	if err != nil {
-		panic(err)
-	}
-}
-
-func teardownGlobal() {
-	var err error
-	err = os.RemoveAll(testDir)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func TestLoad(t *testing.T) {
+func TestFetch(t *testing.T) {
 	assert := assert.New(t)
 	dir := filepath.Join(testDir, "load")
 	err := os.Mkdir(dir, 0777)
@@ -45,9 +25,43 @@ func TestLoad(t *testing.T) {
 
 	tests := []struct {
 		msg, path string
+		badRow    gnfmt.BadRow
+		nameType  diagn.SciNameType
+		synType   diagn.SynonymType
+		hierType  diagn.HierType
 	}{
-		{"gz", "aos-birds.tar.gz"},
-		{"noeml", "noeml.zip"},
+		{
+			"gz",
+			"aos-birds.tar.gz",
+			gnfmt.ErrorBadRow,
+			diagn.SciNameFull,
+			diagn.SynNone,
+			diagn.HierFlat,
+		},
+		{
+			"vascan",
+			"vascan.zip",
+			gnfmt.ErrorBadRow,
+			diagn.SciNameFull,
+			diagn.SynAcceptedID,
+			diagn.HierBoth,
+		},
+		{
+			"col",
+			"col-mini.zip",
+			gnfmt.ErrorBadRow,
+			diagn.SciNameFull,
+			diagn.SynAcceptedID,
+			diagn.HierBoth,
+		},
+		{
+			"pipe",
+			"data_pipe.tar.gz",
+			gnfmt.ProcessBadRow,
+			diagn.SciNameFull,
+			diagn.SynHierarchy,
+			diagn.HierTree,
+		},
 	}
 	for _, v := range tests {
 		err := gnsys.CleanDir(dir)
@@ -55,9 +69,14 @@ func TestLoad(t *testing.T) {
 
 		path := filepath.Join("../../testdata/dwca/", v.path)
 
-		a := idwca.New()
+		opts := []config.Option{config.OptBadRow(v.badRow)}
+		a := idwca.New(opts...)
 		err = a.Fetch(path, dir)
 		assert.Nil(err, v.msg)
+		d := a.Diagnostics()
+		assert.Equal(v.nameType, d.SciNameType, v.msg)
+		assert.Equal(v.synType, d.SynonymType, v.msg)
+		assert.Equal(v.hierType, d.HierType, v.msg)
 	}
 }
 

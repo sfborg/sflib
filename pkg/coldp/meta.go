@@ -44,6 +44,7 @@ type Actor struct {
 	State        string `yaml:"state,omitempty"        json:"state,omitempty"`
 	Country      string `yaml:"country,omitempty"      json:"country,omitempty"`
 	RorID        string `yaml:"rorid,omitempty"        json:"rorid,omitempty"`
+	Department   string `yaml:"department,omitempty"   json:"department,omitempty"`
 	Organization string `yaml:"organisation,omitempty" json:"organisation,omitempty"`
 	URL          string `yaml:"url,omitempty"          json:"url,omitempty"`
 	Note         string `yaml:"note,omitempty"         json:"note,omitempty"`

@@ -5,10 +5,10 @@ var (
 	repoURL = "https://github.com/sfborg/sfga"
 
 	// tag of the sfga repo to get correct schema version.
-	repoTag = "v0.3.32"
+	repoTag = "v0.3.33"
 
 	// schemaHash is the sha256 sum of the correponding schema version.
-	schemaHash = "c6954dab62e41a"
+	schemaHash = "e0259fd6fb89a9"
 )
 
 type GitRepo struct {

@@ -125,6 +125,7 @@ func (a *idwca) processCoreRow(
 	nu.GlobalID = fieldVal(row, fieldsMap, "globalid")
 
 	parentID := fieldVal(row, fieldsMap, "parentnameusageid")
+	// iNat provides a URL to parentID instead of bare ID :-/
 	if strings.HasPrefix(parentID, "http") {
 		parentID = filepath.Base(parentID)
 	}

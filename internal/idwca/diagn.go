@@ -35,7 +35,7 @@ func (a *idwca) coreSample() (
 
 	exts := make(map[string]string)
 	for k, v := range m.ExtensionsData {
-		exts[k] = strings.ToLower(v.Location)
+		exts[k] = strings.ToLower(v.Locations[0])
 	}
 	coreRows := make([]map[string]string, len(dt))
 	for i, row := range dt {

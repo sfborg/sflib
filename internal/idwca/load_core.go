@@ -124,7 +124,12 @@ func (a *idwca) processCoreRow(
 	nu.LocalID = fieldVal(row, fieldsMap, "localid")
 	nu.GlobalID = fieldVal(row, fieldsMap, "globalid")
 
-	nu.ParentID = fieldVal(row, fieldsMap, "parentnameusageid")
+	parentID := fieldVal(row, fieldsMap, "parentnameusageid")
+	if strings.HasPrefix(parentID, "http") {
+		parentID = filepath.Base(parentID)
+	}
+	nu.ParentID = parentID
+
 	nomCode := fieldVal(row, fieldsMap, "nomenclaturalcode")
 	nu.Code = nomcode.New(nomCode)
 	rank := fieldVal(row, fieldsMap, "taxonrank")

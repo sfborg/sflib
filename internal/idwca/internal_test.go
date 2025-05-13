@@ -22,7 +22,7 @@ func TestMeta(t *testing.T) {
 	assert.IsType(m, &dwca.Meta{})
 	assert.Equal(m.EMLFile, "eml.xml")
 	assert.Equal(m.Core.Encoding, "utf-8")
-	assert.Equal(m.Core.Files.Location, "Taxon.tsv")
+	assert.Equal(m.Core.Files.Locations[0], "Taxon.tsv")
 	assert.Equal(m.Core.FieldsTerminatedBy, "\\t")
 	assert.Equal(m.Core.ID.Index, "0")
 	assert.Equal(m.Core.Fields[7].Index, "7")

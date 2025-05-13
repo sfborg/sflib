@@ -14,11 +14,15 @@ import (
 func (a *idwca) LoadVernacular(
 	ctx context.Context,
 	idx int,
-	ext *dwca.Extension,
 	chOut chan<- []coldp.Vernacular,
 ) error {
 	chIn := make(chan []string)
 	g, ctx2 := errgroup.WithContext(ctx)
+
+	ext, err := a.extByIdx(idx)
+	if err != nil {
+		return err
+	}
 
 	g.Go(func() error {
 		return a.vernWorker(ctx2, ext, chIn, chOut)
@@ -87,7 +91,7 @@ func (a *idwca) processVernRow(
 	}
 
 	lang := fieldVal(row, fieldsMap, "language")
-	if len(lang) > 3 {
+	if len(lang) != 3 {
 		res.Language = gnlib.LangCode(lang)
 	} else {
 		res.Language = lang

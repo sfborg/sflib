@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.3.9] - 2025-05-13 Tue
+
+Add: ability to harvest extensions with multiple files.
+
 ## [v0.3.8] - 2025-05-12 Mon
 
 Add [#7]: import DwCA.

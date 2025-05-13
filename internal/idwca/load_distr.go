@@ -14,11 +14,15 @@ import (
 func (a *idwca) LoadDistribution(
 	ctx context.Context,
 	idx int,
-	ext *dwca.Extension,
 	chOut chan<- coldp.Data,
 ) error {
 	chIn := make(chan []string)
 	g, ctx2 := errgroup.WithContext(ctx)
+
+	ext, err := a.extByIdx(idx)
+	if err != nil {
+		return err
+	}
 
 	g.Go(func() error {
 		return a.distrWorker(ctx2, ext, chIn, chOut)

@@ -28,7 +28,6 @@ type Archive interface {
 	LoadVernacular(
 		ctx context.Context,
 		idx int,
-		ext *Extension,
 		ch chan<- []coldp.Vernacular,
 	) error
 	// LoadDistribution reads the content of distribution file and
@@ -36,7 +35,6 @@ type Archive interface {
 	LoadDistribution(
 		ctx context.Context,
 		idx int,
-		ext *Extension,
 		ch chan<- coldp.Data,
 	) error
 	// CoreSlice takes offset and number of rows of the core file, and returns

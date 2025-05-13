@@ -21,8 +21,8 @@ type CoreData struct {
 	// TermFull is the URI of the main Core Data (Topic).
 	TermFull string
 
-	// Location is the location of the Core file.
-	Location string
+	// Locations is the locations of the Core files.
+	Locations []string
 
 	// FieldsData is a map of field Terms to their FieldData.
 	FieldsData map[string]FieldData
@@ -37,8 +37,8 @@ type ExtensionData struct {
 	// It allows to create a star schema of the DwCA archive.
 	CoreIndex int
 
-	// Location is the location of the Extension file.
-	Location string
+	// Locations is the locations of the Extension files.
+	Locations []string
 
 	// FieldsData is a map of field Terms to their FieldData.
 	FieldsData map[string]FieldData

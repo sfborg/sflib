@@ -45,7 +45,7 @@ func (a *idwca) CoreStream(
 func (a *idwca) getCsvConfigCore() (config.Config, error) {
 	var cfg config.Config
 	core := a.meta.Core
-	path := filepath.Join(a.rootDir, core.Files.Location)
+	path := filepath.Join(a.rootDir, core.Files.Locations[0])
 	var colSep rune
 	switch core.FieldsTerminatedBy {
 	case "\\t":

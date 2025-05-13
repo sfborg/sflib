@@ -41,8 +41,8 @@ type Extension struct {
 
 // Files holds the location of files.
 type Files struct {
-	// Location provides path to a file.
-	Location string `xml:"location"`
+	// Locations provides path to a file.
+	Locations []string `xml:"location"`
 }
 
 // ID holds the fields for the Core ID.
@@ -76,7 +76,7 @@ func (m *Meta) Simplify() *MetaSimple {
 	data.CoreData = m.Core.toCoreData()
 
 	for _, ext := range m.Extensions {
-		file := filepath.Base(ext.Files.Location)
+		file := filepath.Base(ext.Files.Locations[0])
 		name := stripExt(file)
 		if ext.RowType != "" {
 			name = filepath.Base(ext.RowType)
@@ -104,7 +104,7 @@ func (c *Core) toCoreData() CoreData {
 	term = strings.ToLower(term)
 	coreData := CoreData{
 		Index:      idx,
-		Location:   c.Files.Location,
+		Locations:  c.Files.Locations,
 		TermFull:   termFull,
 		Term:       term,
 		FieldsData: make(map[string]FieldData),
@@ -140,7 +140,7 @@ func (e *Extension) toExtensionData() ExtensionData {
 	}
 	extData := ExtensionData{
 		CoreIndex:  idx,
-		Location:   e.Files.Location,
+		Locations:  e.Files.Locations,
 		FieldsData: make(map[string]FieldData),
 		FieldsIdx:  make(map[int]FieldData),
 	}

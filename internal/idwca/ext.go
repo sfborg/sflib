@@ -12,15 +12,24 @@ import (
 	"github.com/sfborg/sflib/pkg/dwca"
 )
 
-func (a *idwca) ExtensionSlice(index, offset, limit int) ([][]string, error) {
+func (a *idwca) extByIdx(index int) (*dwca.Extension, error) {
 	if len(a.meta.Extensions) <= index {
 		return nil, &arch.ErrExtensionRead{
 			Err: fmt.Errorf("extension index is out of bounds: %d", index),
 		}
 	}
-	ext := a.meta.Extensions[index]
+	return a.meta.Extensions[index], nil
+}
 
-	cfg, err := getCsvConfigExt(a.rootDir, *ext)
+func (a *idwca) ExtensionSlice(index, offset, limit int) ([][]string, error) {
+	ext, err := a.extByIdx(index)
+	if err != nil {
+		return nil, err
+	}
+
+	path := filepath.Join(a.rootDir, ext.Files.Locations[0])
+
+	cfg, err := getCsvConfigExt(path, *ext)
 	if err != nil {
 		return nil, err
 	}
@@ -45,24 +54,28 @@ func (a *idwca) ExtensionStream(
 	}
 	ext := a.meta.Extensions[index]
 
-	cfg, err := getCsvConfigExt(a.rootDir, *ext)
-	if err != nil {
-		return 0, err
-	}
-	cfg.BadRowMode = a.cfg.BadRow
-	csv := gncsv.New(cfg)
-	rowsNum, err := csv.Read(ctx, extCh)
-	if err != nil {
-		return 0, err
+	var rowsNum int
+	for _, v := range ext.Files.Locations {
+		path := filepath.Join(a.rootDir, v)
+		cfg, err := getCsvConfigExt(path, *ext)
+		if err != nil {
+			return 0, err
+		}
+		cfg.BadRowMode = a.cfg.BadRow
+		csv := gncsv.New(cfg)
+		num, err := csv.Read(ctx, extCh)
+		if err != nil {
+			return 0, err
+		}
+		rowsNum += num
 	}
 	return rowsNum, nil
 }
 
 func getCsvConfigExt(
-	rootDir string,
+	path string,
 	ext dwca.Extension,
 ) (config.Config, error) {
-	path := filepath.Join(rootDir, ext.Files.Location)
 	var colSep rune
 	switch ext.FieldsTerminatedBy {
 	case ",":

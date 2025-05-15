@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.4.0] - 2025-05-15 Thu
+
+Add: missing data to SFGA names using parser.
+
 ## [v0.3.9] - 2025-05-13 Tue
 
 Add: ability to harvest extensions with multiple files.

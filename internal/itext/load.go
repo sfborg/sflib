@@ -8,8 +8,8 @@ import (
 
 	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnparser"
-	"github.com/sfborg/sflib/internal/parser"
 	"github.com/sfborg/sflib/pkg/coldp"
+	"github.com/sfborg/sflib/pkg/parser"
 	"golang.org/x/sync/errgroup"
 )
 

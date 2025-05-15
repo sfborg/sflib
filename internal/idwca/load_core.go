@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/gnames/gnlib/ent/nomcode"
@@ -13,6 +12,7 @@ import (
 	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/dwca"
 	"github.com/sfborg/sflib/pkg/dwca/diagn"
+	"github.com/sfborg/sflib/pkg/parser"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -164,24 +164,12 @@ func (a *idwca) processCoreRow(
 		ref = &coldp.Reference{ID: nu.ReferenceID, Citation: citation}
 	}
 
-	code := a.getParserCode(nu.Code)
+	code := parser.ParserCode(a.cfg.Code, nu.Code)
 	p := a.parserPool[code].Get().(gnparser.GNparser)
 	nu.Amend(p)
 	a.parserPool[code].Put(p)
 
 	return nu, ref
-}
-
-func (a *idwca) getParserCode(code nomcode.Code) nomcode.Code {
-	res := nomcode.Unknown
-	botCodes := []nomcode.Code{nomcode.Botanical, nomcode.Cultivars}
-	if slices.Contains(botCodes, a.cfg.Code) {
-		res = nomcode.Botanical
-	}
-	if slices.Contains(botCodes, code) {
-		res = nomcode.Botanical
-	}
-	return res
 }
 
 func (a *idwca) setNameString(nu *coldp.NameUsage) {

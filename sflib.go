@@ -85,9 +85,9 @@ type sfgaArc struct {
 //
 //	textArchive := sflib.NewText()
 //	// ... use textArchive to manage the archive ...
-func NewText() text.Archive {
+func NewText(opts ...config.Option) text.Archive {
 	res := textArc{
-		Archive: itext.New(),
+		Archive: itext.New(opts...),
 	}
 	return &res
 }
@@ -99,9 +99,9 @@ func NewText() text.Archive {
 //
 //	xsvArchive := sflib.NewXsv()
 //	// ... use xsvArchive to manage the archive ...
-func NewXsv() xsv.Archive {
+func NewXsv(opts ...config.Option) xsv.Archive {
 	res := xsvArc{
-		Archive: ixsv.New(),
+		Archive: ixsv.New(opts...),
 	}
 	return &res
 }

@@ -3,6 +3,7 @@ package isfga
 import (
 	"log/slog"
 
+	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/pkg/coldp"
 )
 
@@ -33,9 +34,11 @@ func (a *isfga) InsertVernaculars(data []coldp.Vernacular) error {
 	defer stmt.Close()
 
 	for _, d := range data {
+		name := gnlib.FixUtf8(d.Name)
+		area := gnlib.FixUtf8(d.Area)
 		_, err = stmt.Exec(
-			d.TaxonID, d.SourceID, d.Name, d.Transliteration, d.Language, d.Preferred,
-			d.Country, d.Area, d.Sex.ID(), d.ReferenceID, d.Remarks, d.Modified,
+			d.TaxonID, d.SourceID, name, d.Transliteration, d.Language, d.Preferred,
+			d.Country, area, d.Sex.ID(), d.ReferenceID, d.Remarks, d.Modified,
 			d.ModifiedBy,
 		)
 		if err != nil {

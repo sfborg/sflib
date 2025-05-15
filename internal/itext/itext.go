@@ -6,19 +6,22 @@ import (
 	"sync"
 
 	"github.com/gnames/gnlib/ent/nomcode"
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/text"
 )
 
 type itext struct {
+	cfg        config.Config
 	filePath   string
 	code       nomcode.Code
 	jobsNum    int
 	parserPool map[nomcode.Code]*sync.Pool
 }
 
-func New() text.Archive {
-	res := itext{}
+func New(opts ...config.Option) text.Archive {
+	cfg := config.New(opts...)
+	res := itext{cfg: cfg}
 	return &res
 }
 

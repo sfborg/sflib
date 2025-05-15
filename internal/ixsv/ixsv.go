@@ -7,11 +7,13 @@ import (
 
 	"github.com/gnames/gnfmt/gncsv"
 	"github.com/gnames/gnlib/ent/nomcode"
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/xsv"
 )
 
 type ixsv struct {
+	cfg        config.Config
 	filePath   string
 	reader     gncsv.Reader
 	headers    map[string]int
@@ -20,8 +22,9 @@ type ixsv struct {
 	parserPool map[nomcode.Code]*sync.Pool
 }
 
-func New() xsv.Archive {
-	res := ixsv{}
+func New(opts ...config.Option) xsv.Archive {
+	cfg := config.New(opts...)
+	res := ixsv{cfg: cfg}
 	return &res
 }
 

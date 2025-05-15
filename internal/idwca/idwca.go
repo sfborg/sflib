@@ -5,9 +5,9 @@ import (
 
 	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/sfborg/sflib/config"
-	"github.com/sfborg/sflib/internal/parser"
 	"github.com/sfborg/sflib/pkg/dwca"
 	"github.com/sfborg/sflib/pkg/dwca/diagn"
+	"github.com/sfborg/sflib/pkg/parser"
 )
 
 type idwca struct {

@@ -9,8 +9,8 @@ import (
 	"github.com/gnames/gnfmt/gncsv/config"
 	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnparser"
-	"github.com/sfborg/sflib/internal/parser"
 	"github.com/sfborg/sflib/pkg/coldp"
+	"github.com/sfborg/sflib/pkg/parser"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -77,7 +77,7 @@ func (a *ixsv) processRow(
 	chOut chan<- coldp.NameUsage,
 ) {
 	rowCode := nomcode.New(a.getVal(row, "code"))
-	code := a.getNomCode(rowCode)
+	code := parser.ParserCode(a.cfg.Code, rowCode)
 
 	p := a.parserPool[code].Get().(gnparser.GNparser)
 
@@ -93,19 +93,6 @@ func (a *ixsv) getVal(row []string, field string) string {
 		return strings.TrimSpace(res)
 	}
 	return ""
-}
-
-func (a *ixsv) getNomCode(rowCode nomcode.Code) nomcode.Code {
-	res := nomcode.Unknown
-	switch a.code {
-	case nomcode.Botanical, nomcode.Cultivars:
-		res = nomcode.Botanical
-	}
-	switch rowCode {
-	case nomcode.Botanical, nomcode.Cultivars:
-		res = nomcode.Botanical
-	}
-	return res
 }
 
 func (a *ixsv) getNameUsage(

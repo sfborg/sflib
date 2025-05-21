@@ -29,15 +29,19 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
     col__scrutinizer_id, col__scrutinizer_date, col__status_id,
     col__reference_id, col__extinct, col__temporal_range_start_id,
     col__temporal_range_end_id, col__environment_id, col__species,
-    col__section, col__subgenus, col__genus, col__subtribe, col__tribe,
-    col__subfamily, col__family, col__superfamily, col__suborder, col__order,
-    col__subclass, col__class, col__subphylum, col__phylum, col__kingdom,
-    col__link, col__remarks, col__modified, col__modified_by
+		sf__species_id, col__section, sf__section_id, col__subgenus,
+		sf__subgenus_id, col__genus, sf__genus_id, col__subtribe, sf__subtribe_id,
+		col__tribe, sf__tribe_id, col__subfamily, sf__subfamily_id, col__family,
+		sf__family_id, col__superfamily, sf__superfamily_id, col__suborder, 
+		sf__suborder_id, col__order, sf__order_id, col__subclass, sf__subclass_id,
+		col__class, sf__class_id, col__subphylum, sf__subphylum_id, col__phylum,
+		sf__phylum_id, col__kingdom, sf__kingdom_id, col__link, col__remarks,
+		col__modified, col__modified_by
     )
   VALUES (
-    ?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?, ?,?,?,?,?,
-    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?
-    )
+    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?,
+		?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?
+  )
 `)
 	if err != nil {
 		return err
@@ -64,8 +68,10 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		gn__canonical_simple, gn__canonical_full, gn__canonical_stemmed,
 		gn__cardinality, gn__virus, gn__hybrid, gn__surrogate, gn__authors,
 		gn__id)
-  VALUES (?,?,?,?, ?,?,?,?, ?,?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?, ?,?,?,
-    ?,?,?, ?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?,?) 
+  VALUES (
+		?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?,
+    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?
+	) 
 `)
 	if err != nil {
 		return err
@@ -79,7 +85,9 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
     col__according_to_id, col__status_id, col__reference_id, col__link,
     col__remarks, col__modified, col__modified_by
     )
-  VALUES (?,?,?,?,?, ?,?,?,?, ?,?,?)`)
+  VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?)
+`)
+
 	if err != nil {
 		return err
 	}
@@ -102,14 +110,17 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		switch d.TaxonomicStatus {
 		case coldp.AcceptedTS, coldp.ProvisionallyAcceptedTS:
 			_, err = tStmt.Exec(
-				d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal, d.BranchLength,
-				d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
+				d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal,
+				d.BranchLength, d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
 				d.AccordingToPageLink, d.Scrutinizer, d.ScrutinizerID,
 				d.ScrutinizerDate, d.TaxonomicStatus.ID(), d.ReferenceID, d.Extinct,
 				d.TemporalRangeStart.ID(), d.TemporalRangeEnd.ID(),
-				strings.Join(env, ","), d.Species, d.Section, d.Subgenus, d.Genus, d.Subtribe,
-				d.Tribe, d.Subfamily, d.Family, d.Superfamily, d.Suborder, d.Order,
-				d.Subclass, d.Class, d.Subphylum, d.Phylum, d.Kingdom,
+				strings.Join(env, ","), d.Species, d.SpeciesID, d.Section, d.SectionID,
+				d.Subgenus, d.SubgenusID, d.Genus, d.GenusID, d.Subtribe, d.SubtribeID,
+				d.Tribe, d.TribeID, d.Subfamily, d.SubfamilyID, d.Family, d.FamilyID,
+				d.Superfamily, d.SuperfamilyID, d.Suborder, d.SuborderID, d.Order,
+				d.OrderID, d.Subclass, d.SubclassID, d.Class, d.ClassID, d.Subphylum,
+				d.SubphylumID, d.Phylum, d.PhylumID, d.Kingdom, d.KingdomID,
 				d.Link, d.Remarks, d.Modified, d.ModifiedBy,
 			)
 			if err != nil {

@@ -29,15 +29,18 @@ func (a *isfga) InsertTaxa(data []coldp.Taxon) error {
     col__according_to_page_link, col__scrutinizer, col__scrutinizer_id,
     col__scrutinizer_date, col__status_id, col__reference_id, col__extinct,
     col__temporal_range_start_id, col__temporal_range_end_id,
-    col__environment_id, col__species, col__section, col__subgenus,
-    col__genus, col__subtribe, col__tribe, col__subfamily, col__family,
-    col__superfamily, col__suborder, col__order, col__subclass, col__class,
-    col__subphylum, col__phylum, col__kingdom, col__link, col__remarks,
-    col__modified, col__modified_by
+    col__environment_id, col__species, sf__species_id, col__section,
+		sf__section_id, col__subgenus, sf__subgenus_id, col__genus, sf__genus_id,
+		col__subtribe, sf__subtribe_id, col__tribe, sf__tribe_id, col__subfamily,
+		sf__subfamily_id, col__family, sf__family_id, col__superfamily,
+		sf__superfamily_id, col__suborder, sf__suborder_id, col__order,
+		sf__order_id, col__subclass, sf__subclass_id, col__class, sf__class_id,
+    col__subphylum, sf__subphylum_id, col__phylum, sf__phylum_id, col__kingdom,
+		sf__kingdom_id, col__link, col__remarks, col__modified, col__modified_by
     )
   VALUES (
-    ?,?,?,?,?,?, ?,?,?,?, ?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?,?,
-    ?,?,?,?,?,?, ?,?,?,?,?, ?,?,?,?
+    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?,
+    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?
     )
 `)
 	if err != nil {
@@ -59,9 +62,12 @@ func (a *isfga) InsertTaxa(data []coldp.Taxon) error {
 			t.AccordingToPageLink, t.Scrutinizer, t.ScrutinizerID,
 			t.ScrutinizerDate, status.ID(), t.ReferenceID, t.Extinct,
 			t.TemporalRangeStart.ID(), t.TemporalRangeEnd.ID(),
-			strings.Join(env, ","), t.Species, t.Section, t.Subgenus, t.Genus, t.Subtribe,
-			t.Tribe, t.Subfamily, t.Family, t.Superfamily, t.Suborder, t.Order,
-			t.Subclass, t.Class, t.Subphylum, t.Phylum, t.Kingdom,
+			strings.Join(env, ","), t.Species, t.SpeciesID, t.Section, t.SectionID,
+			t.Subgenus, t.SubgenusID, t.Genus, t.GenusID, t.Subtribe, t.SubtribeID,
+			t.Tribe, t.TribeID, t.Subfamily, t.SubfamilyID, t.Family, t.FamilyID,
+			t.Superfamily, t.SuperfamilyID, t.Suborder, t.SuborderID, t.Order,
+			t.OrderID, t.Subclass, t.SubclassID, t.Class, t.ClassID, t.Subphylum,
+			t.SubphylumID, t.Phylum, t.PhylumID, t.Kingdom, t.KingdomID,
 			t.Link, t.Remarks, t.Modified, t.ModifiedBy,
 		)
 		if err != nil {

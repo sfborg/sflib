@@ -75,21 +75,37 @@ type NameUsage struct {
 	TemporalRangeEnd          GeoTime         // t
 	Environment               []Environment   // t
 	Species                   string          // t
+	SpeciesID                 string          // sf
 	Section                   string          // t
+	SectionID                 string          // sf
 	Subgenus                  string          // t
+	SubgenusID                string          // sf
 	Genus                     string          // t
+	GenusID                   string          // sf
 	Subtribe                  string          // t
+	SubtribeID                string          // sf
 	Tribe                     string          // t
+	TribeID                   string          // sf
 	Subfamily                 string          // t
+	SubfamilyID               string          // sf
 	Family                    string          // t
+	FamilyID                  string          // sf
 	Superfamily               string          // t
+	SuperfamilyID             string          // sf
 	Suborder                  string          // t
+	SuborderID                string          // sf
 	Order                     string          // t
+	OrderID                   string          // sf
 	Subclass                  string          // t
+	SubclassID                string          // sf
 	Class                     string          // t
+	ClassID                   string          // sf
 	Subphylum                 string          // t
+	SubphylumID               string          // sf
 	Phylum                    string          // t
+	PhylumID                  string          // sf
 	Kingdom                   string          // t
+	KingdomID                 string          // sf
 	Ordinal                   sql.NullInt64   // t
 	BranchLength              sql.NullInt64   // t
 	Link                      string          // n, t
@@ -99,6 +115,8 @@ type NameUsage struct {
 	ModifiedBy                string          // n, t
 }
 
+// Headers is used for creating CoLDP file and they contain only fields
+// that correspond to ColDP format.
 func (n NameUsage) Headers() []string {
 	return []string{
 		"col:id",

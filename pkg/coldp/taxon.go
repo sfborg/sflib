@@ -87,50 +87,98 @@ type Taxon struct {
 	// Species is the species name within this taxon.
 	Species string
 
+	// SpeciesID is the ID of the taxon's species (SF namespace).
+	SpeciesID string
+
 	// Section is the section name within this taxon.
 	Section string
+
+	// SectionID is the ID of the taxon's section (SF namespace).
+	SectionID string
 
 	// Subgenus is the subgenus name within this taxon.
 	Subgenus string
 
+	// SubgenusID is the ID of the taxon's subgenus (SF namespace).
+	SubgenusID string
+
 	// Genus is the genus name within this taxon.
 	Genus string
+
+	// GenusID is the ID of the taxon's genus (SF namespace).
+	GenusID string
 
 	// Subtribe is the subtribe name within this taxon.
 	Subtribe string
 
+	// SubtribeID is the ID of the taxon's subtrive (SF namespace).
+	SubtribeID string
+
 	// Tribe is the tribe name within this taxon.
 	Tribe string
+
+	// TribeID is the ID of the taxon's tribe (SF namespace).
+	TribeID string
 
 	// Subfamily is the subfamily name within this taxon.
 	Subfamily string
 
+	// SubfamilyID is the ID of the taxon's subfamily (SF namespace).
+	SubfamilyID string
+
 	// Family is the family name within this taxon.
 	Family string
+
+	// FamilyID is the ID of the taxon's family (SF namespace).
+	FamilyID string
 
 	// Superfamily is the superfamily name within this taxon.
 	Superfamily string
 
+	// SuperfamilyID is the ID of the taxon's superfamily (SF namespace).
+	SuperfamilyID string
+
 	// Suborder is the suborder name within this taxon.
 	Suborder string
+
+	// SuborderID is the ID of the taxon's suborder (SF namespace).
+	SuborderID string
 
 	// Order is the order name within this taxon.
 	Order string
 
+	// OrderID is the ID of the taxon's order (SF namespace).
+	OrderID string
+
 	// Subclass is the subclass name within this taxon.
 	Subclass string
+
+	// SubclassID is the ID of the taxon's subclass (SF namespace).
+	SubclassID string
 
 	// Class is the class name within this taxon.
 	Class string
 
+	// ClassID is the ID of the taxon's class (SF namespace).
+	ClassID string
+
 	// Subphylum is the subphylum name within this taxon.
 	Subphylum string
+
+	// SubphylumID is the ID of the taxon's subphylum (SF namespace).
+	SubphylumID string
 
 	// Phylum is the phylum name within this taxon.
 	Phylum string
 
+	// PhylumID is the ID of the taxon's phylum (SF namespace).
+	PhylumID string
+
 	// Kingdom is the kingdom name within this taxon.
 	Kingdom string
+
+	// KingdomID is the id of the taxon's kindom (SF namespace).
+	KingdomID string
 
 	// Link is a link to more information about this taxon.
 	Link string

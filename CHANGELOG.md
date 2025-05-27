@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.4.1] - 2025-05-27 Tue
+
+Add: additional converters for nomenclatural status.
+Add: vernaculars to coldp.Data.
+
 ## [v0.4.0] - 2025-05-15 Thu
 
 Add: missing data to SFGA names using parser.

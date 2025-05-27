@@ -8,4 +8,5 @@ type Data struct {
 	NameUsages    []NameUsage
 	Distributions []Distribution
 	References    []Reference
+	Vernaculars   []Vernacular
 }

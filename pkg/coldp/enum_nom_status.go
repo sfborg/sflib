@@ -39,18 +39,20 @@ func NewNomStatus(s string) NomStatus {
 		return NotEstablished
 	case "nomenlegitimum", "potentiallyvalid", "acceptable":
 		return Acceptable
-	case "nomilleg", "nomenillegitimum", "objectivelyinvalid", "unacceptable":
+	case "nomilleg", "nomenillegitimum", "objectivelyinvalid", "unacceptable", "nudum":
 		return Unacceptable
 	case "nomcons", "nomenconservandum", "conservedname", "conserved":
 		return Conserved
 	case "nomrej", "nomenrejiciendum", "rejected":
 		return Rejected
-	case "nomdub", "nomendubium", "doubtful":
+	case "nomdub", "nomendubium", "doubtful", "dubium":
 		return Doubtful
-	case "manuscriptname", "manuscript":
+	case "manuscriptname", "manuscript", "provisorium":
 		return Manuscript
 	case "chresonym":
 		return Chresonym
+	case "alternativum":
+		return UnknownNomStatus
 	default:
 		slog.Warn("Cannot find nom. status", "input", sOrig)
 		return UnknownNomStatus

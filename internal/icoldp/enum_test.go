@@ -131,3 +131,87 @@ func TestEnvironment(t *testing.T) {
 		assert.Equal(v.out, res, v.msg)
 	}
 }
+
+// TestNewNomStatus tests the NewNomStatus function
+func TestNewNomStatus(t *testing.T) {
+	// Disable slog warnings during test
+	tests := []struct {
+		input    string
+		expected coldp.NomStatus
+	}{
+		// Empty string
+		{"", coldp.UnknownNomStatus},
+
+		// Established cases
+		{"nomen validum", coldp.Established},
+		{"NOMEN_VALIDUM", coldp.Established},
+		{"available", coldp.Established},
+		{"ESTABLISHED", coldp.Established},
+		{"Established", coldp.Established},
+
+		// NotEstablished cases
+		{"nom. inval.", coldp.NotEstablished},
+		{"nomen invalidum", coldp.NotEstablished},
+		{"unavailable", coldp.NotEstablished},
+		{"not established", coldp.NotEstablished},
+		{"NOT_ESTABLISHED", coldp.NotEstablished},
+
+		// Acceptable cases
+		{"nomen legitimum", coldp.Acceptable},
+		{"potentially valid", coldp.Acceptable},
+		{"ACCEPTABLE", coldp.Acceptable},
+		{"acceptable", coldp.Acceptable},
+
+		// Unacceptable cases
+		{"nom. illeg.", coldp.Unacceptable},
+		{"nomen illegitimum", coldp.Unacceptable},
+		{"objectively invalid", coldp.Unacceptable},
+		{"unacceptable", coldp.Unacceptable},
+		{"nudum", coldp.Unacceptable},
+
+		// Conserved cases
+		{"nom. cons.", coldp.Conserved},
+		{"nomen conservandum", coldp.Conserved},
+		{"conserved name", coldp.Conserved},
+		{"CONSERVED", coldp.Conserved},
+
+		// Rejected cases
+		{"nom. rej.", coldp.Rejected},
+		{"nomen rejiciendum", coldp.Rejected},
+		{"rejected", coldp.Rejected},
+
+		// Doubtful cases
+		{"nom. dub.", coldp.Doubtful},
+		{"nomen dubium", coldp.Doubtful},
+		{"doubtful", coldp.Doubtful},
+		{"dubium", coldp.Doubtful},
+
+		// Manuscript cases
+		{"manuscript name", coldp.Manuscript},
+		{"manuscript", coldp.Manuscript},
+		{"provisorium", coldp.Manuscript},
+
+		// Chresonym cases
+		{"chresonym", coldp.Chresonym},
+		{"CHRESONYM", coldp.Chresonym},
+
+		// URL cases
+		{"http://example.com/established", coldp.Established},
+		{"https://vocab.org/nomen_validum", coldp.Established},
+		{"http://terms.gbif.org/doubtful", coldp.Doubtful},
+
+		// Alternativum (maps to UnknownNomStatus)
+		{"alternativum", coldp.UnknownNomStatus},
+
+		// Unknown cases
+		{"unknown_status", coldp.UnknownNomStatus},
+		{"invalid_input", coldp.UnknownNomStatus},
+	}
+
+	for _, test := range tests {
+		result := coldp.NewNomStatus(test.input)
+		if result != test.expected {
+			t.Errorf("NewNomStatus(%q) = %v; expected %v", test.input, result, test.expected)
+		}
+	}
+}

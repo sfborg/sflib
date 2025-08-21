@@ -2,6 +2,7 @@ package coldp
 
 import (
 	"log/slog"
+	"path/filepath"
 	"strings"
 )
 
@@ -26,6 +27,9 @@ const (
 // It handles various synonyms and normalizations to ensure consistent matching.
 func NewNomStatus(s string) NomStatus {
 	sOrig := s
+	if strings.HasPrefix(s, "http") {
+		s = filepath.Base(s)
+	}
 	s = strings.ToLower(s)
 	s = strings.ReplaceAll(s, " ", "")
 	s = strings.ReplaceAll(s, ".", "")
@@ -33,25 +37,25 @@ func NewNomStatus(s string) NomStatus {
 	switch s {
 	case "":
 		return UnknownNomStatus
-	case "nomenvalidum", "available", "established":
+	case "nomenvalidum", "available", "established", "valid":
 		return Established
-	case "nominval", "nomeninvalidum", "unavailable", "notestablished":
+	case "nominval", "invalidum", "nomeninvalidum", "unavailable", "notestablished":
 		return NotEstablished
 	case "nomenlegitimum", "potentiallyvalid", "acceptable":
 		return Acceptable
-	case "nomilleg", "nomenillegitimum", "objectivelyinvalid", "unacceptable", "nudum":
+	case "nomilleg", "nomenillegitimum", "objectivelyinvalid", "unacceptable", "nudum", "nullum":
 		return Unacceptable
 	case "nomcons", "nomenconservandum", "conservedname", "conserved":
 		return Conserved
-	case "nomrej", "nomenrejiciendum", "rejected":
+	case "nomrej", "nomenrejiciendum", "rejected", "negatum":
 		return Rejected
-	case "nomdub", "nomendubium", "doubtful", "dubium":
+	case "nomdub", "nomendubium", "doubtful", "dubium", "dubimum":
 		return Doubtful
 	case "manuscriptname", "manuscript", "provisorium":
 		return Manuscript
 	case "chresonym":
 		return Chresonym
-	case "alternativum":
+	case "alternativum", "oblitum":
 		return UnknownNomStatus
 	default:
 		slog.Warn("Cannot find nom. status", "input", sOrig)

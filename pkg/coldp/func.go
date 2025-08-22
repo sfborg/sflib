@@ -207,10 +207,6 @@ func Read[T DataLoader](
 		}
 	}()
 
-	if err != nil {
-		return err
-	}
-
 	csv := gncsv.New(csvCfg)
 	_, err = csv.Read(context.Background(), chIn)
 	if err != nil {

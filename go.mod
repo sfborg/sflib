@@ -6,13 +6,13 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gnames/gnfmt v0.6.1
 	github.com/gnames/gnlib v0.49.0
-	github.com/gnames/gnparser v1.11.7
-	github.com/gnames/gnsys v0.3.8
+	github.com/gnames/gnparser v1.11.8
+	github.com/gnames/gnsys v0.3.9
 	github.com/gnames/gnuuid v0.2.0
-	github.com/goccy/go-yaml v1.17.1
+	github.com/goccy/go-yaml v1.18.0
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/sync v0.14.0
-	modernc.org/sqlite v1.37.0
+	golang.org/x/sync v0.16.0
+	modernc.org/sqlite v1.38.2
 )
 
 require (
@@ -33,13 +33,13 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/ulikunitz/xz v0.5.12 // indirect
-	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
-	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
+	github.com/ulikunitz/xz v0.5.13 // indirect
+	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/libc v1.65.6 // indirect
+	modernc.org/libc v1.66.7 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
-	modernc.org/memory v1.10.0 // indirect
+	modernc.org/memory v1.11.0 // indirect
 )

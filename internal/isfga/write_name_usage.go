@@ -129,14 +129,17 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		case coldp.UnknownTaxSt:
 			if d.ParentID != "" {
 				_, err = tStmt.Exec(
-					d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal, d.BranchLength,
-					d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
+					d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal, 
+					d.BranchLength, d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
 					d.AccordingToPageLink, d.Scrutinizer, d.ScrutinizerID,
 					d.ScrutinizerDate, d.TaxonomicStatus.ID(), d.ReferenceID, d.Extinct,
 					d.TemporalRangeStart.ID(), d.TemporalRangeEnd.ID(),
-					strings.Join(env, ","), d.Species, d.Section, d.Subgenus, d.Genus, d.Subtribe,
-					d.Tribe, d.Subfamily, d.Family, d.Superfamily, d.Suborder, d.Order,
-					d.Subclass, d.Class, d.Subphylum, d.Phylum, d.Kingdom,
+					strings.Join(env, ","), d.Species, d.SpeciesID, d.Section, d.SectionID,
+					d.Subgenus, d.SubgenusID, d.Genus, d.GenusID, d.Subtribe, d.SubtribeID,
+					d.Tribe, d.TribeID, d.Subfamily, d.SubfamilyID, d.Family, d.FamilyID,
+					d.Superfamily, d.SuperfamilyID, d.Suborder, d.SuborderID, d.Order,
+					d.OrderID, d.Subclass, d.SubclassID, d.Class, d.ClassID, d.Subphylum,
+					d.SubphylumID, d.Phylum, d.PhylumID, d.Kingdom, d.KingdomID,
 					d.Link, d.Remarks, d.Modified, d.ModifiedBy,
 				)
 				if err != nil {

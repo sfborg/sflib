@@ -35,19 +35,18 @@ func NewNomStatus(s string) NomStatus {
 	s = strings.ReplaceAll(s, ".", "")
 	s = strings.ReplaceAll(s, "_", "")
 	switch s {
-	case "":
-		return UnknownNomStatus
-	case "nomenvalidum", "available", "established", "valid":
+	case "", "nomenvalidum", "available", "established", "valid":
 		return Established
 	case "nominval", "invalidum", "nomeninvalidum", "unavailable", "notestablished":
 		return NotEstablished
 	case "nomenlegitimum", "potentiallyvalid", "acceptable":
 		return Acceptable
-	case "nomilleg", "nomenillegitimum", "objectivelyinvalid", "unacceptable", "nudum", "nullum":
+	case "nomilleg", "nomenillegitimum", "nomeilegítimo", "nomeilegitimo",
+		"objectivelyinvalid", "unacceptable", "nudum", "nullum":
 		return Unacceptable
-	case "nomcons", "nomenconservandum", "conservedname", "conserved":
+	case "nomcons", "nomenconservandum", "conservedname", "conserved", "nomecorretoviaconservacao":
 		return Conserved
-	case "nomrej", "nomenrejiciendum", "rejected", "negatum":
+	case "nomrej", "nomenrejiciendum", "nomerejeitado", "rejected", "negatum":
 		return Rejected
 	case "nomdub", "nomendubium", "doubtful", "dubium", "dubimum":
 		return Doubtful
@@ -55,7 +54,7 @@ func NewNomStatus(s string) NomStatus {
 		return Manuscript
 	case "chresonym":
 		return Chresonym
-	case "alternativum", "oblitum":
+	case "alternativum", "oblitum", "nomecorreto", "nomenaovalidamentepublicado", "nomenaoefetivamentepublicado", "nomelegítimomasincorreto", "nomelegitimomasincorreto", "nomemalaplicado", "varianteortográfica", "varianteortografica", "nomeaplicacaoincerta":
 		return UnknownNomStatus
 	default:
 		slog.Warn("Cannot find nom. status", "input", sOrig)

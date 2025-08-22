@@ -134,13 +134,15 @@ func TestEnvironment(t *testing.T) {
 
 // TestNewNomStatus tests the NewNomStatus function
 func TestNewNomStatus(t *testing.T) {
+	assert := assert.New(t)
+
 	// Disable slog warnings during test
 	tests := []struct {
 		input    string
 		expected coldp.NomStatus
 	}{
 		// Empty string
-		{"", coldp.UnknownNomStatus},
+		{"", coldp.Established},
 
 		// Established cases
 		{"nomen validum", coldp.Established},
@@ -165,6 +167,7 @@ func TestNewNomStatus(t *testing.T) {
 		// Unacceptable cases
 		{"nom. illeg.", coldp.Unacceptable},
 		{"nomen illegitimum", coldp.Unacceptable},
+		{"NOME_ILEGITIMO", coldp.Unacceptable},
 		{"objectively invalid", coldp.Unacceptable},
 		{"unacceptable", coldp.Unacceptable},
 		{"nudum", coldp.Unacceptable},
@@ -174,9 +177,11 @@ func TestNewNomStatus(t *testing.T) {
 		{"nomen conservandum", coldp.Conserved},
 		{"conserved name", coldp.Conserved},
 		{"CONSERVED", coldp.Conserved},
+		{"NOME_CORRETO_VIA_CONSERVACAO", coldp.Conserved},
 
 		// Rejected cases
 		{"nom. rej.", coldp.Rejected},
+		{"NOME_REJEITADO", coldp.Rejected},
 		{"nomen rejiciendum", coldp.Rejected},
 		{"rejected", coldp.Rejected},
 
@@ -204,14 +209,20 @@ func TestNewNomStatus(t *testing.T) {
 		{"alternativum", coldp.UnknownNomStatus},
 
 		// Unknown cases
+		{"NOME_APLICACAO_INCERTA", coldp.UnknownNomStatus},
+		{"NOME_NAO_EFETIVAMENTE_PUBLICADO", coldp.UnknownNomStatus},
+		{"NOME_NAO_VALIDAMENTE_PUBLICADO", coldp.UnknownNomStatus},
+		{"VARIANTE_ORTOGRAFICA", coldp.UnknownNomStatus},
+		{"NOME_LEGITIMO_MAS_INCORRETO", coldp.UnknownNomStatus},
+		{"NOME_MAL_APLICADO", coldp.UnknownNomStatus},
+		{"VARIANTE_ORTOGRAFICA", coldp.UnknownNomStatus},
+		{"NOME_CORRETO", coldp.UnknownNomStatus},
 		{"unknown_status", coldp.UnknownNomStatus},
 		{"invalid_input", coldp.UnknownNomStatus},
 	}
 
 	for _, test := range tests {
 		result := coldp.NewNomStatus(test.input)
-		if result != test.expected {
-			t.Errorf("NewNomStatus(%q) = %v; expected %v", test.input, result, test.expected)
-		}
+		assert.Equal(test.expected, result, test.input)
 	}
 }

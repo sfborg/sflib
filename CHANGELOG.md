@@ -5,6 +5,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.4.6] - 2025-08-27 Wed
+
+- Add: IDs for flat classification files.
+- Add: Portugeese nomenclatural statuses.
+- Add: update modules.
+- Fix [#16]: process synonyms correctly if in DwCA input there are
+  acceptedNameUsageID and taxonomicStatus fields together.
+- Fix: remove unused error handlings.
+
+## [v0.4.5] - 2025-08-21 Thu
+
+- Add: back `with quotes` option for tsv/pipe files.
+
+## [v0.4.4] - 2025-08-21 Thu
+
+Add: improve nomenclatural status.
+
 ## [v0.4.3] - 2025-05-27 Tue
 
 Add: additional converters for nomenclatural status.

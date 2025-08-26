@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/sfborg/sflib/pkg/arch"
+	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/dwca"
 	"github.com/stretchr/testify/assert"
 )
@@ -104,5 +105,123 @@ func TestBadEML(t *testing.T) {
 		}
 
 		assert.Nil(m, v.msg)
+	}
+}
+
+func TestAddTaxonomicStatus(t *testing.T) {
+	assert := assert.New(t)
+
+	tests := []struct {
+		msg      string
+		nu       coldp.NameUsage
+		row      []string
+		fieldMap map[string]int
+		expected coldp.NameUsage
+	}{
+		{
+			msg: "no status or accepted fields",
+			nu:  coldp.NameUsage{ID: "1"},
+			row: []string{"1", "test"},
+			fieldMap: map[string]int{
+				"id": 0,
+			},
+			expected: coldp.NameUsage{
+				ID:              "1",
+				TaxonomicStatus: coldp.UnknownTaxSt,
+			},
+		},
+		{
+			msg: "explicit accepted status",
+			nu:  coldp.NameUsage{ID: "1"},
+			row: []string{"1", "accepted"},
+			fieldMap: map[string]int{
+				"id":              0,
+				"taxonomicstatus": 1,
+			},
+			expected: coldp.NameUsage{
+				ID:              "1",
+				TaxonomicStatus: coldp.AcceptedTS,
+			},
+		},
+		{
+			msg: "explicit synonym status",
+			nu:  coldp.NameUsage{ID: "1"},
+			row: []string{"1", "synonym"},
+			fieldMap: map[string]int{
+				"id":              0,
+				"taxonomicstatus": 1,
+			},
+			expected: coldp.NameUsage{
+				ID:              "1",
+				TaxonomicStatus: coldp.SynonymTS,
+			},
+		},
+		{
+			msg: "accepted name usage ID different from ID",
+			nu:  coldp.NameUsage{ID: "1"},
+			row: []string{"1", "", "2"},
+			fieldMap: map[string]int{
+				"id":                  0,
+				"taxonomicstatus":     1,
+				"acceptednameusageid": 2,
+			},
+			expected: coldp.NameUsage{
+				ID:              "1",
+				ParentID:        "2",
+				TaxonomicStatus: coldp.SynonymTS,
+			},
+		},
+		{
+			msg: "accepted name usage ID same as ID",
+			nu:  coldp.NameUsage{ID: "1"},
+			row: []string{"1", "", "1"},
+			fieldMap: map[string]int{
+				"id":                  0,
+				"taxonomicstatus":     1,
+				"acceptednameusageid": 2,
+			},
+			expected: coldp.NameUsage{
+				ID:              "1",
+				TaxonomicStatus: coldp.AcceptedTS,
+			},
+		},
+		{
+			msg: "synonym with explicit status and accepted ID",
+			nu:  coldp.NameUsage{ID: "1"},
+			row: []string{"1", "synonym", "2"},
+			fieldMap: map[string]int{
+				"id":                  0,
+				"taxonomicstatus":     1,
+				"acceptednameusageid": 2,
+			},
+			expected: coldp.NameUsage{
+				ID:              "1",
+				ParentID:        "2",
+				TaxonomicStatus: coldp.SynonymTS,
+			},
+		},
+		{
+			msg: "only accepted field present with different ID",
+			nu:  coldp.NameUsage{ID: "1"},
+			row: []string{"1", "2"},
+			fieldMap: map[string]int{
+				"id":                  0,
+				"acceptednameusageid": 1,
+			},
+			expected: coldp.NameUsage{
+				ID:              "1",
+				ParentID:        "2",
+				TaxonomicStatus: coldp.SynonymTS,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.msg, func(t *testing.T) {
+			result := addTaxonomicStatus(tt.nu, tt.row, tt.fieldMap)
+			assert.Equal(tt.expected.ID, result.ID)
+			assert.Equal(tt.expected.ParentID, result.ParentID)
+			assert.Equal(tt.expected.TaxonomicStatus, result.TaxonomicStatus)
+		})
 	}
 }

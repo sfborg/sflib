@@ -1,10 +1,8 @@
 package idwca
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 
@@ -12,6 +10,8 @@ import (
 	dwca "github.com/sfborg/sflib/pkg/dwca"
 )
 
+// getMeta reads metadata file and returns dwca.Meta struct. In case if
+// something went wrong, it returns an error.
 func getMeta(metaPath string) (*dwca.Meta, error) {
 	r, err := os.Open(metaPath)
 	if err != nil {
@@ -19,57 +19,51 @@ func getMeta(metaPath string) (*dwca.Meta, error) {
 	}
 	defer r.Close()
 
-	bs, err := io.ReadAll(r)
-	if err != nil {
-		return nil, &arch.ErrMetaReader{Err: err}
-	}
-
 	var res dwca.Meta
-	decoder := xml.NewDecoder(bytes.NewReader(bs))
+	// Decode XML directly from the file reader to avoid reading the entire file into memory first.
+	decoder := xml.NewDecoder(r)
 	err = decoder.Decode(&res)
 	if err != nil {
 		return nil, &arch.ErrMetaDecoder{Err: err}
 	}
 
-	if res.Core.ID.Index == "" {
-		res.Core.ID.Idx = -1
-	} else {
-		res.Core.ID.Idx, err = strconv.Atoi(res.Core.ID.Index)
+	// Helper function to parse string indices into integers.
+	// It handles empty strings by returning -1 and wraps strconv.Atoi errors with more context.
+	parseIntIdx := func(indexStr string, fieldName string) (int, error) {
+		if indexStr == "" {
+			return -1, nil
+		}
+		val, err := strconv.Atoi(indexStr)
 		if err != nil {
-			return nil, fmt.Errorf("cannot convert meta core id: %w", err)
+			return 0, fmt.Errorf("cannot convert %s index '%s': %w", fieldName, indexStr, err)
+		}
+		return val, nil
+	}
+
+	// Parse Core ID index
+	res.Core.ID.Idx, err = parseIntIdx(res.Core.ID.Index, "meta core ID")
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse Core Fields indices
+	for i := range res.Core.Fields {
+		res.Core.Fields[i].Idx, err = parseIntIdx(res.Core.Fields[i].Index, "meta core field")
+		if err != nil {
+			return nil, err
 		}
 	}
 
-	fs := res.Core.Fields
-	for i := range fs {
-		if fs[i].Index == "" {
-			fs[i].Idx = -1
-			continue
-		}
-		fs[i].Idx, err = strconv.Atoi(fs[i].Index)
-		if err != nil {
-			return nil, fmt.Errorf("cannot covert meta core field: %w", err)
-		}
-	}
-
+	// Parse Extension CoreID and Fields indices
 	for i := range res.Extensions {
-		if res.Extensions[i].CoreID.Index == "" {
-			res.Extensions[i].CoreID.Idx = -1
-			continue
-		}
-		res.Extensions[i].CoreID.Idx, err = strconv.Atoi(res.Extensions[i].CoreID.Index)
+		res.Extensions[i].CoreID.Idx, err = parseIntIdx(res.Extensions[i].CoreID.Index, "meta ext ID")
 		if err != nil {
-			return nil, fmt.Errorf("cannot convert meta ext id: %w", err)
+			return nil, err
 		}
-		fs := res.Extensions[i].Fields
-		for j := range fs {
-			if fs[j].Index == "" {
-				fs[j].Idx = -1
-				continue
-			}
-			fs[j].Idx, err = strconv.Atoi(fs[j].Index)
+		for j := range res.Extensions[i].Fields {
+			res.Extensions[i].Fields[j].Idx, err = parseIntIdx(res.Extensions[i].Fields[j].Index, "meta ext field")
 			if err != nil {
-				return nil, fmt.Errorf("cannot convert meta ext field: %w", err)
+				return nil, err
 			}
 		}
 	}

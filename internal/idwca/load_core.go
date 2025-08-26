@@ -202,19 +202,20 @@ func addTaxonomicStatus(
 	// use provided addTaxonomicStatus if possible
 	ts := fieldVal(row, fieldMap, "taxonomicstatus")
 	nu.TaxonomicStatus = coldp.NewTaxonomicStatus(ts)
-	if nu.TaxonomicStatus != coldp.UnknownTaxSt {
-		return nu
-	}
 
 	acceptedNameUsageID := fieldVal(row, fieldMap, "acceptednameusageid")
 	if acceptedNameUsageID != "" && nu.ID != acceptedNameUsageID {
 		// for NameUsage's synonyms accepted ID goes to parent, and
 		// synonymy is expressed by taxonomic status
 		nu.ParentID = acceptedNameUsageID
-		nu.TaxonomicStatus = coldp.SynonymTS
+		if nu.TaxonomicStatus == coldp.UnknownTaxSt {
+			nu.TaxonomicStatus = coldp.SynonymTS
+		}
 		return nu
 	}
 
-	nu.TaxonomicStatus = coldp.AcceptedTS
+	if nu.TaxonomicStatus == coldp.UnknownTaxSt {
+		nu.TaxonomicStatus = coldp.AcceptedTS
+	}
 	return nu
 }

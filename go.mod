@@ -4,8 +4,8 @@ go 1.24.6
 
 require (
 	github.com/dustin/go-humanize v1.0.1
-	github.com/gnames/gnfmt v0.6.1
-	github.com/gnames/gnlib v0.49.0
+	github.com/gnames/gnfmt v0.6.2
+	github.com/gnames/gnlib v0.50.0
 	github.com/gnames/gnparser v1.11.8
 	github.com/gnames/gnsys v0.3.9
 	github.com/gnames/gnuuid v0.2.0
@@ -33,7 +33,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/ulikunitz/xz v0.5.13 // indirect
+	github.com/ulikunitz/xz v0.5.14 // indirect
 	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect

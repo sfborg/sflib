@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/gnames/gnlib"
+	"github.com/gnames/gnfmt/gnlang"
 	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/dwca"
 	"golang.org/x/sync/errgroup"
@@ -91,10 +91,14 @@ func (a *idwca) processVernRow(
 	}
 
 	lang := fieldVal(row, fieldsMap, "language")
-	if len(lang) != 3 {
-		res.Language = gnlib.LangCode(lang)
-	} else {
+	switch len(lang) {
+	case 2:
+		res.Language, _ = gnlang.LangCode2To3Letters(lang)
+	case 3:
 		res.Language = lang
+	default:
+		// convert language to 3 letter code
+		res.Language = gnlang.LangCode(lang)
 	}
 	res.Area = fieldVal(row, fieldsMap, "locality")
 	res.Country = fieldVal(row, fieldsMap, "countrycode")

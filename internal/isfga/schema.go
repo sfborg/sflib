@@ -15,7 +15,8 @@ import (
 )
 
 type schema struct {
-	repo config.GitRepo
+	repo            config.GitRepo
+	localSchemaPath string
 }
 
 func NewSchema(repo config.GitRepo) sfga.Schema {
@@ -23,7 +24,23 @@ func NewSchema(repo config.GitRepo) sfga.Schema {
 	return &res
 }
 
+func NewSchemaWithLocalPath(repo config.GitRepo, localPath string) sfga.Schema {
+	res := schema{repo: repo, localSchemaPath: localPath}
+	return &res
+}
+
 func (s *schema) Fetch() ([]byte, error) {
+	// If local schema path is provided, use it directly
+	if s.localSchemaPath != "" {
+		res, err := os.ReadFile(s.localSchemaPath)
+		if err != nil {
+			err = fmt.Errorf("cannot read local schema %s: %w", s.localSchemaPath, err)
+			return nil, err
+		}
+		return res, nil
+	}
+
+	// Otherwise fetch from git repo
 	tempDir, err := os.MkdirTemp("", "git-schema-")
 	if err != nil {
 		return nil, err

@@ -33,6 +33,10 @@ type Config struct {
 	// GitRepo is used for initialization of SFGA archive.
 	GitRepo
 
+	// LocalSchemaPath is an optional path to a local schema.sql file.
+	// If set, it will be used instead of fetching from GitRepo.
+	LocalSchemaPath string
+
 	Code nomcode.Code
 
 	// BadRow sets how to process rows with wrong number of fields in CSV
@@ -81,6 +85,12 @@ func OptJobsNum(i int) Option {
 func OptCode(code nomcode.Code) Option {
 	return func(c *Config) {
 		c.Code = code
+	}
+}
+
+func OptLocalSchemaPath(path string) Option {
+	return func(c *Config) {
+		c.LocalSchemaPath = path
 	}
 }
 

@@ -16,6 +16,11 @@ type NameRelation struct {
 	// Basyonym, Homotypic).
 	Type NomRelType
 
+	// TwNameRelationshipType (TW) is the original relationship type from TaxonWorks.
+	// This preserves the full NOMEN ontology type for lossless round-tripping.
+	// It is not part of CoLDP standard.
+	TwNameRelationshipType string
+
 	// ReferenceID is the identifier of the reference that describes this
 	// relationship.
 	ReferenceID string

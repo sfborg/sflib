@@ -24,6 +24,27 @@ type Archive interface {
 	Reader
 	Writer
 	Updater
+	Enricher
+}
+
+// BasionymInferenceConfig controls the basionym inference behavior.
+type BasionymInferenceConfig struct {
+	// SkipIfRelationsExist skips inference if BASIONYM relations already exist
+	SkipIfRelationsExist bool
+
+	// CreateOriginalCombinations creates OriginalGenus, OriginalSpecies, etc.
+	// relationships in addition to BASIONYM
+	CreateOriginalCombinations bool
+}
+
+// Enricher provides methods for enriching SFGA data through inference.
+type Enricher interface {
+	// InferBasionyms detects and creates basionym relationships by matching
+	// stemmed epithets and original authorship across all names in the archive.
+	// This is useful for archives that don't have explicit basionym relationships.
+	// The config controls whether to skip if relations exist and whether to
+	// create OriginalCombination relationships.
+	InferBasionyms(ctx context.Context, cfg BasionymInferenceConfig) error
 }
 
 // Updater provides methods for upgrading SFGA data from old schemas to

@@ -15,6 +15,7 @@ func (a *isfga) LoadNameRelationships(
 	q := `
 SELECT
 	col__name_id, col__related_name_id, col__source_id, col__type_id,
+	tw__name_relationship_type,
 	col__reference_id, col__remarks, col__modified, col__modified_by
 FROM name_relation
 `
@@ -31,8 +32,9 @@ FROM name_relation
 
 		var typ string
 		err = rows.Scan(
-			&nr.NameID, &nr.RelatedNameID, &nr.SourceID, &typ, &nr.ReferenceID,
-			&nr.Remarks, &nr.Modified, &nr.ModifiedBy,
+			&nr.NameID, &nr.RelatedNameID, &nr.SourceID, &typ,
+			&nr.TwNameRelationshipType,
+			&nr.ReferenceID, &nr.Remarks, &nr.Modified, &nr.ModifiedBy,
 		)
 		if err != nil {
 			return fmt.Errorf("cannot scan name relationship row: %w", err)

@@ -119,7 +119,7 @@ func TestDownload(t *testing.T) {
 	defer os.RemoveAll(dir)
 
 	var a sfga.Archive
-	sf := "http://opendata.globalnames.org/sfga/147-vascan-2025-01-31.sql.zip"
+	sf := "http://opendata.globalnames.org/sfga/archive/147-vascan-2025-01-31.sql.zip"
 	a = isfga.New()
 	assert.Nil(err)
 	err = a.Fetch(sf, dir)

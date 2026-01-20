@@ -1,70 +1,43 @@
 package parser
 
 import (
-	"slices"
-	"sync"
-
 	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnparser"
 )
 
-// ParserCode determines the nomenclatural code for parsing based on the
-// provided code from configuration and the code associated with a specific row.
-// The purpose of the code is to parse subgenus either like authorship of genus
-// (Botanical and Cultivar code), or as an infragenus (all other codes).
-// The local code of the row is more important than the code in the
-// configuration, however unknown row code does not influence  anything                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    jj.
+// ParserCode determines the nomenclatural code to use for parsing.
+// The code of a row has precedence over globally defined code.
 func ParserCode(code, rowCode nomcode.Code) nomcode.Code {
-	res := nomcode.Unknown
-	botCodes := []nomcode.Code{nomcode.Botanical, nomcode.Cultivars}
-	if slices.Contains(botCodes, code) {
-		res = nomcode.Botanical
+	if rowCode == nomcode.Unknown {
+		return code
 	}
-	if slices.Contains(botCodes, rowCode) {
-		res = nomcode.Botanical
-	} else if rowCode != nomcode.Unknown {
-		res = nomcode.Unknown
-	}
-	return res
+	return rowCode
 }
 
-// Pool creates a pool of gnparser instances for different nomenclatural codes.
-// The size of the pool is determined by the number of jobs.
-func Pool(jobsNum int) map[nomcode.Code]*sync.Pool {
-	res := make(map[nomcode.Code]*sync.Pool)
+// Pool creates a map with nomenclatural codes as keys, and pools of
+// GNparser with the corresponding to the pool settings. The following
+// nomenclatural codes are used currently: Unknosn, Zoological,
+// Botanical, Cultivars, Bacterial, Virus. Each pool's capacity is
+// equal to jobsNum.
+func Pool(jobsNum int) map[nomcode.Code]chan gnparser.GNparser {
+	res := make(map[nomcode.Code]chan gnparser.GNparser)
+	codes := []nomcode.Code{
+		nomcode.Unknown,
+		nomcode.Zoological,
+		nomcode.Botanical,
+		nomcode.Cultivars,
+		nomcode.Bacterial,
+		nomcode.Virus,
+	}
 
 	opts := []gnparser.Option{
 		gnparser.OptWithDetails(true),
 	}
 
-	res[nomcode.Unknown] = &sync.Pool{
-		// New is used when pool is empty to generate new parser.
-		New: func() any {
-			return newParser(opts...)
-		},
+	for _, code := range codes {
+		codeOpts := append(opts, gnparser.OptCode(code))
+		cfg := gnparser.NewConfig(codeOpts...)
+		res[code] = gnparser.NewPool(cfg, jobsNum)
 	}
-
-	for range jobsNum {
-		res[nomcode.Unknown].Put(newParser(opts...))
-	}
-
-	optsBot := append(opts, gnparser.OptCode(nomcode.Cultivars))
-	res[nomcode.Botanical] = &sync.Pool{
-		New: func() any {
-			return newParser(optsBot...)
-		},
-	}
-
-	for range jobsNum {
-		res[nomcode.Botanical].Put(newParser(optsBot...))
-	}
-
 	return res
-}
-
-// newParser creates a new instance of gnparser with the given options.
-func newParser(opts ...gnparser.Option) gnparser.GNparser {
-	cfg := gnparser.NewConfig(opts...)
-	parser := gnparser.New(cfg)
-	return parser
 }

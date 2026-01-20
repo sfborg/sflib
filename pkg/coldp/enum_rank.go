@@ -13,6 +13,16 @@ func (r Rank) ID() string {
 	return ""
 }
 
+func (r Rank) IsIfraspecific() bool {
+	switch r {
+	case Subspecies, Variety, Subvariety, Form, Subform,
+		FormaSpecialis, Aberration, Morph, Natio, Proles:
+		return true
+	default:
+		return false
+	}
+}
+
 // String returns the string representation of the rank.
 func (r Rank) String() string {
 	return ToStr(r.ID())
@@ -240,14 +250,28 @@ var abbrToRank = map[string]Rank{
 	"MUT":        Mutatio,
 }
 
-// rankToAbbr maps Rank values to their corresponding abbreviations.
-var rankToAbbr = func() map[Rank]string {
-	res := make(map[Rank]string)
-	for k, v := range abbrToRank {
-		res[v] = k
+func (r Rank) AbbrString() string {
+	switch r {
+	case Subspecies:
+		return "subsp."
+	case Variety:
+		return "var."
+	case Form:
+		return "f."
+	case Subform:
+		return "subf."
+	case FormaSpecialis:
+		return "f.sp."
+	case Aberration:
+		return "ab."
+	case Proles:
+		return "pr."
+	case Natio:
+		return "nat."
+	default:
+		return r.String()
 	}
-	return res
-}()
+}
 
 // rankToString maps Rank values to their full string names.
 var rankToString = map[Rank]string{
@@ -366,3 +390,125 @@ var stringToRank = func() map[string]Rank {
 	}
 	return res
 }()
+
+// RankByOrder returns a slice of Ranks sorted by their order from higher
+// to lower taxon.
+func RankByOrder() []Rank {
+	res := []Rank{
+		Superdomain,
+		Domain,
+		Subdomain,
+		Infradomain,
+		Empire,
+		Realm,
+		Subrealm,
+		Superkingdom,
+		Kingdom,
+		Subkingdom,
+		Infrakingdom,
+		Superphylum,
+		Phylum,
+		Subphylum,
+		Infraphylum,
+		Parvphylum,
+		Microphylum,
+		Nanophylum,
+		Claudius,
+		Gigaclass,
+		Megaclass,
+		Superclass,
+		Class,
+		Subclass,
+		Infraclass,
+		Subterclass,
+		Parvclass,
+		Superdivision,
+		Division,
+		Subdivision,
+		Infradivision,
+		Superlegion,
+		Legion,
+		Sublegion,
+		Infralegion,
+		Megacohort,
+		Supercohort,
+		Cohort,
+		Subcohort,
+		Infracohort,
+		Gigaorder,
+		Magnorder,
+		Grandorder,
+		Mirorder,
+		Superorder,
+		Order,
+		Nanorder,
+		Hypoorder,
+		Minorder,
+		Suborder,
+		Infraorder,
+		Parvorder,
+		SupersectionZoology,
+		SectionZoology,
+		SubsectionZoology,
+		Falanx,
+		Gigafamily,
+		Megafamily,
+		Grandfamily,
+		Superfamily,
+		Epifamily,
+		Family,
+		Subfamily,
+		Infrafamily,
+		Supertribe,
+		Tribe,
+		Subtribe,
+		Infratribe,
+		SupragenericName,
+		Supergenus,
+		Genus,
+		Subgenus,
+		Infragenus,
+		SupersectionBotany,
+		SectionBotany,
+		SubsectionBotany,
+		Superseries,
+		Series,
+		Subseries,
+		InfragenericName,
+		SpeciesAggregate,
+		Species,
+		InfraspecificName,
+		Grex,
+		Klepton,
+		Subspecies,
+		CultivarGroup,
+		Convariety,
+		InfrasubspecificName,
+		Proles,
+		Natio,
+		Aberration,
+		Morph,
+		Supervariety,
+		Variety,
+		Subvariety,
+		Superform,
+		Form,
+		Subform,
+		Pathovar,
+		Biovar,
+		Chemovar,
+		Morphovar,
+		Phagovar,
+		Serovar,
+		Chemoform,
+		FormaSpecialis,
+		Lusus,
+		Cultivar,
+		Mutatio,
+		Strain,
+		Other,
+		Unranked,
+		UnknownRank,
+	}
+	return res
+}

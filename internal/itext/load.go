@@ -85,7 +85,7 @@ func (a *itext) process(
 		code = nomcode.Botanical
 	}
 
-	p := a.parserPool[code].Get().(gnparser.GNparser)
+	p := <-a.parserPool[code]
 
 	for {
 		select {
@@ -93,7 +93,7 @@ func (a *itext) process(
 			return ctx.Err()
 		case line, ok := <-chIn:
 			if !ok {
-				a.parserPool[code].Put(p)
+				a.parserPool[code] <- p
 				return nil
 			}
 			chOut <- a.processLine(p, line)

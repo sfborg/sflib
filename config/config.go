@@ -10,10 +10,10 @@ var (
 	repoURL = "https://github.com/sfborg/sfga"
 
 	// repoTag of the sfga repo to get correct schema version.
-	repoTag = "v0.4.0"
+	repoTag = "v0.4.1"
 
 	// schemaHash is the sha256 sum of the correponding schema version.
-	schemaHash = "ef6c3aa692"
+	schemaHash = "f30774e99f43"
 )
 
 type GitRepo struct {
@@ -37,7 +37,8 @@ type Config struct {
 	// If set, it will be used instead of fetching from GitRepo.
 	LocalSchemaPath string
 
-	Code nomcode.Code
+	// NomCode represents nomenclatural code relevant for the dataset.
+	NomCode nomcode.Code
 
 	// BadRow sets how to process rows with wrong number of fields in CSV
 	// files.
@@ -46,6 +47,11 @@ type Config struct {
 	// WithQuotes sets CSV reader to use `"` as quote. When it is true,
 	// RFC-based CSV reader is used, even if delimiter is tab or pipe.
 	WithQuotes bool
+
+	// WithParents flag can be set to true when a dataset with a flat
+	// hierachy needs conversion to a parent/child hierachy.
+	// All IDs generated during unflattening will have 'sf-' prefix.
+	WithParents bool
 
 	// BatchSize tells how many elements (rows, structs) to deal with in
 	// a chunk of data.
@@ -82,9 +88,9 @@ func OptJobsNum(i int) Option {
 	}
 }
 
-func OptCode(code nomcode.Code) Option {
+func OptNomCode(code nomcode.Code) Option {
 	return func(c *Config) {
-		c.Code = code
+		c.NomCode = code
 	}
 }
 
@@ -105,7 +111,7 @@ func New(opts ...Option) Config {
 		GitRepo:   gitRepo,
 		BadRow:    gnfmt.ProcessBadRow,
 		JobsNum:   5,
-		Code:      nomcode.Unknown,
+		NomCode:   nomcode.Unknown,
 		BatchSize: 50_000,
 	}
 

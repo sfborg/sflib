@@ -35,12 +35,12 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		sf__family_id, col__superfamily, sf__superfamily_id, col__suborder, 
 		sf__suborder_id, col__order, sf__order_id, col__subclass, sf__subclass_id,
 		col__class, sf__class_id, col__subphylum, sf__subphylum_id, col__phylum,
-		sf__phylum_id, col__kingdom, sf__kingdom_id, col__link, col__remarks,
-		col__modified, col__modified_by
+		sf__phylum_id, col__kingdom, sf__kingdom_id, sf__realm, sf__realm_id,
+		col__link, col__remarks, col__modified, col__modified_by
     )
   VALUES (
     ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?,
-		?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?
+		?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?
   )
 `)
 	if err != nil {
@@ -121,7 +121,7 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 				d.Superfamily, d.SuperfamilyID, d.Suborder, d.SuborderID, d.Order,
 				d.OrderID, d.Subclass, d.SubclassID, d.Class, d.ClassID, d.Subphylum,
 				d.SubphylumID, d.Phylum, d.PhylumID, d.Kingdom, d.KingdomID,
-				d.Link, d.Remarks, d.Modified, d.ModifiedBy,
+				d.Realm, d.RealmID, d.Link, d.Remarks, d.Modified, d.ModifiedBy,
 			)
 			if err != nil {
 				return err
@@ -129,7 +129,7 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		case coldp.UnknownTaxSt:
 			if d.ParentID != "" {
 				_, err = tStmt.Exec(
-					d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal, 
+					d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal,
 					d.BranchLength, d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
 					d.AccordingToPageLink, d.Scrutinizer, d.ScrutinizerID,
 					d.ScrutinizerDate, d.TaxonomicStatus.ID(), d.ReferenceID, d.Extinct,
@@ -140,7 +140,7 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 					d.Superfamily, d.SuperfamilyID, d.Suborder, d.SuborderID, d.Order,
 					d.OrderID, d.Subclass, d.SubclassID, d.Class, d.ClassID, d.Subphylum,
 					d.SubphylumID, d.Phylum, d.PhylumID, d.Kingdom, d.KingdomID,
-					d.Link, d.Remarks, d.Modified, d.ModifiedBy,
+					d.Realm, d.RealmID, d.Link, d.Remarks, d.Modified, d.ModifiedBy,
 				)
 				if err != nil {
 					return err

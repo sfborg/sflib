@@ -45,6 +45,11 @@ type Enricher interface {
 	// The config controls whether to skip if relations exist and whether to
 	// create OriginalCombination relationships.
 	InferBasionyms(ctx context.Context, cfg BasionymInferenceConfig) error
+
+	// UnflattenHierarchy creates a parent/child hierarchy using flat hierarchy
+	// data of the original SFGA file. It creates new IDs (marked with `sf-`
+	// prefix) and adds missing entries for higher taxa.
+	UnflattenHierarchy(oldSfga Archive) error
 }
 
 // Updater provides methods for upgrading SFGA data from old schemas to

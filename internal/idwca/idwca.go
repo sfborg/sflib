@@ -1,9 +1,8 @@
 package idwca
 
 import (
-	"sync"
-
 	"github.com/gnames/gnlib/ent/nomcode"
+	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/pkg/dwca"
 	"github.com/sfborg/sflib/pkg/dwca/diagn"
@@ -26,7 +25,7 @@ type idwca struct {
 	// diagn provides types of ScientificName, Hieararchy, Synonymy.
 	diagn *diagn.Diagnostics
 	// parserPool contains parsers for names in botanical and zoological codes.
-	parserPool map[nomcode.Code]*sync.Pool
+	parserPool map[nomcode.Code]chan gnparser.GNparser
 }
 
 func New(opts ...config.Option) dwca.Archive {

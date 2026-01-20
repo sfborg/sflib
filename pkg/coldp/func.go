@@ -56,7 +56,7 @@ func Write[T DataWriter](
 }
 
 // NormalizeHeaders attempts to normalize DarwinCore and ColDP terms to
-// headers that correspond to ColDP.
+// headers that correspond to ColDP. The headers are lowcase.
 func NormalizeHeaders(headers []string) map[string]int {
 	res := map[string]int{}
 	headers = gnlib.Map(headers, func(s string) string {
@@ -84,6 +84,7 @@ func NormalizeHeaders(headers []string) map[string]int {
 			res["genericname"] = i
 		case "infragenericepithet", "subgenus", "infragenus":
 			res["infragenericepithet"] = i
+			res["subgenus"] = i
 		case "specificepithet", "species":
 			res["specificepithet"] = i
 		case "infraspecificepithet", "infraspecies":

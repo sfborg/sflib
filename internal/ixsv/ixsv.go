@@ -3,10 +3,10 @@ package ixsv
 import (
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/gnames/gnfmt/gncsv"
 	"github.com/gnames/gnlib/ent/nomcode"
+	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/xsv"
@@ -17,9 +17,8 @@ type ixsv struct {
 	filePath   string
 	reader     gncsv.Reader
 	headers    map[string]int
-	code       nomcode.Code
 	jobsNum    int
-	parserPool map[nomcode.Code]*sync.Pool
+	parserPool map[nomcode.Code]chan gnparser.GNparser
 }
 
 func New(opts ...config.Option) xsv.Archive {
@@ -31,6 +30,11 @@ func New(opts ...config.Option) xsv.Archive {
 func (a *ixsv) Fetch(src, dstDir string) error {
 	var err error
 	var dlDir string
+
+	if err = util.AssureEmptyDir(dstDir); err != nil {
+		return err
+	}
+
 	dlDir, src, err = util.AssureLocal(src)
 	if err != nil {
 		return err

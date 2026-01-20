@@ -180,6 +180,12 @@ type Taxon struct {
 	// KingdomID is the id of the taxon's kindom (SF namespace).
 	KingdomID string
 
+	// Realm is the realm name within this taxon (SF namespace).
+	Realm string
+
+	// RealmID is the ID of the taxon's realm (SF namespace).
+	RealmID string
+
 	// Link is a link to more information about this taxon.
 	Link string
 
@@ -214,21 +220,39 @@ func (t Taxon) Headers() []string {
 		"col:temporalRangeEnd",
 		"col:environment",
 		"col:species",
+		"sf:speciesId",
 		"col:section",
+		"sf:sectionId",
 		"col:subgenus",
+		"sf:subgenusId",
 		"col:genus",
+		"sf:genusId",
 		"col:subtribe",
+		"sf:subtribeId",
 		"col:tribe",
+		"sf:tribeId",
 		"col:subfamily",
+		"sf:subfamilyId",
 		"col:family",
+		"sf:familyId",
 		"col:superfamily",
+		"sf:superfamilyId",
 		"col:suborder",
+		"sf:suborderId",
 		"col:order",
+		"sf:orderId",
 		"col:subclass",
+		"sf:subclassId",
 		"col:class",
+		"sf:classId",
 		"col:subphylum",
+		"sf:subphylumId",
 		"col:phylum",
+		"sf:phylumId",
 		"col:kingdom",
+		"sf:kingdomId",
+		"sf:realm",
+		"sf:realmId",
 		"col:referenceId",
 		"col:link",
 		"col:remarks",
@@ -264,10 +288,14 @@ func (t Taxon) Row() []string {
 		t.NameID, t.NamePhrase, t.AccordingToID, t.AccordingToPage,
 		t.AccordingToPageLink, t.Scrutinizer, t.ScrutinizerID, prov, extinct,
 		t.TemporalRangeStart.String(), t.TemporalRangeEnd.String(),
-		strings.Join(envs, ","), t.Species, t.Section, t.Subgenus, t.Genus,
-		t.Subtribe, t.Tribe, t.Subfamily, t.Family, t.Superfamily,
-		t.Suborder, t.Order, t.Subclass, t.Class, t.Subphylum, t.Phylum,
-		t.Kingdom, t.ReferenceID, t.Link, t.Remarks, t.Modified,
+		strings.Join(envs, ","), t.Species, t.SpeciesID, t.Section, t.SectionID,
+		t.Subgenus, t.SubgenusID, t.Genus, t.GenusID, t.Subtribe,
+		t.SubtribeID, t.Tribe, t.TribeID, t.Subfamily, t.SubfamilyID,
+		t.Family, t.FamilyID, t.Superfamily, t.SuperfamilyID,
+		t.Suborder, t.SuborderID, t.Order, t.OrderID, t.Subclass,
+		t.SubclassID, t.Class, t.ClassID, t.Subphylum, t.SubphylumID,
+		t.Phylum, t.PhylumID, t.Kingdom, t.KingdomID, t.Realm, t.RealmID,
+		t.ReferenceID, t.Link, t.Remarks, t.Modified,
 		t.ModifiedBy,
 	}
 	return res
@@ -295,21 +323,39 @@ func (t Taxon) Load(headers, data []string) (DataLoader, error) {
 	t.TemporalRangeEnd = NewGeoTime(row["temporalrangeend"])
 	t.Environment = GetEnvironments(row["environment"])
 	t.Species = row["species"]
+	t.SpeciesID = row["speciesid"]
 	t.Section = row["section"]
+	t.SectionID = row["sectionid"]
 	t.Subgenus = row["subgenus"]
+	t.SubgenusID = row["subgenusid"]
 	t.Genus = row["genus"]
+	t.GenusID = row["genusid"]
 	t.Subtribe = row["subtribe"]
+	t.SubtribeID = row["subtribeid"]
 	t.Tribe = row["tribe"]
+	t.TribeID = row["tribeid"]
 	t.Subfamily = row["subfamily"]
+	t.SubfamilyID = row["subfamilyid"]
 	t.Family = row["family"]
+	t.FamilyID = row["familyid"]
 	t.Superfamily = row["superfamily"]
+	t.SuperfamilyID = row["superfamilyid"]
 	t.Suborder = row["suborder"]
+	t.SuborderID = row["suborderid"]
 	t.Order = row["order"]
+	t.OrderID = row["orderid"]
 	t.Subclass = row["subclass"]
+	t.SubclassID = row["subclassid"]
 	t.Class = row["class"]
+	t.ClassID = row["classid"]
 	t.Subphylum = row["subphylum"]
+	t.SubphylumID = row["subphylumid"]
 	t.Phylum = row["phylum"]
+	t.PhylumID = row["phylumid"]
 	t.Kingdom = row["kingdom"]
+	t.KingdomID = row["kingdomid"]
+	t.Realm = row["realm"]
+	t.RealmID = row["realmid"]
 	t.ReferenceID = row["referenceid"]
 	t.Link = row["link"]
 	t.Remarks = row["remarks"]

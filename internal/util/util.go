@@ -1,7 +1,6 @@
 package util
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -14,24 +13,32 @@ import (
 	"github.com/sfborg/sflib/pkg/arch"
 )
 
+func AssureEmptyDir(dir string) error {
+	var err error
+	if err = os.RemoveAll(dir); err != nil {
+		return err
+	}
+	if err = os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
+	return nil
+}
+
 func AssureLocal(src string) (string, string, error) {
 	var err error
 	var exists bool
+	var dlPath string
 	if strings.HasPrefix(src, "http") {
 		slog.Info("Downloading from URL", "url", src)
 		dlDir, err := os.MkdirTemp("", "sflib-dl")
 		if err != nil {
 			return dlDir, "", &arch.ErrDownload{URL: src, Err: err}
 		}
-		src, err = gnsys.Download(src, dlDir, true)
-		var dlErr *gnsys.ErrDownload
-		if errors.As(err, &dlErr) {
-			return dlDir, "", &arch.ErrDownload{URL: dlErr.URL, Err: dlErr.Err}
-		}
+		dlPath, err = gnsys.Download(src, dlDir, true)
 		if err != nil {
-			return dlDir, "", err
+			return dlDir, "", &arch.ErrDownload{URL: src, Err: err}
 		}
-		return dlDir, src, nil
+		return dlDir, dlPath, nil
 	}
 
 	// looks like the file is local, lets check if it exists

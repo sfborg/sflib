@@ -3,9 +3,9 @@ package itext
 import (
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/gnames/gnlib/ent/nomcode"
+	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/text"
@@ -16,7 +16,7 @@ type itext struct {
 	filePath   string
 	code       nomcode.Code
 	jobsNum    int
-	parserPool map[nomcode.Code]*sync.Pool
+	parserPool map[nomcode.Code]chan gnparser.GNparser
 }
 
 func New(opts ...config.Option) text.Archive {

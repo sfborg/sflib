@@ -14,6 +14,8 @@ import (
 type Archive interface {
 	arch.Packager
 
+	// Load converts xSV file to coldp.NameUsage objects and feeds them to
+	// a channel.
 	Load(
 		ctx context.Context,
 		ch chan<- coldp.NameUsage,

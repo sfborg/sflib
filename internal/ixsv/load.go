@@ -16,18 +16,21 @@ import (
 
 func (a *ixsv) Load(
 	ctx context.Context,
-	ch chan<- coldp.NameUsage,
+	chOut chan<- coldp.NameUsage,
 	jobsNum int,
 	nomCode nomcode.Code,
 ) error {
-	opt := config.OptPath(a.filePath)
-	cfg, err := config.New(opt)
+	opts := []config.Option{
+		config.OptPath(a.filePath),
+	}
+	csvCfg, err := config.New(opts...)
 	if err != nil {
 		return err
 	}
-	a.reader = gncsv.New(cfg)
+	a.cfg.NomCode = nomCode
+	a.reader = gncsv.New(csvCfg)
+	// get lowcase coldp headers
 	a.headers = coldp.NormalizeHeaders(a.reader.Headers())
-	a.code = nomCode
 	a.jobsNum = jobsNum
 	a.parserPool = parser.Pool(jobsNum)
 
@@ -42,7 +45,7 @@ func (a *ixsv) Load(
 
 	for range jobsNum {
 		g.Go(func() error {
-			return a.process(ctx2, chIn, ch)
+			return a.process(ctx2, chIn, chOut)
 		})
 	}
 
@@ -77,12 +80,12 @@ func (a *ixsv) processRow(
 	chOut chan<- coldp.NameUsage,
 ) {
 	rowCode := nomcode.New(a.getVal(row, "code"))
-	code := parser.ParserCode(a.cfg.Code, rowCode)
+	code := parser.ParserCode(a.cfg.NomCode, rowCode)
 
-	p := a.parserPool[code].Get().(gnparser.GNparser)
+	p := <-a.parserPool[code]
 
-	nu := a.getNameUsage(p, row)
-	a.parserPool[code].Put(p)
+	nu := a.getNameUsage(p, code, row)
+	a.parserPool[code] <- p
 
 	chOut <- nu
 }
@@ -97,8 +100,10 @@ func (a *ixsv) getVal(row []string, field string) string {
 
 func (a *ixsv) getNameUsage(
 	p gnparser.GNparser,
+	code nomcode.Code,
 	row []string,
 ) coldp.NameUsage {
+
 	res := coldp.NameUsage{
 		ID:                a.getVal(row, "id"),
 		AlternativeID:     a.getVal(row, "alternativeid"),
@@ -139,7 +144,7 @@ func (a *ixsv) getNameUsage(
 		PublishedInPageLink:       a.getVal(row, "publishedinpagelink"),
 		Gender:                    coldp.NewGender(a.getVal(row, "gender")),
 		Etymology:                 a.getVal(row, "etymology"),
-		Code:                      nomcode.New(a.getVal(row, "code")),
+		Code:                      code,
 		NameStatus: coldp.NewNomStatus(
 			a.getVal(row, "namestatus"),
 		),
@@ -150,10 +155,10 @@ func (a *ixsv) getNameUsage(
 		Scrutinizer:         a.getVal(row, "scrutinizer"),
 		ScrutinizerID:       a.getVal(row, "scrutinizerid"),
 		ScrutinizerDate:     a.getVal(row, "scrutinizerdate"),
-		Species:             a.getVal(row, "species"),
+		Species:             a.getVal(row, "specificepithet"),
 		Section:             a.getVal(row, "section"),
 		Subgenus:            a.getVal(row, "subgenus"),
-		Genus:               a.getVal(row, "genus"),
+		Genus:               a.getVal(row, "genericname"),
 		Subtribe:            a.getVal(row, "subtribe"),
 		Tribe:               a.getVal(row, "tribe"),
 		Subfamily:           a.getVal(row, "subfamily"),
@@ -166,11 +171,24 @@ func (a *ixsv) getNameUsage(
 		Subphylum:           a.getVal(row, "subphylum"),
 		Phylum:              a.getVal(row, "phylum"),
 		Kingdom:             a.getVal(row, "kingdom"),
+		Realm:               a.getVal(row, "realm"),
 		Link:                a.getVal(row, "link"),
 		NameRemarks:         a.getVal(row, "nameremarks"),
 		Remarks:             a.getVal(row, "remarks"),
 		Modified:            a.getVal(row, "modified"),
 		ModifiedBy:          a.getVal(row, "modifiedby"),
+	}
+
+	if res.ScientificName == "" {
+		res.ScientificName = genSciName(res)
+	}
+
+	if res.ID == "" {
+		res.ID = "sf-" + res.GenerateUUID().String()
+	}
+
+	if res.TaxonomicStatus == coldp.UnknownTaxSt {
+		res.TaxonomicStatus = res.InferTaxonomicStatus()
 	}
 
 	// add parsed data
@@ -182,4 +200,37 @@ func (a *ixsv) getNameUsage(
 	}
 	res.Amend(p)
 	return res
+}
+
+func genSciName(res coldp.NameUsage) string {
+	if res.Genus == "" || res.SpecificEpithet == "" {
+		return ""
+	}
+	name := []string{res.Genus, "", res.SpecificEpithet, "", ""}
+	if res.Code == nomcode.Zoological && res.InfragenericEpithet != "" {
+		name[1] = "(" + res.InfragenericEpithet + ")"
+	}
+	addInfraSp(name, res)
+
+	var sb strings.Builder
+	first := true
+	for _, s := range name {
+		if s != "" {
+			if !first {
+				sb.WriteString(" ")
+			}
+			sb.WriteString(s)
+			first = false
+		}
+	}
+	return sb.String()
+}
+
+func addInfraSp(name []string, res coldp.NameUsage) {
+	if res.InfraspecificEpithet != "" {
+		name[4] = res.InfraspecificEpithet
+	}
+	if res.Rank.IsIfraspecific() {
+		name[3] = res.Rank.AbbrString()
+	}
 }

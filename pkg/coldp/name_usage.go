@@ -8,6 +8,8 @@ import (
 	"github.com/gnames/gnlib"
 	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnparser"
+	"github.com/gnames/gnuuid"
+	"github.com/google/uuid"
 )
 
 // NameUsage combines fields of Name, Taxon and Synonym.
@@ -106,6 +108,8 @@ type NameUsage struct {
 	PhylumID                  string          // sf
 	Kingdom                   string          // t
 	KingdomID                 string          // sf
+	Realm                     string          // sf
+	RealmID                   string          // sf
 	Ordinal                   sql.NullInt64   // t
 	BranchLength              sql.NullInt64   // t
 	Link                      string          // n, t
@@ -113,6 +117,35 @@ type NameUsage struct {
 	Remarks                   string          // t
 	Modified                  string          // n, t
 	ModifiedBy                string          // n, t
+}
+
+// GenerateUUID generates UUID v5 using information that should be unique
+// for the NameUsage record.
+func (n NameUsage) GenerateUUID() uuid.UUID {
+	data := []string{
+		n.Realm, n.Kingdom, n.Phylum, n.Subphylum, n.Class,
+		n.Subclass, n.Order, n.Suborder, n.Superfamily, n.Family,
+		n.Subfamily, n.Tribe, n.Subtribe, n.Genus, n.Subgenus,
+		n.Section, n.Species, n.ScientificName, n.Authorship,
+	}
+	return gnuuid.New(strings.Join(data, "|"))
+}
+
+// InferTaxonomicStatus tries to figure out if a record with limited data
+// represents a taxon record or a bare name.
+func (n NameUsage) InferTaxonomicStatus() TaxonomicStatus {
+	data := []string{
+		n.Realm, n.Kingdom, n.Phylum, n.Subphylum, n.Class,
+		n.Subclass, n.Order, n.Suborder, n.Superfamily, n.Family,
+		n.Subfamily, n.Tribe, n.Subtribe, n.Genus, n.Subgenus,
+		n.Section, n.Species,
+	}
+	for _, v := range data {
+		if v != "" {
+			return AcceptedTS
+		}
+	}
+	return UnknownTaxSt
 }
 
 // Headers is used for creating CoLDP file and they contain only fields
@@ -169,21 +202,39 @@ func (n NameUsage) Headers() []string {
 		"col:temporalRangeEnd",
 		"col:environment",
 		"col:species",
+		"sf:speciesId",
 		"col:section",
+		"sf:sectionId",
 		"col:subgenus",
+		"sf:subgenusId",
 		"col:genus",
+		"sf:genusId",
 		"col:subtribe",
+		"sf:subtribeId",
 		"col:tribe",
+		"sf:tribeId",
 		"col:subfamily",
+		"sf:subfamilyId",
 		"col:family",
+		"sf:familyId",
 		"col:superfamily",
+		"sf:superfamilyId",
 		"col:suborder",
+		"sf:suborderId",
 		"col:order",
+		"sf:orderId",
 		"col:subclass",
+		"sf:subclassId",
 		"col:class",
+		"sf:classId",
 		"col:subphylum",
+		"sf:subphylumId",
 		"col:phylum",
+		"sf:phylumId",
 		"col:kingdom",
+		"sf:kingdomId",
+		"sf:realm",
+		"sf:realmId",
 		"col:ordinal",
 		"col:branchLength",
 		"col:link",
@@ -235,10 +286,14 @@ func (n NameUsage) Row() []string {
 		n.AccordingToPage, n.AccordingToPageLink, n.ReferenceID,
 		n.Scrutinizer, n.ScrutinizerID, n.ScrutinizerDate, extinct,
 		n.TemporalRangeStart.String(), n.TemporalRangeEnd.String(),
-		strings.Join(envs, ","), n.Species, n.Section, n.Subgenus,
-		n.Genus, n.Subtribe, n.Tribe, n.Subfamily, n.Family, n.Superfamily,
-		n.Suborder, n.Order, n.Subclass, n.Class, n.Subphylum, n.Phylum,
-		n.Kingdom, ordinal, brLen, n.Link, n.NameRemarks, n.Remarks, n.Modified,
+		strings.Join(envs, ","), n.Species, n.SpeciesID, n.Section, n.SectionID,
+		n.Subgenus, n.SubgenusID, n.Genus, n.GenusID, n.Subtribe,
+		n.SubtribeID, n.Tribe, n.TribeID, n.Subfamily, n.SubfamilyID,
+		n.Family, n.FamilyID, n.Superfamily, n.SuperfamilyID,
+		n.Suborder, n.SuborderID, n.Order, n.OrderID, n.Subclass,
+		n.SubclassID, n.Class, n.ClassID, n.Subphylum, n.SubphylumID,
+		n.Phylum, n.PhylumID, n.Kingdom, n.KingdomID, n.Realm, n.RealmID,
+		ordinal, brLen, n.Link, n.NameRemarks, n.Remarks, n.Modified,
 		n.ModifiedBy,
 	}
 	return res
@@ -300,21 +355,39 @@ func (n NameUsage) Load(headers, data []string) (DataLoader, error) {
 	n.TemporalRangeEnd = NewGeoTime(row["temporalrangeend"])
 	n.Environment = GetEnvironments(row["environment"])
 	n.Species = row["species"]
+	n.SpeciesID = row["speciesid"]
 	n.Section = row["section"]
+	n.SectionID = row["sectionid"]
 	n.Subgenus = row["subgenus"]
+	n.SubgenusID = row["subgenusid"]
 	n.Genus = row["genus"]
+	n.GenusID = row["genusid"]
 	n.Subtribe = row["subtribe"]
+	n.SubtribeID = row["subtribeid"]
 	n.Tribe = row["tribe"]
+	n.TribeID = row["tribeid"]
 	n.Subfamily = row["subfamily"]
+	n.SubfamilyID = row["subfamilyid"]
 	n.Family = row["family"]
+	n.FamilyID = row["familyid"]
 	n.Superfamily = row["superfamily"]
+	n.SuperfamilyID = row["superfamilyid"]
 	n.Suborder = row["suborder"]
+	n.SuborderID = row["suborderid"]
 	n.Order = row["order"]
+	n.OrderID = row["orderid"]
 	n.Subclass = row["subclass"]
+	n.SubclassID = row["subclassid"]
 	n.Class = row["class"]
+	n.ClassID = row["classid"]
 	n.Subphylum = row["subphylum"]
+	n.SubphylumID = row["subphylumid"]
 	n.Phylum = row["phylum"]
+	n.PhylumID = row["phylumid"]
 	n.Kingdom = row["kingdom"]
+	n.KingdomID = row["kingdomid"]
+	n.Realm = row["realm"]
+	n.RealmID = row["realmid"]
 	n.Ordinal = ToInt(row["ordinal"])
 	n.BranchLength = ToInt(row["branchlength"])
 	n.Link = row["link"]
@@ -328,6 +401,8 @@ func (n NameUsage) Load(headers, data []string) (DataLoader, error) {
 func (n *NameUsage) Amend(p gnparser.GNparser) {
 	prsd := p.ParseName(n.ScientificNameString).Flatten()
 
+	n.Virus = ToBool(prsd.Virus)
+	n.GnID = prsd.VerbatimID
 	if prsd.Parsed {
 		n.ParseQuality = ToInt(prsd.ParseQuality)
 		if prsd.ParseQuality > 2 {
@@ -337,11 +412,9 @@ func (n *NameUsage) Amend(p gnparser.GNparser) {
 		n.CanonicalFull = prsd.CanonicalFull
 		n.CanonicalStemmed = prsd.CanonicalStemmed
 		n.Cardinality = ToInt(prsd.Cardinality)
-		n.Virus = ToBool(prsd.Virus)
 		n.Hybrid = prsd.Hybrid
 		n.Surrogate = prsd.Surrogate
 		n.Authors = prsd.Authors
-		n.GnID = prsd.VerbatimID
 
 		n.Authorship = pick(n.Authorship, prsd.Authorship)
 		n.Rank = NewRank(pick(n.Rank.String(), prsd.Rank))

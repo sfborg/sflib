@@ -47,7 +47,7 @@ func (a *isfga) InsertNames(data []coldp.Name) error {
 
 	relStmt, err := tx.Prepare(`
 	INSERT INTO name_relation
-		(name_id, related_name_id, type_id)
+		(col__name_id, col__related_name_id, col__type_id)
 	VALUES (?, ?, ?)
 `)
 	if err != nil {

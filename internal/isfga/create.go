@@ -5,12 +5,17 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/sfga"
 )
 
 // Create copies schema from repo and uses it to create
 // new SQLite database.
 func (a *isfga) Create(dir string) error {
+	if err := util.AssureEmptyDir(dir); err != nil {
+		return err
+	}
+
 	var sch sfga.Schema
 	if a.cfg.LocalSchemaPath != "" {
 		sch = NewSchemaWithLocalPath(a.cfg.GitRepo, a.cfg.LocalSchemaPath)

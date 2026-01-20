@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/gnames/gnlib/ent/nomcode"
-	"github.com/gnames/gnparser"
 	"github.com/gnames/gnuuid"
 	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/dwca"
@@ -138,6 +137,7 @@ func (a *idwca) processCoreRow(
 	nu = addTaxonomicStatus(nu, row, fieldsMap)
 
 	nu.Notho = coldp.NewNamePart(fieldVal(row, fieldsMap, "notho"))
+	nu.Realm = fieldVal(row, fieldsMap, "realm")
 	nu.Kingdom = fieldVal(row, fieldsMap, "kingdom")
 	nu.Phylum = fieldVal(row, fieldsMap, "phylum")
 	nu.Class = fieldVal(row, fieldsMap, "class")
@@ -164,10 +164,10 @@ func (a *idwca) processCoreRow(
 		ref = &coldp.Reference{ID: nu.ReferenceID, Citation: citation}
 	}
 
-	code := parser.ParserCode(a.cfg.Code, nu.Code)
-	p := a.parserPool[code].Get().(gnparser.GNparser)
+	code := parser.ParserCode(a.cfg.NomCode, nu.Code)
+	p := <-a.parserPool[code]
 	nu.Amend(p)
-	a.parserPool[code].Put(p)
+	a.parserPool[code] <- p
 
 	return nu, ref
 }

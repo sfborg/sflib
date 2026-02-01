@@ -16,8 +16,8 @@ github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/
 github.com/gnames/gnfmt v0.1.0/go.mod h1:WG9c3CoiVrGc1SDsxLk7zjmv2B4UIzI00m4K5Khc/d0=
 github.com/gnames/gnfmt v0.6.4 h1:QqAmkNB/mpyXRkVso+jy2rnogrhSubdaJwfRZ0n97oE=
 github.com/gnames/gnfmt v0.6.4/go.mod h1:VL7mM0BzryW5+8D9tvZ56ZnvZsGf4Vum8u7U3GuBXcY=
-github.com/gnames/gnlib v0.63.0 h1:+GcdW8Map5GNWvhlPmwrk9/+x4iLOE73LXDqpuMkFt8=
-github.com/gnames/gnlib v0.63.0/go.mod h1:hGG6yFjATLaJ44CyxGh+UjNza7gZTb41vp3KzMVoW9s=
+github.com/gnames/gnlib v0.64.0 h1:hszrdtVPc8TxRdwrQsNxtAztq3KwInbaVoLbHwHwEwk=
+github.com/gnames/gnlib v0.64.0/go.mod h1:hGG6yFjATLaJ44CyxGh+UjNza7gZTb41vp3KzMVoW9s=
 github.com/gnames/gnparser v1.14.2 h1:q7W8byrILOVFjL/HQ9Yva2M71WHUrZWgJKoHU4LhJM8=
 github.com/gnames/gnparser v1.14.2/go.mod h1:3yJVPcOMcym2Yw4bGxIocyfhDStL6qoT8K2WcerYZEM=
 github.com/gnames/gnsys v0.4.3 h1:KkgEre0TKR6/HliKXUrqv0Ze1bApj0g5wMedQVpRI24=

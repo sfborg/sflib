@@ -15,7 +15,12 @@ func (a *isfga) LoadNames(
 ) error {
 	q := `
 SELECT
-	col__id, col__alternative_id, col__source_id, col__scientific_name,
+	col__id, col__alternative_id, col__source_id,
+	tw__taxon_name_id,
+	gn__scientific_name_string, gn__parse_quality, gn__canonical_simple,
+	gn__canonical_full, gn__canonical_stemmed, gn__cardinality,
+	gn__virus, gn__hybrid, gn__surrogate, gn__authors, gn__id,
+	col__scientific_name,
 	col__authorship, col__rank_id, col__uninomial, col__genus,
 	col__infrageneric_epithet, col__specific_epithet,
 	col__infraspecific_epithet, col__cultivar_epithet, col__notho_id,
@@ -43,7 +48,12 @@ FROM name
 
 		var rank, notho, code, status, gender string
 		err = rows.Scan(
-			&n.ID, &n.AlternativeID, &n.SourceID, &n.ScientificName,
+			&n.ID, &n.AlternativeID, &n.SourceID,
+			&n.TwTaxonNameID,
+			&n.ScientificNameString, &n.ParseQuality, &n.CanonicalSimple,
+			&n.CanonicalFull, &n.CanonicalStemmed, &n.Cardinality,
+			&n.Virus, &n.Hybrid, &n.Surrogate, &n.Authors, &n.GnID,
+			&n.ScientificName,
 			&n.Authorship, &rank, &n.Uninomial, &n.Genus, &n.InfragenericEpithet,
 			&n.SpecificEpithet, &n.InfraspecificEpithet, &n.CultivarEpithet,
 			&notho, &n.OriginalSpelling, &n.CombinationAuthorship,

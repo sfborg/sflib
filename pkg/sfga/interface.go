@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/pkg/arch"
 	"github.com/sfborg/sflib/pkg/coldp"
 )
@@ -45,22 +46,18 @@ type Enricher interface {
 	// The config controls whether to skip if relations exist and whether to
 	// create OriginalCombination relationships.
 	InferBasionyms(ctx context.Context, cfg BasionymInferenceConfig) error
-
-	// UnflattenHierarchy creates a parent/child hierarchy using flat hierarchy
-	// data of the original SFGA file. It creates new IDs (marked with `sf-`
-	// prefix) and adds missing entries for higher taxa.
-	UnflattenHierarchy(oldSfga Archive) error
 }
 
 // Updater provides methods for upgrading SFGA data from old schemas to
 // the last one. It does require schemas to be compatible, meaning that the
 // new schema only adds information, and does not remove/modify fields.
 type Updater interface {
-	// Update takes the URL or local path of an old SFGA file and the output
-	// path, which will be used for the SFGA file with the lates schema.
-	// Optional flag would create a Zip version of the file. It returns error
-	// in case if a problem arises.
-	Update(oldSfga Archive) error
+	// Update takes an empty archive based on the latest version of SFGA and
+	// populates it using data from the current archive. It also takes an option
+	// to create a parent/child hierarchy from 'flat' classification in the
+	// current archive. This option does nothing if parent/child classification
+	// already exists.
+	Update(emptySfga Archive, withParents bool) error
 }
 
 // Reader provides methods to feed data from SFGA tables to a channel with
@@ -88,6 +85,9 @@ type Reader interface {
 // AccessorSFGA defines methods for establishing and managing a connection to the
 // SQLite database associated with the SFGA archive.
 type AccessorSFGA interface {
+	// Config returns configuration data of the archive.
+	Config() config.Config
+
 	// Connect establishes a connection to the SQLite database and returns the
 	// database handle or an error if the connection fails.
 	Connect() (*sql.DB, error)

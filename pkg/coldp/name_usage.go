@@ -17,6 +17,8 @@ type NameUsage struct {
 	ID                        string          // t, s
 	AlternativeID             string          // t
 	NameAlternativeID         string          // n
+	TwTaxonNameID             string          // n TW
+	OtuID                     string          // t TW
 	LocalID                   string          // t GN
 	GlobalID                  string          // t GN
 	SourceID                  string          // n,t,s
@@ -155,6 +157,8 @@ func (n NameUsage) Headers() []string {
 		"col:id",
 		"col:alternativeId",
 		"col:nameAlternativeId",
+		"tw:taxonNameID",
+		"tw:otuID",
 		"col:sourceId",
 		"col:parentId",
 		"col:basionymId",
@@ -271,7 +275,8 @@ func (n NameUsage) Row() []string {
 	})
 
 	res := []string{
-		n.ID, n.AlternativeID, n.NameAlternativeID, n.SourceID, n.ParentID,
+		n.ID, n.AlternativeID, n.NameAlternativeID, n.TwTaxonNameID,
+		n.OtuID, n.SourceID, n.ParentID,
 		n.BasionymID, n.TaxonomicStatus.String(), n.ScientificName,
 		n.Authorship, n.Rank.String(), n.Notho.String(), orig, n.Uninomial,
 		n.GenericName, n.InfragenericEpithet, n.SpecificEpithet,
@@ -304,6 +309,8 @@ func (n NameUsage) Load(headers, data []string) (DataLoader, error) {
 	n.ID = row["id"]
 	n.AlternativeID = row["alternativeid"]
 	n.NameAlternativeID = row["namealternativeid"]
+	n.TwTaxonNameID = row["taxonnameid"]
+	n.OtuID = row["otuid"]
 	n.SourceID = row["sourceid"]
 	n.ParentID = row["parentid"]
 	n.BasionymID = row["basionymid"]

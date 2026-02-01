@@ -26,6 +26,10 @@ type Taxon struct {
 	// etc. If it is used in the source URL GN might use it.
 	GlobalID string
 
+	// OtuID corresponds to Operational Taxonomic Unit (OTU) in TaxonWorks.
+	// It is not part of CoLDP standard.
+	OtuID string
+
 	// SourceID is the identifier of the source from metadata.
 	SourceID string
 

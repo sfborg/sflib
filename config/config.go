@@ -100,6 +100,12 @@ func OptLocalSchemaPath(path string) Option {
 	}
 }
 
+func OptWithParents(b bool) Option {
+	return func(c *Config) {
+		c.WithParents = b
+	}
+}
+
 func New(opts ...Option) Config {
 	gitRepo := GitRepo{
 		URL:          repoURL,

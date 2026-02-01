@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -280,11 +279,12 @@ func ToBool[T string | bool | int](val T) sql.NullBool {
 			res.Valid = false
 		}
 	case int:
-		if v == 1 {
+		switch v {
+		case 1:
 			res.Bool = true
-		} else if v == 0 {
+		case 0:
 			res.Bool = false
-		} else {
+		default:
 			res.Valid = false
 		}
 	case bool:
@@ -335,7 +335,7 @@ func RowToMap(headers, row []string) (map[string]string, error) {
 			FieldsNum:    len(headers),
 			RowFieldsNum: len(row),
 			Row:          row,
-			Message:      fmt.Sprintf("not enough fields, filled with empty strings"),
+			Message:      "not enough fields, filled with empty strings",
 		}
 	}
 	if diff < 0 {
@@ -343,7 +343,7 @@ func RowToMap(headers, row []string) (map[string]string, error) {
 			FieldsNum:    len(headers),
 			RowFieldsNum: len(row),
 			Row:          row,
-			Message:      fmt.Sprintf("too many fields, extras will be ignored"),
+			Message:      "too many fields, extras will be ignored",
 		}
 	}
 

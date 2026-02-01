@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/pkg/sfga"
@@ -32,14 +33,27 @@ type field struct {
 // Parameters:
 //   - sfgaEmpty: An sfga.Archive object representing the target database with an
 //     empty schema.
+//   - withParents: an option that would trigger an attempt to create a
+//     parent/child hierarchy out of flat one. In case if flat chierarchy is
+//     empty, or parent/child hierarchy already exists, the option is ignored.
 //
 // Returns:
 //   - error: An error if any step in the update process fails, otherwise nil.
-func (a *isfga) Update(sfgaEmpty sfga.Archive) error {
+func (a *isfga) Update(sfgaEmpty sfga.Archive, withParents bool) error {
 	slog.Info("Getting tables information")
 	tbls, err := a.getTables()
 	if err != nil {
 		return err
+	}
+
+	if withParents {
+		shouldBuild, err := a.shouldAddParents()
+		if err != nil {
+			return err
+		}
+		if shouldBuild {
+			return a.transferDataWithParents(sfgaEmpty, tbls)
+		}
 	}
 
 	err = a.transferData(sfgaEmpty.DbPath(), tbls)
@@ -47,6 +61,54 @@ func (a *isfga) Update(sfgaEmpty sfga.Archive) error {
 		return err
 	}
 
+	return nil
+}
+
+// transferDataWithParents transfers data while building parent-child hierarchy.
+// It uses NameUsages to populate name, taxon, and synonym tables with hierarchy,
+// then copies all other tables normally.
+func (a *isfga) transferDataWithParents(
+	sfgaEmpty sfga.Archive, tables []tbl,
+) error {
+	slog.Info("Transferring data and adding parent IDs")
+
+	// Ensure new database is connected before writing
+	if _, err := sfgaEmpty.Connect(); err != nil {
+		return err
+	}
+
+	if err := a.addParents(sfgaEmpty); err != nil {
+		return err
+	}
+
+	// These tables are populated already by AddParents
+	excludeTables := map[string]bool{
+		"name":          true,
+		"taxon":         true,
+		"synonym":       true,
+		"name_relation": true,
+	}
+
+	// Transfer remaining tables using the standard method
+	if err := a.attachDatabase(sfgaEmpty.DbPath()); err != nil {
+		return err
+	}
+	defer func() {
+		if detachErr := a.detachDatabase(); detachErr != nil {
+			slog.Error("Failed to detach database", "error", detachErr)
+		}
+	}()
+
+	for _, tableInfo := range tables {
+		if excludeTables[tableInfo.name] {
+			continue
+		}
+		if err := a.transferTableData(tableInfo); err != nil {
+			return err
+		}
+	}
+
+	slog.Info("Finished transferring data with hierarchy")
 	return nil
 }
 
@@ -166,12 +228,12 @@ func (a *isfga) transferTableData(tableInfo tbl) error {
 
 	selectQ := fmt.Sprintf(
 		`SELECT %s FROM %s`,
-		joinWithComma(columnNames), tableName,
+		strings.Join(columnNames, ","), tableName,
 	)
 
 	insertQ := fmt.Sprintf(
 		`INSERT INTO %s.%s (%s) %s`,
-		newDb, tableName, joinWithComma(columnNames), selectQ,
+		newDb, tableName, strings.Join(columnNames, ","), selectQ,
 	)
 
 	slog.Debug("Executing query", "query", insertQ)
@@ -182,13 +244,42 @@ func (a *isfga) transferTableData(tableInfo tbl) error {
 	return err
 }
 
-func joinWithComma(strs []string) string {
-	if len(strs) == 0 {
-		return ""
+func (a *isfga) shouldAddParents() (bool, error) {
+	// if there is at least one parent, do not add parents.
+	var hasParents bool
+	err := a.db.QueryRow(`
+		SELECT EXISTS (
+		  SELECT 1 from taxon
+		    WHERE col__parent_id IS NOT NULL AND col__parent_id != ''
+		)
+	`).Scan(&hasParents)
+	if err != nil {
+		return false, err
 	}
-	result := strs[0]
-	for _, str := range strs[1:] {
-		result += "," + str
+	if hasParents {
+		slog.Info("Parent IDs already exist, skipping adding parents")
+		return false, nil
 	}
-	return result
+
+	q := `
+	SELECT EXISTS (
+		SELECT 1 FROM taxon
+			WHERE
+				col__genus != '' OR col__tribe != '' OR col__family != '' OR
+				col__order != '' OR col__class != '' OR col__phylum != '' OR
+				col__kingdom != ''
+)
+`
+	var hasFlatHierarchy bool
+	err = a.db.QueryRow(q).Scan(&hasFlatHierarchy)
+	if err != nil {
+		return false, err
+	}
+
+	if !hasFlatHierarchy {
+		slog.Info("Flat hierarchy does not exist, skipping adding parents")
+		return false, nil
+	}
+
+	return true, nil
 }

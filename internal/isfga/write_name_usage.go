@@ -23,7 +23,8 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 	tStmt, err := tx.Prepare(`
   INSERT INTO taxon
     (
-    col__id, col__alternative_id, col__source_id, col__parent_id, col__ordinal,
+    col__id, col__alternative_id, gn__local_id, gn__global_id, tw__otu_id,
+		col__source_id, col__parent_id, col__ordinal,
     col__branch_length, col__name_id, col__name_phrase, col__according_to_id,
     col__according_to_page, col__according_to_page_link, col__scrutinizer,
     col__scrutinizer_id, col__scrutinizer_date, col__status_id,
@@ -40,7 +41,8 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
     )
   VALUES (
     ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?,
-		?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?
+		?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?,
+		?
   )
 `)
 	if err != nil {
@@ -51,7 +53,8 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 	nStmt, err := tx.Prepare(`
   INSERT INTO name
     (
-    col__id, col__alternative_id, col__source_id, col__scientific_name,
+    col__id, col__alternative_id, col__source_id, tw__taxon_name_id,
+		col__scientific_name,
     col__authorship, col__rank_id, col__uninomial, col__genus,
     col__infrageneric_epithet, col__specific_epithet,
     col__infraspecific_epithet, col__cultivar_epithet, col__notho_id,
@@ -70,7 +73,7 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		gn__id)
   VALUES (
 		?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?,
-    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?
+    ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?
 	) 
 `)
 	if err != nil {
@@ -110,7 +113,8 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		switch d.TaxonomicStatus {
 		case coldp.AcceptedTS, coldp.ProvisionallyAcceptedTS:
 			_, err = tStmt.Exec(
-				d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal,
+				d.ID, d.AlternativeID, d.LocalID, d.GlobalID, d.OtuID, d.SourceID,
+				d.ParentID, d.Ordinal,
 				d.BranchLength, d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
 				d.AccordingToPageLink, d.Scrutinizer, d.ScrutinizerID,
 				d.ScrutinizerDate, d.TaxonomicStatus.ID(), d.ReferenceID, d.Extinct,
@@ -158,7 +162,8 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		}
 
 		_, err = nStmt.Exec(
-			d.ID, d.NameAlternativeID, d.SourceID, d.ScientificName, d.Authorship,
+			d.ID, d.NameAlternativeID, d.SourceID, d.TwTaxonNameID, d.ScientificName,
+			d.Authorship,
 			d.Rank.ID(), d.Uninomial, d.GenericName, d.InfragenericEpithet,
 			d.SpecificEpithet, d.InfraspecificEpithet, d.CultivarEpithet,
 			d.Notho.ID(), d.OriginalSpelling, d.CombinationAuthorship,

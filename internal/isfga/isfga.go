@@ -33,6 +33,10 @@ func New(opts ...config.Option) sfga.Archive {
 	return &res
 }
 
+func (s *isfga) Config() config.Config {
+	return s.cfg
+}
+
 func (s *isfga) SetDb(path string) {
 	_ = s.Close()
 	s.dbPath = path
@@ -41,6 +45,10 @@ func (s *isfga) SetDb(path string) {
 func (s *isfga) Connect() (*sql.DB, error) {
 	var err error
 	var db *sql.DB
+
+	if s.db != nil {
+		return s.db, nil
+	}
 
 	if s.dbPath == "" {
 		err = errors.New("the SQLite path is empty")

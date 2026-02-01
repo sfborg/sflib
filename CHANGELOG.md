@@ -5,6 +5,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.5.0] - 2026-02-01 Sun
+
+- Add: Close method sets db to nil.
+- Add [#20]: flat hierarchy to parent/child.
+
+## [v0.4.9] - 2026-01-20 Tue
+
+- Add: improve xsv import, update modules.
+
+## [v0.4.8] - 2025-12-13 Sat
+
+- Fix: improve basionym inference with OriginalX relationships.
+- Add: global basionym inference module.
+- Add: persist tw__name_relationship_type in name_relation table.
+- Add: TaxonWorks fields for lossless round-tripping.
+- Add: local schema path override option (--schema flag).
+
+## [v0.4.7] - 2025-10-24 Fri
+
+- Add: update dependencies and add Justfile.
+- Add: update modules.
+
 ## [v0.4.6] - 2025-08-27 Wed
 
 - Add: IDs for flat classification files.

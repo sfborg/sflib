@@ -101,6 +101,7 @@ func (s *isfga) Close() error {
 	var err error
 	if s.db != nil {
 		err = s.db.Close()
+		s.db = nil
 		if err != nil {
 			return err
 		}

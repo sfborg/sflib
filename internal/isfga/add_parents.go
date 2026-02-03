@@ -123,8 +123,21 @@ func processNode(nameMap map[string]*node, n node, tmpID int) int {
 	return tmpID
 }
 
+// formatSubgenus constructs the full subgenus scientific name in the format
+// "Genus (Subgenus)". Returns empty string if subgenus is empty.
+func formatSubgenus(genus, subgenus string) string {
+	if subgenus == "" {
+		return ""
+	}
+	if genus == "" {
+		return subgenus
+	}
+	return genus + " (" + subgenus + ")"
+}
+
 // getPathFromNameUsage creates a slice of all parent taxa included into flat
-// classification from a NameUsage. Empty records are ignored.
+// classification from a NameUsage. Empty records and self-references (where
+// the path entry rank matches the record's rank) are ignored.
 func getPathFromNameUsage(nu coldp.NameUsage) []coldp.NameUsage {
 	taxa := []coldp.NameUsage{
 		{Rank: coldp.Realm, ScientificName: nu.Realm},
@@ -141,16 +154,22 @@ func getPathFromNameUsage(nu coldp.NameUsage) []coldp.NameUsage {
 		{Rank: coldp.Tribe, ScientificName: nu.Tribe},
 		{Rank: coldp.Subtribe, ScientificName: nu.Subtribe},
 		{Rank: coldp.Genus, ScientificName: nu.Genus},
-		{Rank: coldp.Subgenus, ScientificName: nu.Subgenus},
+		{Rank: coldp.Subgenus, ScientificName: formatSubgenus(nu.Genus, nu.Subgenus)},
 		{Rank: coldp.Section, ScientificName: nu.Section},
 		{Rank: coldp.Species, ScientificName: nu.Species},
 	}
 	var idx int
 	for i := range taxa {
-		if taxa[i].ScientificName != "" {
-			taxa[idx] = taxa[i]
-			idx++
+		// Skip empty entries
+		if taxa[i].ScientificName == "" {
+			continue
 		}
+		// Skip self-references: when flat hierarchy rank matches record's rank
+		if taxa[i].Rank == nu.Rank {
+			continue
+		}
+		taxa[idx] = taxa[i]
+		idx++
 	}
 	return taxa[:idx]
 }
@@ -383,7 +402,7 @@ func addFlatClassificationIDs(
 	nu.TribeID = getID(nu.Tribe)
 	nu.SubtribeID = getID(nu.Subtribe)
 	nu.GenusID = getID(nu.Genus)
-	nu.SubgenusID = getID(nu.Subgenus)
+	nu.SubgenusID = getID(formatSubgenus(nu.Genus, nu.Subgenus))
 	nu.SectionID = getID(nu.Section)
 	nu.SpeciesID = getID(nu.Species)
 }

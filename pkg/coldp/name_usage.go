@@ -150,8 +150,8 @@ func (n NameUsage) InferTaxonomicStatus() TaxonomicStatus {
 	return UnknownTaxSt
 }
 
-// Headers is used for creating CoLDP file and they contain only fields
-// that correspond to ColDP format.
+// Headers for all fields of NameUsage, including ones
+// that exist only in SFGA file. It is used for creating CoLDP file.
 func (n NameUsage) Headers() []string {
 	return []string{
 		"col:id",
@@ -246,6 +246,78 @@ func (n NameUsage) Headers() []string {
 		"col:remarks",
 		"col:modified",
 		"col:modifiedBy",
+	}
+}
+
+// CoreHeaders are limited to the most used fields.
+func (n NameUsage) CoreHeaders() []string {
+	return []string{
+		"col:id",
+		"col:nameAlternativeId",
+		"col:parentId",
+		"col:taxonomicStatus",
+		"col:scientificName",
+		"col:authorship",
+		"col:rank",
+		"col:code",
+		"col:nameStatus",
+		"col:extinct",
+		"col:species",
+		"sf:speciesId",
+		"col:section",
+		"sf:sectionId",
+		"col:subgenus",
+		"sf:subgenusId",
+		"col:genus",
+		"sf:genusId",
+		"col:subtribe",
+		"sf:subtribeId",
+		"col:tribe",
+		"sf:tribeId",
+		"col:subfamily",
+		"sf:subfamilyId",
+		"col:family",
+		"sf:familyId",
+		"col:superfamily",
+		"sf:superfamilyId",
+		"col:suborder",
+		"sf:suborderId",
+		"col:order",
+		"sf:orderId",
+		"col:subclass",
+		"sf:subclassId",
+		"col:class",
+		"sf:classId",
+		"col:subphylum",
+		"sf:subphylumId",
+		"col:phylum",
+		"sf:phylumId",
+		"col:kingdom",
+		"sf:kingdomId",
+		"sf:realm",
+		"sf:realmId",
+		"col:remarks",
+	}
+}
+
+func (n NameUsage) CoreRow() []string {
+	var extinct string
+	if n.Extinct.Valid {
+		extinct = strconv.FormatBool(n.Extinct.Bool)
+	}
+
+	return []string{
+		n.ID, n.NameAlternativeID, n.ParentID,
+		n.TaxonomicStatus.String(), n.ScientificName, n.Authorship,
+		n.Rank.String(), n.Code.String(), n.NameStatus.String(),
+		extinct, n.Species, n.SpeciesID, n.Section, n.SectionID,
+		n.Subgenus, n.SubgenusID, n.Genus, n.GenusID, n.Subtribe,
+		n.SubtribeID, n.Tribe, n.TribeID, n.Subfamily, n.SubfamilyID,
+		n.Family, n.FamilyID, n.Superfamily, n.SuperfamilyID,
+		n.Suborder, n.SuborderID, n.Order, n.OrderID, n.Subclass,
+		n.SubclassID, n.Class, n.ClassID, n.Subphylum, n.SubphylumID,
+		n.Phylum, n.PhylumID, n.Kingdom, n.KingdomID, n.Realm, n.RealmID,
+		n.Remarks,
 	}
 }
 

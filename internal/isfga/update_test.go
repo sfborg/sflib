@@ -43,6 +43,164 @@ func TestUpdate(t *testing.T) {
 	assert.Equal(1, gnlib.CmpVersion(newVersion, version))
 }
 
+func TestUpdateWithHierarchyDiptera(t *testing.T) {
+	assert := assert.New(t)
+	dir := filepath.Join(testDir, "update-diptera")
+	err := os.Mkdir(dir, 0755)
+	assert.Nil(err)
+	defer os.RemoveAll(dir)
+
+	// Use diptera-flat.sqlite which has flat hierarchy with genus/subgenus/species
+	path := "../../testdata/sfga/diptera-flat.sqlite"
+	oldSfga := isfga.New()
+	err = oldSfga.Fetch(path, dir)
+	assert.Nil(err)
+	_, err = oldSfga.Connect()
+	assert.Nil(err)
+
+	// Get original taxon count
+	var origCount int
+	err = oldSfga.Db().QueryRow("SELECT COUNT(*) FROM taxon").Scan(&origCount)
+	assert.Nil(err)
+
+	newSfga := isfga.New()
+	err = newSfga.Create(filepath.Join(dir))
+	assert.Nil(err)
+
+	// Update with hierarchy building enabled
+	err = oldSfga.Update(newSfga, true)
+	assert.Nil(err)
+
+	_, err = newSfga.Connect()
+	assert.Nil(err)
+
+	// Check that new taxon count is greater (generated parents added)
+	var newCount int
+	err = newSfga.Db().QueryRow("SELECT COUNT(*) FROM taxon").Scan(&newCount)
+	assert.Nil(err)
+	assert.Greater(newCount, origCount, "should have more taxa after hierarchy build")
+
+	// CRITICAL: Verify no self-references - a taxon should never be its own parent
+	var selfRefCount int
+	err = newSfga.Db().QueryRow(`
+		SELECT COUNT(*) FROM taxon
+		WHERE col__id = col__parent_id
+	`).Scan(&selfRefCount)
+	assert.Nil(err)
+	assert.Equal(0, selfRefCount, "no taxon should reference itself as parent")
+
+	// Verify no duplicate scientific names created
+	var dupCount int
+	err = newSfga.Db().QueryRow(`
+		SELECT COUNT(*) FROM (
+			SELECT n.col__scientific_name, COUNT(*) as cnt
+			FROM taxon t
+			JOIN name n ON t.col__name_id = n.col__id
+			GROUP BY n.col__scientific_name
+			HAVING cnt > 1
+		)
+	`).Scan(&dupCount)
+	assert.Nil(err)
+	assert.Equal(0, dupCount, "should have no duplicate scientific names")
+
+	// Verify genus records don't have parent with same scientific name
+	var genusWithSameParent int
+	err = newSfga.Db().QueryRow(`
+		SELECT COUNT(*) FROM taxon t1
+		JOIN name n1 ON t1.col__name_id = n1.col__id
+		JOIN taxon t2 ON t1.col__parent_id = t2.col__id
+		JOIN name n2 ON t2.col__name_id = n2.col__id
+		WHERE n1.col__rank_id = 'GENUS'
+		  AND n1.col__scientific_name = n2.col__scientific_name
+	`).Scan(&genusWithSameParent)
+	assert.Nil(err)
+	assert.Equal(0, genusWithSameParent, "genus should not have parent with same name")
+
+	// Verify subgenus records don't have parent with same scientific name
+	var subgenusWithSameParent int
+	err = newSfga.Db().QueryRow(`
+		SELECT COUNT(*) FROM taxon t1
+		JOIN name n1 ON t1.col__name_id = n1.col__id
+		JOIN taxon t2 ON t1.col__parent_id = t2.col__id
+		JOIN name n2 ON t2.col__name_id = n2.col__id
+		WHERE n1.col__rank_id = 'SUBGENUS'
+		  AND n1.col__scientific_name = n2.col__scientific_name
+	`).Scan(&subgenusWithSameParent)
+	assert.Nil(err)
+	assert.Equal(0, subgenusWithSameParent, "subgenus should not have parent with same name")
+
+	// Verify hierarchy integrity: all parent_ids should exist as taxon ids
+	var orphanCount int
+	err = newSfga.Db().QueryRow(`
+		SELECT COUNT(*) FROM taxon t1
+		WHERE t1.col__parent_id != ''
+		  AND t1.col__parent_id NOT IN (SELECT col__id FROM taxon)
+	`).Scan(&orphanCount)
+	assert.Nil(err)
+	assert.Equal(0, orphanCount, "all parent_ids should reference existing taxa")
+
+	// Verify a specific genus (Amphineurus) has Subfamily as parent (closest in hierarchy)
+	var amphineurusParentRank string
+	err = newSfga.Db().QueryRow(`
+		SELECT n2.col__rank_id FROM taxon t1
+		JOIN name n1 ON t1.col__name_id = n1.col__id
+		JOIN taxon t2 ON t1.col__parent_id = t2.col__id
+		JOIN name n2 ON t2.col__name_id = n2.col__id
+		WHERE n1.col__scientific_name = 'Amphineurus'
+		  AND n1.col__rank_id = 'GENUS'
+	`).Scan(&amphineurusParentRank)
+	assert.Nil(err)
+	assert.Equal("SUBFAMILY", amphineurusParentRank, "genus Amphineurus should have subfamily as parent")
+
+	// Verify species with subgenus has subgenus as parent, not genus
+	// "Amphineurus (Amphineurus) breviclavus" should have parent "Amphineurus (Amphineurus)" (SUBGENUS)
+	var speciesParentName, speciesParentRank string
+	err = newSfga.Db().QueryRow(`
+		SELECT n2.col__scientific_name, n2.col__rank_id FROM taxon t1
+		JOIN name n1 ON t1.col__name_id = n1.col__id
+		JOIN taxon t2 ON t1.col__parent_id = t2.col__id
+		JOIN name n2 ON t2.col__name_id = n2.col__id
+		WHERE n1.col__scientific_name = 'Amphineurus (Amphineurus) breviclavus'
+	`).Scan(&speciesParentName, &speciesParentRank)
+	assert.Nil(err)
+	assert.Equal("Amphineurus (Amphineurus)", speciesParentName, "species should have subgenus as parent")
+	assert.Equal("SUBGENUS", speciesParentRank, "parent should be SUBGENUS rank")
+
+	// Verify subgenus has genus as parent
+	var subgenusParentName, subgenusParentRank string
+	err = newSfga.Db().QueryRow(`
+		SELECT n2.col__scientific_name, n2.col__rank_id FROM taxon t1
+		JOIN name n1 ON t1.col__name_id = n1.col__id
+		JOIN taxon t2 ON t1.col__parent_id = t2.col__id
+		JOIN name n2 ON t2.col__name_id = n2.col__id
+		WHERE n1.col__scientific_name = 'Amphineurus (Amphineurus)'
+		  AND n1.col__rank_id = 'SUBGENUS'
+	`).Scan(&subgenusParentName, &subgenusParentRank)
+	assert.Nil(err)
+	assert.Equal("Amphineurus", subgenusParentName, "subgenus should have genus as parent")
+	assert.Equal("GENUS", subgenusParentRank, "parent should be GENUS rank")
+
+	// Verify SubgenusID points to the subgenus record, not the genus
+	var subgenusID, genusID string
+	err = newSfga.Db().QueryRow(`
+		SELECT t.sf__subgenus_id, t.sf__genus_id FROM taxon t
+		JOIN name n ON t.col__name_id = n.col__id
+		WHERE n.col__scientific_name = 'Amphineurus (Amphineurus) breviclavus'
+	`).Scan(&subgenusID, &genusID)
+	assert.Nil(err)
+	assert.NotEqual(subgenusID, genusID, "SubgenusID and GenusID should differ")
+	// SubgenusID should match the subgenus record's ID
+	var actualSubgenusRecordID string
+	err = newSfga.Db().QueryRow(`
+		SELECT t.col__id FROM taxon t
+		JOIN name n ON t.col__name_id = n.col__id
+		WHERE n.col__scientific_name = 'Amphineurus (Amphineurus)'
+		  AND n.col__rank_id = 'SUBGENUS'
+	`).Scan(&actualSubgenusRecordID)
+	assert.Nil(err)
+	assert.Equal(actualSubgenusRecordID, subgenusID, "SubgenusID should point to the subgenus record")
+}
+
 func TestUpdateWithHierarchy(t *testing.T) {
 	assert := assert.New(t)
 	dir := filepath.Join(testDir, "update-hier")

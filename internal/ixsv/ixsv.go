@@ -1,6 +1,9 @@
 package ixsv
 
 import (
+	"archive/zip"
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -9,6 +12,7 @@ import (
 	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/util"
+	"github.com/sfborg/sflib/pkg/arch"
 	"github.com/sfborg/sflib/pkg/xsv"
 )
 
@@ -54,6 +58,82 @@ func (a *ixsv) Create(dir string) error {
 }
 
 func (a *ixsv) Export(outputPath string, isZip bool) error {
+	if a.filePath == "" {
+		return &arch.ErrFileOpen{Path: "", Err: nil}
+	}
+
+	// Add .csv extension if not present
+	if filepath.Ext(outputPath) != ".csv" {
+		outputPath += ".csv"
+	}
+
+	// Copy CSV file to output path if different
+	if a.filePath != outputPath {
+		if err := copyFile(a.filePath, outputPath); err != nil {
+			return err
+		}
+	}
+
+	slog.Info("CSV file exported", "file", outputPath)
+
+	if isZip {
+		if err := createZip(outputPath); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func copyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return &arch.ErrFileOpen{Path: src, Err: err}
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return &arch.ErrFileCreate{File: dst, Err: err}
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		return &arch.ErrFileCopy{Src: src, Dst: dst, Err: err}
+	}
+
+	return nil
+}
+
+func createZip(filePath string) error {
+	zipFile := filePath + ".zip"
+	f, err := os.Create(zipFile)
+	if err != nil {
+		return &arch.ErrFileCreate{File: zipFile, Err: err}
+	}
+	defer f.Close()
+
+	zipWriter := zip.NewWriter(f)
+	defer zipWriter.Close()
+
+	srcFile, err := os.Open(filePath)
+	if err != nil {
+		return &arch.ErrFileOpen{Path: filePath, Err: err}
+	}
+	defer srcFile.Close()
+
+	zipEntry, err := zipWriter.Create(filepath.Base(filePath))
+	if err != nil {
+		return &arch.ErrZipCreate{File: zipFile, Err: err}
+	}
+
+	_, err = io.Copy(zipEntry, srcFile)
+	if err != nil {
+		return &arch.ErrZipCreate{File: zipFile, Err: err}
+	}
+
+	slog.Info("CSV ZIP file created", "file", zipFile)
 	return nil
 }
 

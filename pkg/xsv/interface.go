@@ -23,6 +23,14 @@ type Archive interface {
 		nomCode nomcode.Code,
 	) error
 
+	// Write converts coldp.NameUsage entries to CSV rows, writing them to a
+	// FilePath.
+	Write(
+		ctx context.Context,
+		ch <-chan coldp.NameUsage,
+		filePath string,
+	) error
+
 	// FilePath returns the path to the file with scientific names.
 	FilePath() string
 

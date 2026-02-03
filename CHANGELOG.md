@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.5.1] - 2026-02-03 Tue
+
+- Add [#21]: add `to xsv` functionality
+- Add: improvements in parent/child hierarchy creation;w
+
 ## [v0.5.0] - 2026-02-01 Sun
 
 - Add: Close method sets db to nil.
@@ -193,6 +198,10 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.4.0]: https://github.com/sfborg/sflib/compare/v0.3.9...v0.4.0
+[v0.3.9]: https://github.com/sfborg/sflib/compare/v0.3.8...v0.3.9
+[v0.3.8]: https://github.com/sfborg/sflib/compare/v0.3.7...v0.3.8
+[v0.3.7]: https://github.com/sfborg/sflib/compare/v0.3.6...v0.3.7
 [v0.3.6]: https://github.com/sfborg/sflib/compare/v0.3.5...v0.3.6
 [v0.3.5]: https://github.com/sfborg/sflib/compare/v0.3.4...v0.3.5
 [v0.3.4]: https://github.com/sfborg/sflib/compare/v0.3.3...v0.3.4
@@ -220,6 +229,7 @@ This document follows [changelog guidelines]
 [v0.1.1]: https://github.com/sfborg/sflib/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/sfborg/sflib/compare/v0.0.1...v0.1.0
 [v0.0.1]: https://github.com/sfborg/sflib/tree/v0.0.1
+[#21]: https://github.com/sfborg/sflib/issues/21
 [#20]: https://github.com/sfborg/sflib/issues/20
 [#19]: https://github.com/sfborg/sflib/issues/19
 [#18]: https://github.com/sfborg/sflib/issues/18

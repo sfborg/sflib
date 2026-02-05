@@ -5,9 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.5.2] - 2026-02-05 Thu
+
+- Add [#22]: implement `to dwca` functionality.
+
 ## [v0.5.1] - 2026-02-03 Tue
 
-- Add [#21]: add `to xsv` functionality
+- Add [#21]: add `to xsv` functionality.
 - Add: improvements in parent/child hierarchy creation;w
 
 ## [v0.5.0] - 2026-02-01 Sun
@@ -198,6 +202,18 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.5.2]: https://github.com/sfborg/sflib/compare/v0.5.1...v0.5.2
+[v0.5.1]: https://github.com/sfborg/sflib/compare/v0.5.0...v0.5.1
+[v0.5.0]: https://github.com/sfborg/sflib/compare/v0.4.9...v0.5.0
+[v0.4.9]: https://github.com/sfborg/sflib/compare/v0.4.8...v0.4.9
+[v0.4.8]: https://github.com/sfborg/sflib/compare/v0.4.7...v0.4.8
+[v0.4.7]: https://github.com/sfborg/sflib/compare/v0.4.6...v0.4.7
+[v0.4.6]: https://github.com/sfborg/sflib/compare/v0.4.5...v0.4.6
+[v0.4.5]: https://github.com/sfborg/sflib/compare/v0.4.4...v0.4.5
+[v0.4.4]: https://github.com/sfborg/sflib/compare/v0.4.3...v0.4.4
+[v0.4.3]: https://github.com/sfborg/sflib/compare/v0.4.2...v0.4.3
+[v0.4.2]: https://github.com/sfborg/sflib/compare/v0.4.1...v0.4.2
+[v0.4.1]: https://github.com/sfborg/sflib/compare/v0.4.0...v0.4.1
 [v0.4.0]: https://github.com/sfborg/sflib/compare/v0.3.9...v0.4.0
 [v0.3.9]: https://github.com/sfborg/sflib/compare/v0.3.8...v0.3.9
 [v0.3.8]: https://github.com/sfborg/sflib/compare/v0.3.7...v0.3.8
@@ -229,6 +245,7 @@ This document follows [changelog guidelines]
 [v0.1.1]: https://github.com/sfborg/sflib/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/sfborg/sflib/compare/v0.0.1...v0.1.0
 [v0.0.1]: https://github.com/sfborg/sflib/tree/v0.0.1
+[#22]: https://github.com/sfborg/sflib/issues/22
 [#21]: https://github.com/sfborg/sflib/issues/21
 [#20]: https://github.com/sfborg/sflib/issues/20
 [#19]: https://github.com/sfborg/sflib/issues/19

@@ -4,6 +4,7 @@ import (
 	"github.com/gnames/gnlib/ent/nomcode"
 	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/config"
+	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/dwca"
 	"github.com/sfborg/sflib/pkg/dwca/diagn"
 	"github.com/sfborg/sflib/pkg/parser"
@@ -26,6 +27,12 @@ type idwca struct {
 	diagn *diagn.Diagnostics
 	// parserPool contains parsers for names in botanical and zoological codes.
 	parserPool map[nomcode.Code]chan gnparser.GNparser
+	// coreWritten is set after WriteCore successfully writes data.
+	coreWritten bool
+	// vernWritten is set after WriteVernaculars successfully writes data.
+	vernWritten bool
+	// distrWritten is set after WriteDistributions successfully writes data.
+	distrWritten bool
 }
 
 func New(opts ...config.Option) dwca.Archive {
@@ -38,11 +45,10 @@ func New(opts ...config.Option) dwca.Archive {
 }
 
 func (a *idwca) Create(dir string) error {
-	// TODO implement
-	return nil
-}
-func (a *idwca) Export(outputPath string, isZip bool) error {
-	// TODO implement
+	a.rootDir = dir
+	if err := util.AssureEmptyDir(a.rootDir); err != nil {
+		return err
+	}
 	return nil
 }
 

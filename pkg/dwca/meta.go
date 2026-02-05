@@ -49,7 +49,7 @@ type Files struct {
 type ID struct {
 	Index string `xml:"index,attr"`
 	Idx   int    `xml:"-"`
-	Term  string `xml:"term,attr"`
+	Term  string `xml:"term,attr,omitempty"`
 }
 
 // CoreID holds the fields for the CoreID data.

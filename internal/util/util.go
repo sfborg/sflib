@@ -1,6 +1,7 @@
 package util
 
 import (
+	"archive/zip"
 	"fmt"
 	"io"
 	"log/slog"
@@ -116,4 +117,56 @@ func Progress(count int, recordType string) {
 
 func ProgressEnd() {
 	fmt.Fprintf(os.Stderr, "\r%s\r", strings.Repeat(" ", 50))
+}
+
+func CopyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return &arch.ErrFileOpen{Path: src, Err: err}
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return &arch.ErrFileCreate{File: dst, Err: err}
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		return &arch.ErrFileCopy{Src: src, Dst: dst, Err: err}
+	}
+
+	return nil
+}
+
+func CreateZip(filePath string) error {
+	zipFile := filePath + ".zip"
+	f, err := os.Create(zipFile)
+	if err != nil {
+		return &arch.ErrFileCreate{File: zipFile, Err: err}
+	}
+	defer f.Close()
+
+	zipWriter := zip.NewWriter(f)
+	defer zipWriter.Close()
+
+	srcFile, err := os.Open(filePath)
+	if err != nil {
+		return &arch.ErrFileOpen{Path: filePath, Err: err}
+	}
+	defer srcFile.Close()
+
+	zipEntry, err := zipWriter.Create(filepath.Base(filePath))
+	if err != nil {
+		return &arch.ErrZipCreate{File: zipFile, Err: err}
+	}
+
+	_, err = io.Copy(zipEntry, srcFile)
+	if err != nil {
+		return &arch.ErrZipCreate{File: zipFile, Err: err}
+	}
+
+	slog.Info("CSV ZIP file created", "file", zipFile)
+	return nil
 }

@@ -27,7 +27,7 @@ func (a *itext) Load(
 	chIn := make(chan string)
 
 	g.Go(func() error {
-		err := a.read(ctx2, chIn, a.filePath)
+		err := a.read(ctx2, chIn, a.sfgaFilePath)
 		close(chIn)
 		return err
 	})

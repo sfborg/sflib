@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.5.3] - 2026-02-07 Sat
+
+- Add [#24]: implement `to text` functionality.
+
 ## [v0.5.2] - 2026-02-05 Thu
 
 - Add [#22]: implement `to dwca` functionality.

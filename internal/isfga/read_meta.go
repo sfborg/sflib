@@ -9,7 +9,44 @@ import (
 	"github.com/sfborg/sflib/pkg/coldp"
 )
 
+var validTables = func() gnlib.Set[string] {
+	res := make(gnlib.Set[string])
+	tables := []string{
+		"metadata", "source", "author", "reference",
+		"name", "taxon", "synonym", "vernacular",
+		"name_relation", "type_material", "distribution",
+		"media", "treatment", "species_estimate",
+		"taxon_property", "species_interaction",
+		"taxon_concept_relation", "name_match",
+	}
+	for i := range tables {
+		res.Add(tables[i])
+	}
+	return res
+}()
+
+func (a *isfga) isEmpty(table string) bool {
+	if !validTables.Has(table) {
+		return true
+	}
+	q := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s LIMIT 1)", table)
+	var exists bool
+
+	err := a.db.QueryRow(q).Scan(&exists)
+	if err != nil {
+		return true
+	}
+	if exists {
+		return false
+	}
+	return true
+}
+
 func (a *isfga) LoadMeta() (*coldp.Meta, error) {
+	if a.isEmpty("metadata") {
+		return nil, nil
+	}
+
 	q := `
 SELECT
 	col__doi, col__title, col__alias, col__description, col__issued,

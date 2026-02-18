@@ -133,7 +133,8 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 		case coldp.UnknownTaxSt:
 			if d.ParentID != "" {
 				_, err = tStmt.Exec(
-					d.ID, d.AlternativeID, d.SourceID, d.ParentID, d.Ordinal,
+					d.ID, d.AlternativeID, d.LocalID, d.GlobalID, d.OtuID, d.SourceID,
+					d.ParentID, d.Ordinal,
 					d.BranchLength, d.ID, d.NamePhrase, d.AccordingToID, d.AccordingToPage,
 					d.AccordingToPageLink, d.Scrutinizer, d.ScrutinizerID,
 					d.ScrutinizerDate, d.TaxonomicStatus.ID(), d.ReferenceID, d.Extinct,

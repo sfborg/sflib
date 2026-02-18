@@ -53,20 +53,23 @@ func (a *idwca) coreWorker(
 		NameUsages: make([]coldp.NameUsage, 0, a.cfg.BatchSize),
 		References: make([]coldp.Reference, 0, a.cfg.BatchSize),
 	}
-
 	for {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		case v, ok := <-chIn:
 			if !ok {
+				// send the last batch of leftovers
 				if len(data.NameUsages) > 0 {
-					chOut <- data
+					return sendBatch(ctx, chOut, data)
 				}
 				return nil
 			}
+
 			if len(data.NameUsages) >= a.cfg.BatchSize {
-				chOut <- data
+				if err := sendBatch(ctx, chOut, data); err != nil {
+					return err
+				}
 				data = coldp.Data{
 					NameUsages: make([]coldp.NameUsage, 0, a.cfg.BatchSize),
 					References: make([]coldp.Reference, 0, a.cfg.BatchSize),
@@ -79,6 +82,16 @@ func (a *idwca) coreWorker(
 				data.References = append(data.References, *ref)
 			}
 		}
+	}
+}
+
+// sendBatch handles context-aware channel send
+func sendBatch(ctx context.Context, ch chan<- coldp.Data, data coldp.Data) error {
+	select {
+	case ch <- data:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
 	}
 }
 

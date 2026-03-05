@@ -5,6 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.5.6] - 2026-03-05 Thu
+
+- Add: improve documentation, add Zenodo file.
+
+## [v0.5.5] - 2026-02-19 Thu
+
+- Add [#26]: zn-CH becomes chi lang code.
+
+## [v0.5.4] - 2026-02-18 Wed
+
+- Fix: write NameUsage bug.
+
 ## [v0.5.3] - 2026-02-07 Sat
 
 - Add [#24]: implement `to text` functionality.
@@ -206,6 +218,9 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.5.6]: https://github.com/sfborg/sflib/compare/v0.5.5...v0.5.6
+[v0.5.5]: https://github.com/sfborg/sflib/compare/v0.5.4...v0.5.5
+[v0.5.4]: https://github.com/sfborg/sflib/compare/v0.5.3...v0.5.4
 [v0.5.3]: https://github.com/sfborg/sflib/compare/v0.5.2...v0.5.3
 [v0.5.2]: https://github.com/sfborg/sflib/compare/v0.5.1...v0.5.2
 [v0.5.1]: https://github.com/sfborg/sflib/compare/v0.5.0...v0.5.1
@@ -250,6 +265,7 @@ This document follows [changelog guidelines]
 [v0.1.1]: https://github.com/sfborg/sflib/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/sfborg/sflib/compare/v0.0.1...v0.1.0
 [v0.0.1]: https://github.com/sfborg/sflib/tree/v0.0.1
+[#26]: https://github.com/sfborg/sflib/issues/26
 [#24]: https://github.com/sfborg/sflib/issues/24
 [#22]: https://github.com/sfborg/sflib/issues/22
 [#21]: https://github.com/sfborg/sflib/issues/21

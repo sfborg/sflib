@@ -112,7 +112,7 @@ call `Fetch` to load the source into a cache directory, then read records
 through a channel.
 
 For more complete real-world usage, see [sf][sf] — the primary tool built
-on top of `sflib`.
+on top of `SFlib`.
 
 [sf]: https://github.com/sfborg/sf
 

@@ -252,7 +252,9 @@ Released under [MIT license]
 [CSV]: https://www.ietf.org/rfc/rfc4180.txt
 [CoLDP Interface API]: pkg/coldp/interface.go
 [CoLDP]: https://github.com/CatalogueOfLife/coldp
+[Dmitry Mozzherin]: https://github.com/dimus
 [DwCA]: https://dwc.tdwg.org/terms
+[Geoffrey Ower]: https://github.com/gdower
 [MIT license]: LICENSE
 [Packager API]: pkg/arch/interface.go
 [SFGA Interface API]: pkg/sfga/interface.go

@@ -7,20 +7,20 @@ Group Archives ([SFGA]s).
 ## Overview
 
 `SFlib` provides a unified interface for working with biodiversity data across
-several archive formats. It allows to convert any of supported formats into
+several archive formats. It allows converting any supported format into
 any other one using SFGA as an intermediary.
 
 ### Supported Archive Formats
 
 | Package      | Format            | Description                             |
 |--------------|-------------------|-----------------------------------------|
-| `pkg/sfga`   | [SFGA]            | SQLite-based archive with               |
+| `pkg/sfga`   | [SFGA]            | SQLite-based lossless interchange format |
 | `pkg/coldp`  | [CoLDP]           | Catalogue of Life Data Package          |
 | `pkg/dwca`   | [DwCA]            | Darwin Core Archive                     |
 | `pkg/xsv`    | [CSV] / TSV / PSV | Delimited values files with DwC headers |
 | `pkg/text`   | Plain text        | One scientific name per line (UTF-8)    |
 
-Each format exposes a consistent `Archive` interface with `Load`, `Write`, and
+Each format exposes a consistent `Archive` interface with `Fetch`, `Create`, and
 `Export` methods, created via factory functions in the root package:
 
 ```go
@@ -36,6 +36,8 @@ sflib.NewSfga(opts...)
 [SFGA] is an SQLite-based archive format based heavily on CoLDP standard. SFGA
 is designed as a lossless interchange format, preserving all information from
 any format it converts to or from.
+
+[Packager API]
 
 [SFGA Interface API]
 
@@ -58,6 +60,8 @@ The [CoLDP] package provides base models for both SFGA and CoLDP.
 Comprehensive enumerated types are provided for taxonomic rank, status,
 nomenclatural status, habitat, sex, and more.
 
+[Packager API]
+
 [CoLDP Interface API]
 
 ### Darwin Core Archive (`pkg/dwca`)
@@ -70,12 +74,18 @@ XSV package reads and writes comma-separated, tab-separated and
 pipe-separated files (CSV,TSV,PSV files). It automatically detects field
 delimiters and maps DarwinCore and CoLDP column headers to SFGA.
 
+[Packager API]
+
 [XSV Interface API]
 
-### Name Parsing (`pkg/parser`)
+### Text Format (`pkg/text`)
 
-A thin wrapper around [GNparser] that provides nomenclatural-code-
-aware parsing and concurrent parser pools for high-throughput workloads.
+Text package reads and writes a plain text file where every line contains
+one scientific name.
+
+[Packager API]
+
+[Text Interface API]
 
 ### Configuration
 
@@ -119,7 +129,7 @@ import (
 )
 
 a := sflib.NewText()
-err := a.Fetch("names.txt", cacheDir)
+err := a.Fetch("names.txt", "/tmp/text-cache")
 
 ch := make(chan coldp.NameUsage)
 var wg sync.WaitGroup
@@ -148,10 +158,10 @@ import (
 )
 
 dwca := sflib.NewDwca()
-err := dwca.Fetch("archive.zip", dwcaDir)
+err := dwca.Fetch("archive.zip", "/tmp/dwca-cache")
 
 sfga := sflib.NewSfga()
-err = sfga.Create(sfgaDir)
+err = sfga.Create("/tmp/sfga-cache")
 _, err = sfga.Connect()
 defer sfga.Close()
 
@@ -168,6 +178,47 @@ go func() {
 err = dwca.LoadCore(context.Background(), ch)
 close(ch)
 wg.Wait()
+```
+
+### Convert an SFGA archive to CoLDP
+
+Continuing from the previous example, the SFGA archive can be converted to any
+other supported format. This demonstrates the full round-trip: DwCA → SFGA →
+CoLDP.
+
+```go
+import (
+  "context"
+  "path/filepath"
+  "sync"
+
+  "github.com/sfborg/sflib"
+  "github.com/sfborg/sflib/pkg/coldp"
+)
+
+sfga := sflib.NewSfga()
+err := sfga.Fetch("archive.sqlite.zip", "/tmp/sfga-cache")
+_, err = sfga.Connect()
+defer sfga.Close()
+
+coldpDir := "/tmp/coldp-cache"
+cl := sflib.NewColdp()
+err = cl.Create(coldpDir)
+
+ch := make(chan coldp.NameUsage)
+ctx := context.Background()
+var wg sync.WaitGroup
+wg.Add(1)
+go func() {
+  defer wg.Done()
+  coldp.Write(ctx, ch, filepath.Join(coldpDir, "NameUsage.tsv"))
+}()
+
+err = sfga.LoadNameUsages(ctx, ch)
+close(ch)
+wg.Wait()
+
+err = cl.Export("output.zip", true)
 ```
 
 ## Testing
@@ -194,12 +245,17 @@ go test ./... -p 1
 
 * [Geoffrey Ower]
 
+## License
 
-[SFGA]: https://github.com/sfborg/sfga
-[CoLDP]: https://github.com/CatalogueOfLife/coldp
-[GNparser]: https://github.com/gnames/gnparser
-[DwCA]: https://dwc.tdwg.org/terms
+Released under [MIT license]
+
 [CSV]: https://www.ietf.org/rfc/rfc4180.txt
-[SFGA Interface API]: pkg/sfga/interface.go
 [CoLDP Interface API]: pkg/coldp/interface.go
-
+[CoLDP]: https://github.com/CatalogueOfLife/coldp
+[DwCA]: https://dwc.tdwg.org/terms
+[MIT license]: LICENSE
+[Packager API]: pkg/arch/interface.go
+[SFGA Interface API]: pkg/sfga/interface.go
+[SFGA]: https://github.com/sfborg/sfga
+[Text Interface API]: pkg/text/interface.go
+[XSV Interface API]: pkg/xsv/interface.go

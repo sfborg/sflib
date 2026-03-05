@@ -27,6 +27,10 @@ type Archive interface {
 		nomCode nomcode.Code,
 	) error
 
+	// Write receives NameUsage objects from the channel and writes them to
+	// the text Archive file, one name per line. Context allows to cancel the
+	// process if it receives a Done signal. It returns error if anything
+	// goes wrong.
 	Write(
 		ctx context.Context,
 		ch <-chan coldp.NameUsage,

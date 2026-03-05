@@ -1,24 +1,24 @@
-# `sflib`
+# `SFlib`
 
-`sflib` is a Go library containing shared functionality for Species File Group
+`SFlib` is a Go library containing shared functionality for Species File Group
 (SFG) projects. It primarily focuses on handling functionality for Species File
-Group Archives (SFGAs).
+Group Archives ([SFGA]s).
 
 ## Overview
 
-`sflib` provides a unified interface for working with biodiversity data across
-five archive formats. The [Catalogue of Life Data Package (CoLDP)][coldp] is
-the shared internal data model used throughout.
+`SFlib` provides a unified interface for working with biodiversity data across
+several archive formats. It allows to convert any of supported formats into
+any other one using SFGA as an intermediary.
 
 ### Supported Archive Formats
 
-| Package      | Format                          | Description                                              |
-|--------------|---------------------------------|----------------------------------------------------------|
-| `pkg/text`   | Plain text                      | One scientific name per line (UTF-8)                     |
-| `pkg/xsv`    | CSV / TSV / PSV                 | Delimited values with automatic DarwinCore header mapping |
-| `pkg/coldp`  | CoLDP                           | Catalogue of Life Data Package (full standard)           |
-| `pkg/dwca`   | Darwin Core Archive             | DwCA format as used by GBIF                              |
-| `pkg/sfga`   | Species File Group Archive      | SQLite-based archive with full read/write support        |
+| Package      | Format            | Description                             |
+|--------------|-------------------|-----------------------------------------|
+| `pkg/sfga`   | [SFGA]            | SQLite-based archive with               |
+| `pkg/coldp`  | [CoLDP]           | Catalogue of Life Data Package          |
+| `pkg/dwca`   | [DwCA]            | Darwin Core Archive                     |
+| `pkg/xsv`    | [CSV] / TSV / PSV | Delimited values files with DwC headers |
+| `pkg/text`   | Plain text        | One scientific name per line (UTF-8)    |
 
 Each format exposes a consistent `Archive` interface with `Load`, `Write`, and
 `Export` methods, created via factory functions in the root package:
@@ -31,9 +31,18 @@ sflib.NewDwca(opts...)
 sflib.NewSfga(opts...)
 ```
 
+### Species File Group Archive (`pkg/sfga`)
+
+[SFGA] is an SQLite-based archive format based heavily on CoLDP standard. SFGA
+is designed as a lossless interchange format, preserving all information from
+any format it converts to or from.
+
+[SFGA Interface API]
+
+
 ### CoLDP Data Model (`pkg/coldp`)
 
-The CoLDP package defines the core types shared across all formats:
+The [CoLDP] package provides base models for both SFGA and CoLDP.
 
 * **NameUsage** — consolidated record combining Name, Taxon, and Synonym data
 * **Name** — scientific name with parsed components and nomenclatural metadata
@@ -49,38 +58,26 @@ The CoLDP package defines the core types shared across all formats:
 Comprehensive enumerated types are provided for taxonomic rank, status,
 nomenclatural status, habitat, sex, and more.
 
-### Species File Group Archive (`pkg/sfga`)
-
-SFGA is an SQLite-based archive format. The package provides:
-
-* **Reader** — load all CoLDP entity types from the database
-* **Writer** — insert all CoLDP entity types into the database
-* **AccessorSFGA** — connection management, schema version checking, and
-  compatibility validation
-* **Updater** — migrate an existing SFGA to a newer schema version
-* **Enricher** — enrich data, e.g. automatically infer basionym relationships
-* **Schema** — fetch the current SFGA schema from the upstream repository
+[CoLDP Interface API]
 
 ### Darwin Core Archive (`pkg/dwca`)
 
-* **Reader** — read core taxon file plus Vernacular and Distribution extensions,
-  with diagnostics and EML metadata access
-* **Writer** — write `meta.xml`, `eml.xml`, core taxon TSV, and extension files
+[DwCA] package allows to convert to and from Darwin Core Archives.
 
 ### XSV Format (`pkg/xsv`)
 
-Automatically detects field delimiters and maps DarwinCore and CoLDP column
-headers to the canonical CoLDP terms, enabling straightforward import of
-third-party CSV/TSV exports.
+XSV package reads and writes comma-separated, tab-separated and
+pipe-separated files (CSV,TSV,PSV files). It automatically detects field
+delimiters and maps DarwinCore and CoLDP column headers to SFGA.
+
+[XSV Interface API]
 
 ### Name Parsing (`pkg/parser`)
 
-A thin wrapper around [GNparser][gnparser] that provides nomenclatural-code-
+A thin wrapper around [GNparser] that provides nomenclatural-code-
 aware parsing and concurrent parser pools for high-throughput workloads.
 
 ### Configuration
-
-All factory functions accept functional options:
 
 * `OptNomCode` — nomenclatural code (Zoological, Botanical, Bacterial, …)
 * `OptJobsNum` — number of concurrent workers (default: 5)
@@ -89,13 +86,10 @@ All factory functions accept functional options:
 * `OptLocalSchemaPath` — use a local SFGA schema file instead of fetching
   from GitHub
 
-[coldp]: https://github.com/CatalogueOfLife/coldp
-[gnparser]: https://github.com/gnames/gnparser
-
-
 ## Installation
 
-To use `sflib` in your Go project, run:
+Requires Go 1.25 or later. No CGO or system libraries are required —
+SQLite support is provided by a pure-Go driver.
 
 ```bash
 go get github.com/sfborg/sflib
@@ -103,72 +97,77 @@ go get github.com/sfborg/sflib
 
 ## Usage Examples
 
-### Working with Species File Group Archives (SFGA)
+All formats use the same pattern: create an archive with a `New*` factory,
+call `Fetch` to load the source into a cache directory, then read records
+through a channel.
 
-This section demonstrates how to interact with SFG Archives using `sflib`.
+For more complete real-world usage, see [sf][sf] — the primary tool built
+on top of `sflib`.
 
-#### Creating a new SFGA
+[sf]: https://github.com/sfborg/sf
 
- ```go
-import (
-  "fmt"
-  "github.com/sfborg/sflib/pkg/sfgaio"
-)
-
-func main() {
-  sfga := sfgaio.New()
-  err := sfga.Create(dif)
-  ...
-  _, err = sfga.Connect()
-  ...
-  defer sfga.Close()
-  fmt.Println("SFGA created successfully.")
-}
-```
-
-#### Import
-
-This example demonstrates how to import data into an existing SFGA.
+### Load names from a text file
 
 ```go
 import (
-  "fmt"
-  "github.com/sfborg/sflib/pkg/sfgaio"
+  "context"
+  "sync"
+
+  "github.com/gnames/gnlib/ent/nomcode"
+  "github.com/sfborg/sflib"
+  "github.com/sfborg/sflib/pkg/coldp"
 )
 
-func main() {
-  sfga := sfgaio.New()
-  err := sfga.SetDb(dbPath) // Set the path to the existing SFGA database
-  ...
-  err = sfga.Import(filePath) // Import data from filePath
-  ...
-  _, err = sfga.Connect() // Connect to the database
-  ...
-  defer sfga.Close() // Close the connection when done
-  fmt.Println("Data imported successfully.")
-}
+a := sflib.NewText()
+err := a.Fetch("names.txt", cacheDir)
+
+ch := make(chan coldp.NameUsage)
+var wg sync.WaitGroup
+wg.Add(1)
+go func() {
+  defer wg.Done()
+  for nu := range ch {
+    // process nu
+  }
+}()
+
+err = a.Load(context.Background(), ch, 5, nomcode.Zoological)
+close(ch)
+wg.Wait()
 ```
 
-#### Ad-hoc connection
-
-This example demonstrates how to connect to an existing SFGA database without
-creating a new one.
+### Convert a DwCA archive to SFGA
 
 ```go
 import (
-  "fmt"
-  "github.com/sfborg/sflib/pkg/sfgaio"
+  "context"
+  "sync"
+
+  "github.com/sfborg/sflib"
+  "github.com/sfborg/sflib/pkg/coldp"
 )
 
-func main() {
-  sfga := sfgaio.New()
-  err := sfga.SetDb(filePath) // Set the path to the existing SFGA database
-  ...
-  _, err = sfga.Connect() // Connect to the database
-  ...
-  defer sfga.Close() // Close the connection when done
-  fmt.Println("Connected to SFGA successfully.")
-}
+dwca := sflib.NewDwca()
+err := dwca.Fetch("archive.zip", dwcaDir)
+
+sfga := sflib.NewSfga()
+err = sfga.Create(sfgaDir)
+_, err = sfga.Connect()
+defer sfga.Close()
+
+ch := make(chan coldp.Data)
+var wg sync.WaitGroup
+wg.Add(1)
+go func() {
+  defer wg.Done()
+  for d := range ch {
+    sfga.InsertNameUsages(d.NameUsages)
+  }
+}()
+
+err = dwca.LoadCore(context.Background(), ch)
+close(ch)
+wg.Wait()
 ```
 
 ## Testing
@@ -178,7 +177,7 @@ create running conditions, that will break some tests. To make sure
 running only one thread with tests either use
 
 ```sh
-make test
+just test
 ```
 
 or run tests with `-p 1` option:
@@ -186,3 +185,21 @@ or run tests with `-p 1` option:
 ```sh
 go test ./... -p 1
 ```
+
+## Authors
+
+* [Dmitry Mozzherin]
+
+## Contributors
+
+* [Geoffrey Ower]
+
+
+[SFGA]: https://github.com/sfborg/sfga
+[CoLDP]: https://github.com/CatalogueOfLife/coldp
+[GNparser]: https://github.com/gnames/gnparser
+[DwCA]: https://dwc.tdwg.org/terms
+[CSV]: https://www.ietf.org/rfc/rfc4180.txt
+[SFGA Interface API]: pkg/sfga/interface.go
+[CoLDP Interface API]: pkg/coldp/interface.go
+

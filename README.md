@@ -1,5 +1,7 @@
 # `SFlib`
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18879464.svg)](https://doi.org/10.5281/zenodo.18879464)
+
 `SFlib` is a Go library containing shared functionality for Species File Group
 (SFG) projects. It primarily focuses on handling functionality for Species File
 Group Archives ([SFGA]s).

@@ -242,9 +242,6 @@ go test ./... -p 1
 ## Authors
 
 * [Dmitry Mozzherin]
-
-## Contributors
-
 * [Geoffrey Ower]
 
 ## License

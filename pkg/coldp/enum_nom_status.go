@@ -37,14 +37,17 @@ func NewNomStatus(s string) NomStatus {
 	switch s {
 	case "", "nomenvalidum", "available", "established", "valid":
 		return Established
-	case "nominval", "invalidum", "nomeninvalidum", "unavailable", "notestablished":
+	case "nominval", "invalidum", "nomeninvalidum", "unavailable", "notestablished",
+		"nomnud", "nomsubnud", "prosyn":
 		return NotEstablished
 	case "nomenlegitimum", "potentiallyvalid", "acceptable":
 		return Acceptable
 	case "nomilleg", "nomenillegitimum", "nomeilegítimo", "nomeilegitimo",
-		"objectivelyinvalid", "unacceptable", "nudum", "nullum":
+		"objectivelyinvalid", "unacceptable", "nudum", "nullum",
+		"nomsuperfl", "isonym":
 		return Unacceptable
-	case "nomcons", "nomenconservandum", "conservedname", "conserved", "nomecorretoviaconservacao":
+	case "nomcons", "nomenconservandum", "conservedname", "conserved", "nomecorretoviaconservacao",
+		"nometorthcons":
 		return Conserved
 	case "nomrej", "nomenrejiciendum", "nomerejeitado", "rejected", "negatum":
 		return Rejected

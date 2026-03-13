@@ -232,6 +232,7 @@ var abbrToRank = map[string]Rank{
 	"SER":        Series,
 	"SUBSER":     Subseries,
 	"SP":         Species,
+	"SPEC":       Species,
 	"INFRASP":    InfraspecificName,
 	"GX":         Grex,
 	"SUBSP":      Subspecies,

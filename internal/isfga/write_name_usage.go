@@ -151,6 +151,8 @@ func (a *isfga) InsertNameUsages(data []coldp.NameUsage) error {
 					return err
 				}
 			}
+		case coldp.BareNameTS:
+
 		default:
 			_, err = sStmt.Exec(
 				d.ID, d.ParentID, d.SourceID, d.ID, d.NamePhrase, d.AccordingToID,

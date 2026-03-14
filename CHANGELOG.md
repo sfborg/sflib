@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v0.5.8 - 2026-03-14 Sat
+
+- Fix: bare names do not get into synonym table.
+
 ## v0.5.7 - 2026-03-13 Fri
 
 - Add: Update nom. status and rank enums.

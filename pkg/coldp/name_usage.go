@@ -389,10 +389,6 @@ func (n NameUsage) Load(headers, data []string) (DataLoader, error) {
 	n.TaxonomicStatus = NewTaxonomicStatus(row["status"])
 	n.ScientificName = row["scientificname"]
 	n.Authorship = row["authorship"]
-	n.ScientificNameString = n.ScientificName
-	if n.Authorship != "" && !strings.HasSuffix(n.ScientificName, n.Authorship) {
-		n.ScientificNameString += " " + n.Authorship
-	}
 	n.Rank = NewRank(row["rank"])
 	n.Notho = NewNamePart(row["notho"])
 	n.OriginalSpelling = ToBool(row["originalspelling"])
@@ -401,6 +397,15 @@ func (n NameUsage) Load(headers, data []string) (DataLoader, error) {
 	n.InfragenericEpithet = row["infragenericepithet"]
 	n.SpecificEpithet = row["specificepithet"]
 	n.InfraspecificEpithet = row["infraspecificepithet"]
+	if n.ScientificName == "" {
+		n.ScientificName = assembleScientificName(
+			n.Uninomial, n.GenericName, n.SpecificEpithet, n.InfraspecificEpithet,
+		)
+	}
+	n.ScientificNameString = n.ScientificName
+	if n.Authorship != "" && !strings.HasSuffix(n.ScientificName, n.Authorship) {
+		n.ScientificNameString += " " + n.Authorship
+	}
 	n.CultivarEpithet = row["cultivarepithet"]
 	n.CombinationAuthorship = row["combinationauthorship"]
 	n.CombinationAuthorshipID = row["combinationauthorshipid"]

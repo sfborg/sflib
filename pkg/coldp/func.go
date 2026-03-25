@@ -359,6 +359,27 @@ func RowToMap(headers, row []string) (map[string]string, error) {
 	return res, warning
 }
 
+// assembleScientificName builds a canonical scientific name from its
+// components when the scientificName field itself is absent. It joins
+// non-empty parts with a single space.
+func assembleScientificName(uninomial, generic, specific, infraspecific string) string {
+	parts := make([]string, 0, 3)
+	if uninomial != "" {
+		parts = append(parts, uninomial)
+	} else {
+		if generic != "" {
+			parts = append(parts, generic)
+		}
+		if specific != "" {
+			parts = append(parts, specific)
+		}
+		if infraspecific != "" {
+			parts = append(parts, infraspecific)
+		}
+	}
+	return strings.Join(parts, " ")
+}
+
 // ToStr normalizes enumerated string IDs to 'normal' strings.
 // For example 'PROVISIONALLY_ACCEPTED' becomes
 // 'provisionally accepted'.

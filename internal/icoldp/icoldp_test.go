@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/gnames/gnsys"
@@ -123,6 +124,161 @@ func TestMeta(t *testing.T) {
 		assert.Equal(v.contactOrganization, meta.Contact.Organization)
 		assert.Equal(v.license, meta.License)
 	}
+}
+
+func TestNoSciName(t *testing.T) {
+	var err error
+	assert := assert.New(t)
+	err = gnsys.CleanDir(testDir)
+	assert.Nil(err)
+
+	a := icoldp.New()
+	path := filepath.Join("..", "..", "testdata", "coldp", "nameusage", "no-sci-name.zip")
+	err = a.Fetch(path, testDir)
+	assert.Nil(err)
+
+	err = a.DirInfo()
+	assert.Nil(err)
+
+	nuPath, ok := a.DataPaths()[coldp.NameUsageDT]
+	assert.True(ok)
+
+	ch := make(chan coldp.NameUsage)
+	var res []coldp.NameUsage
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for nu := range ch {
+			res = append(res, nu)
+		}
+	}()
+
+	err = coldp.Read(a.Config(), nuPath, ch)
+	assert.Nil(err)
+	close(ch)
+	wg.Wait()
+
+	// Build lookup by ID
+	byID := make(map[string]coldp.NameUsage)
+	for _, nu := range res {
+		byID[nu.ID] = nu
+	}
+
+	assert.Equal(11, len(res), "should load all 11 records")
+
+	// Records with col:scientificName keep their value as-is.
+	nu := byID["animalia"]
+	assert.Equal("Animalia", nu.ScientificName)
+
+	// Uninomial-only record: ScientificName assembled from col:uninomial.
+	nu = byID["urn:lsid:nmbe.ch:spiderfam:0001"]
+	assert.Equal("Liphistiidae", nu.ScientificName)
+
+	nu = byID["urn:lsid:nmbe.ch:spidergen:00001"]
+	assert.Equal("Heptathela", nu.ScientificName)
+
+	// Species record: ScientificName assembled from col:genericName + col:specificEpithet.
+	nu = byID["urn:lsid:nmbe.ch:spidersp:000008"]
+	assert.Equal("Heptathela higoensis", nu.ScientificName)
+
+	nu = byID["urn:lsid:nmbe.ch:spidersp:000030"]
+	assert.Equal("Liphistius albipes", nu.ScientificName)
+}
+
+func TestNoSciNameSplit(t *testing.T) {
+	var err error
+	assert := assert.New(t)
+	err = gnsys.CleanDir(testDir)
+	assert.Nil(err)
+
+	a := icoldp.New()
+	path := filepath.Join("..", "..", "testdata", "coldp", "name", "no-sci-name.zip")
+	err = a.Fetch(path, testDir)
+	assert.Nil(err)
+
+	err = a.DirInfo()
+	assert.Nil(err)
+
+	namePath, ok := a.DataPaths()[coldp.NameDT]
+	assert.True(ok)
+
+	taxonPath, ok := a.DataPaths()[coldp.TaxonDT]
+	assert.True(ok)
+
+	// Read Name records.
+	nameCh := make(chan coldp.Name)
+	var names []coldp.Name
+	var nameWg sync.WaitGroup
+	nameWg.Add(1)
+	go func() {
+		defer nameWg.Done()
+		for n := range nameCh {
+			names = append(names, n)
+		}
+	}()
+	err = coldp.Read(a.Config(), namePath, nameCh)
+	assert.Nil(err)
+	close(nameCh)
+	nameWg.Wait()
+
+	assert.Equal(11, len(names), "should load all 11 Name records")
+
+	byNameID := make(map[string]coldp.Name)
+	for _, n := range names {
+		byNameID[n.ID] = n
+	}
+
+	// Records with col:scientificName keep their value as-is.
+	n := byNameID["n-animalia"]
+	assert.Equal("Animalia", n.ScientificName)
+
+	// Uninomial records: ScientificName assembled from col:uninomial.
+	n = byNameID["n-liphistiidae"]
+	assert.Equal("Liphistiidae", n.ScientificName)
+	assert.Equal("Thorell, 1869", n.Authorship)
+
+	n = byNameID["n-heptathela"]
+	assert.Equal("Heptathela", n.ScientificName)
+
+	// Species records: ScientificName assembled from col:genus + col:specificEpithet.
+	n = byNameID["n-higoensis"]
+	assert.Equal("Heptathela higoensis", n.ScientificName)
+	assert.Equal("Haupt, 1983", n.Authorship)
+
+	n = byNameID["n-albipes"]
+	assert.Equal("Liphistius albipes", n.ScientificName)
+
+	// Read Taxon records and verify nameID links.
+	taxonCh := make(chan coldp.Taxon)
+	var taxa []coldp.Taxon
+	var taxonWg sync.WaitGroup
+	taxonWg.Add(1)
+	go func() {
+		defer taxonWg.Done()
+		for tx := range taxonCh {
+			taxa = append(taxa, tx)
+		}
+	}()
+	err = coldp.Read(a.Config(), taxonPath, taxonCh)
+	assert.Nil(err)
+	close(taxonCh)
+	taxonWg.Wait()
+
+	assert.Equal(11, len(taxa), "should load all 11 Taxon records")
+
+	byTaxonID := make(map[string]coldp.Taxon)
+	for _, tx := range taxa {
+		byTaxonID[tx.ID] = tx
+	}
+
+	tx := byTaxonID["animalia"]
+	assert.Equal("n-animalia", tx.NameID)
+	assert.Equal("", tx.ParentID)
+
+	tx = byTaxonID["urn:lsid:nmbe.ch:spidersp:000008"]
+	assert.Equal("n-higoensis", tx.NameID)
+	assert.Equal("urn:lsid:nmbe.ch:spidergen:00001", tx.ParentID)
 }
 
 func TestName(t *testing.T) {

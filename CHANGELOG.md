@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v0.5.9 - 2026-03-25 Wed
+
+- Add: create value for col__scientific_name from name pieces if sci name is
+  empty.
+
 ## v0.5.8 - 2026-03-14 Sat
 
 - Fix: bare names do not get into synonym table.
@@ -227,6 +232,9 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.5.9]: https://github.com/sfborg/sflib/compare/v0.5.8...v0.5.9
+[v0.5.8]: https://github.com/sfborg/sflib/compare/v0.5.7...v0.5.8
+[v0.5.7]: https://github.com/sfborg/sflib/compare/v0.5.6...v0.5.7
 [v0.5.6]: https://github.com/sfborg/sflib/compare/v0.5.5...v0.5.6
 [v0.5.5]: https://github.com/sfborg/sflib/compare/v0.5.4...v0.5.5
 [v0.5.4]: https://github.com/sfborg/sflib/compare/v0.5.3...v0.5.4

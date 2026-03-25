@@ -273,16 +273,21 @@ func (n Name) Load(headers, data []string) (DataLoader, error) {
 	n.BasionymID = row["basionymid"] // becomes NameRelation
 	n.ScientificName = row["scientificname"]
 	n.Authorship = row["authorship"] // verbatim author string
-	n.ScientificNameString = n.ScientificName
-	if n.Authorship != "" && !strings.HasSuffix(n.ScientificName, n.Authorship) {
-		n.ScientificNameString += " " + n.Authorship
-	}
 	n.Rank = NewRank(row["rank"])
 	n.Uninomial = row["uninomial"]
 	n.Genus = row["genus"]
 	n.InfragenericEpithet = row["infragenericepithet"]
 	n.SpecificEpithet = row["specificepithet"]
 	n.InfraspecificEpithet = row["infraspecificepithet"]
+	if n.ScientificName == "" {
+		n.ScientificName = assembleScientificName(
+			n.Uninomial, n.Genus, n.SpecificEpithet, n.InfraspecificEpithet,
+		)
+	}
+	n.ScientificNameString = n.ScientificName
+	if n.Authorship != "" && !strings.HasSuffix(n.ScientificName, n.Authorship) {
+		n.ScientificNameString += " " + n.Authorship
+	}
 	n.CultivarEpithet = row["cultivarepithet"]
 	n.Notho = NewNamePart(row["notho"])
 	n.OriginalSpelling = ToBool(row["originalspelling"])

@@ -253,13 +253,11 @@ func TestNoSciNameSplit(t *testing.T) {
 	taxonCh := make(chan coldp.Taxon)
 	var taxa []coldp.Taxon
 	var taxonWg sync.WaitGroup
-	taxonWg.Add(1)
-	go func() {
-		defer taxonWg.Done()
+	taxonWg.Go(func() {
 		for tx := range taxonCh {
 			taxa = append(taxa, tx)
 		}
-	}()
+	})
 	err = coldp.Read(a.Config(), taxonPath, taxonCh)
 	assert.Nil(err)
 	close(taxonCh)
@@ -279,6 +277,44 @@ func TestNoSciNameSplit(t *testing.T) {
 	tx = byTaxonID["urn:lsid:nmbe.ch:spidersp:000008"]
 	assert.Equal("n-higoensis", tx.NameID)
 	assert.Equal("urn:lsid:nmbe.ch:spidergen:00001", tx.ParentID)
+}
+
+func TestReferences(t *testing.T) {
+	var err error
+	assert := assert.New(t)
+	err = gnsys.CleanDir(testDir)
+	assert.Nil(err)
+
+	a := icoldp.New()
+	path := filepath.Join("..", "..", "testdata", "coldp", "nameusage/ptero-yaml.zip")
+	err = a.Fetch(path, testDir)
+	assert.Nil(err)
+
+	err = a.DirInfo()
+	assert.Nil(err)
+
+	refPath, ok := a.DataPaths()[coldp.ReferenceDT]
+	assert.True(ok)
+
+	ch := make(chan coldp.Reference)
+	var refs []coldp.Reference
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for ref := range ch {
+			refs = append(refs, ref)
+		}
+	}()
+
+	err = coldp.Read(a.Config(), refPath, ch)
+	assert.Nil(err)
+	close(ch)
+	wg.Wait()
+
+	assert.Equal(1966, len(refs))
+	assert.Equal("1597", refs[0].ID)
+	assert.NotEmpty(refs[0].Citation)
 }
 
 func TestName(t *testing.T) {

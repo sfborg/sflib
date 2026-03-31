@@ -5,16 +5,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## v0.5.9 - 2026-03-25 Wed
+## [v0.5.10] - 2026-03-31 Tue
+
+- Fix [#28]: CoLDP archives that have references in csv/tsv/psv format as well
+  as jsonl, json, or bib formats now get references imported correctly.
+
+## [v0.5.9] - 2026-03-25 Wed
 
 - Add: create value for col__scientific_name from name pieces if sci name is
   empty.
 
-## v0.5.8 - 2026-03-14 Sat
+## [v0.5.8] - 2026-03-14 Sat
 
 - Fix: bare names do not get into synonym table.
 
-## v0.5.7 - 2026-03-13 Fri
+## [v0.5.7] - 2026-03-13 Fri
 
 - Add: Update nom. status and rank enums.
 - Add: Zenodo link, citation.
@@ -232,6 +237,7 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.5.10]: https://github.com/sfborg/sflib/compare/v0.5.9...v0.5.10
 [v0.5.9]: https://github.com/sfborg/sflib/compare/v0.5.8...v0.5.9
 [v0.5.8]: https://github.com/sfborg/sflib/compare/v0.5.7...v0.5.8
 [v0.5.7]: https://github.com/sfborg/sflib/compare/v0.5.6...v0.5.7
@@ -282,6 +288,7 @@ This document follows [changelog guidelines]
 [v0.1.1]: https://github.com/sfborg/sflib/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/sfborg/sflib/compare/v0.0.1...v0.1.0
 [v0.0.1]: https://github.com/sfborg/sflib/tree/v0.0.1
+[#28]: https://github.com/sfborg/sflib/issues/28
 [#26]: https://github.com/sfborg/sflib/issues/26
 [#24]: https://github.com/sfborg/sflib/issues/24
 [#22]: https://github.com/sfborg/sflib/issues/22

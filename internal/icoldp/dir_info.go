@@ -21,6 +21,9 @@ func (a *icoldp) DirInfo() error {
 	var dt coldp.DataType
 	var metaOK bool
 
+	var refPath string
+	var refPri int
+
 	for _, v := range paths {
 		dir, file, ext := gnsys.SplitPath(v)
 
@@ -32,12 +35,43 @@ func (a *icoldp) DirInfo() error {
 		}
 
 		dt = coldp.NewDataType(file, ext)
-		if dt != coldp.UnkownDT {
+		if dt == coldp.UnkownDT {
+			continue
+		}
+
+		// Reference files can appear in multiple formats; apply precedence
+		// csv/tsv > jsonl > json > bib and store only the best under ReferenceDT.
+		if dt == coldp.ReferenceDT || dt == coldp.ReferenceJsonDT || dt == coldp.ReferenceBibtexDT {
+			if p := refFormatPriority(ext); p > refPri {
+				refPath = v
+				refPri = p
+			}
+		} else {
 			a.dataPaths[dt] = v
 		}
 	}
 
+	if refPath != "" {
+		a.dataPaths[coldp.ReferenceDT] = refPath
+	}
+
 	return nil
+}
+
+// refFormatPriority returns a priority score for a reference file extension.
+// Higher score wins: csv/tsv/psv=4, jsonl=3, json=2, bib=1.
+func refFormatPriority(ext string) int {
+	switch strings.ToLower(ext) {
+	case ".csv", ".tsv", ".psv":
+		return 4
+	case ".jsonl":
+		return 3
+	case ".json":
+		return 2
+	case ".bib":
+		return 1
+	}
+	return 0
 }
 
 // getDataDir returns dataDir where data files are residing.

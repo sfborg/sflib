@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.5.11] - 2026-04-02 Thu
+
+- Fix: avoid superfluous, and duplicate synonyms.
+
 ## [v0.5.10] - 2026-03-31 Tue
 
 - Fix [#28]: CoLDP archives that have references in csv/tsv/psv format as well
@@ -237,6 +241,7 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.5.11]: https://github.com/sfborg/sflib/compare/v0.5.10...v0.5.11
 [v0.5.10]: https://github.com/sfborg/sflib/compare/v0.5.9...v0.5.10
 [v0.5.9]: https://github.com/sfborg/sflib/compare/v0.5.8...v0.5.9
 [v0.5.8]: https://github.com/sfborg/sflib/compare/v0.5.7...v0.5.8

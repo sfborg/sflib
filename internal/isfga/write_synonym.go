@@ -19,7 +19,7 @@ func (a *isfga) InsertSynonyms(data []coldp.Synonym) error {
 	}()
 
 	stmt, err := tx.Prepare(`
-  INSERT INTO synonym
+  INSERT OR IGNORE INTO synonym
   (
     col__id, col__taxon_id, col__source_id, col__name_id, col__name_phrase,
     col__according_to_id, col__status_id, col__reference_id,

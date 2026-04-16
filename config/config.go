@@ -14,6 +14,9 @@ var (
 
 	// schemaHash is the sha256 sum of the correponding schema version.
 	schemaHash = "f1de96f7419136"
+
+	// SchemaVersion is the desired SFGA schema version.
+	SchemaVersion = repoTag
 )
 
 type GitRepo struct {
@@ -60,6 +63,21 @@ type Config struct {
 	// JobsNum conveys the number of concurrent jobs to run, where it is
 	// needed.
 	JobsNum int
+
+	// InferBasionyms enables basionym inference during enrichment.
+	InferBasionyms bool
+
+	// SkipBasionymsIfRelationsExist skips basionym inference if BASIONYM
+	// relations already exist in the archive.
+	SkipBasionymsIfRelationsExist bool
+
+	// CreateOriginalCombinations creates OriginalGenus, OriginalSpecies, etc.
+	// relationships in addition to BASIONYM during inference.
+	CreateOriginalCombinations bool
+
+	// MigrateOutputDir, if set, saves a copy of the migrated SFGA file to
+	// this directory after auto-migration in Fetch().
+	MigrateOutputDir string
 }
 
 type Option func(*Config)
@@ -103,6 +121,30 @@ func OptLocalSchemaPath(path string) Option {
 func OptWithParents(b bool) Option {
 	return func(c *Config) {
 		c.WithParents = b
+	}
+}
+
+func OptInferBasionyms(b bool) Option {
+	return func(c *Config) {
+		c.InferBasionyms = b
+	}
+}
+
+func OptSkipBasionymsIfRelationsExist(b bool) Option {
+	return func(c *Config) {
+		c.SkipBasionymsIfRelationsExist = b
+	}
+}
+
+func OptCreateOriginalCombinations(b bool) Option {
+	return func(c *Config) {
+		c.CreateOriginalCombinations = b
+	}
+}
+
+func OptMigrateOutputDir(dir string) Option {
+	return func(c *Config) {
+		c.MigrateOutputDir = dir
 	}
 }
 

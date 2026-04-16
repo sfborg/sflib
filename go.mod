@@ -2,6 +2,10 @@ module github.com/sfborg/sflib
 
 go 1.25.1
 
+// Local fork with a fix for SQLite shorthand REFERENCES introspection.
+// Swap for the pushed fork reference once available upstream or on GitHub.
+replace ariga.io/atlas => /home/dimus/code/golang/atlas
+
 require (
 	ariga.io/atlas v1.2.0
 	github.com/dustin/go-humanize v1.0.1

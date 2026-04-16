@@ -24,40 +24,34 @@ type Archive interface {
 	AccessorSFGA
 	Reader
 	Writer
-	Updater
+	Migrator
 	Enricher
 }
 
-// BasionymInferenceConfig controls the basionym inference behavior.
-type BasionymInferenceConfig struct {
-	// SkipIfRelationsExist skips inference if BASIONYM relations already exist
-	SkipIfRelationsExist bool
-
-	// CreateOriginalCombinations creates OriginalGenus, OriginalSpecies, etc.
-	// relationships in addition to BASIONYM
-	CreateOriginalCombinations bool
+// Migrator provides Atlas-based schema migration for SFGA archives.
+type Migrator interface {
+	// Migrate brings the archive's schema up to the target version by
+	// computing an Atlas diff between the live schema and the desired schema
+	// (schema.sql at the target sflib tag) and applying only the necessary
+	// changes. It operates on a copy written to dstDir so the source file is
+	// never modified. Returns an Archive pointing at the migrated copy.
+	Migrate(dstDir string) (Archive, error)
 }
 
 // Enricher provides methods for enriching SFGA data through inference.
 type Enricher interface {
 	// InferBasionyms detects and creates basionym relationships by matching
 	// stemmed epithets and original authorship across all names in the archive.
-	// This is useful for archives that don't have explicit basionym relationships.
-	// The config controls whether to skip if relations exist and whether to
-	// create OriginalCombination relationships.
-	InferBasionyms(ctx context.Context, cfg BasionymInferenceConfig) error
-}
+	// Behavior is controlled by Config.SkipBasionymsIfRelationsExist and
+	// Config.CreateOriginalCombinations.
+	InferBasionyms(ctx context.Context) error
 
-// Updater provides methods for upgrading SFGA data from old schemas to
-// the last one. It does require schemas to be compatible, meaning that the
-// new schema only adds information, and does not remove/modify fields.
-type Updater interface {
-	// Update takes an empty archive based on the latest version of SFGA and
-	// populates it using data from the current archive. It also takes an option
-	// to create a parent/child hierarchy from 'flat' classification in the
-	// current archive. This option does nothing if parent/child classification
-	// already exists.
-	Update(emptySfga Archive, withParents bool) error
+	// AddParents builds a parent/child hierarchy from flat classification
+	// fields (kingdom, phylum, class, etc.) in the taxon table. Works
+	// in-place: deletes and re-inserts name, taxon, synonym, and
+	// name_relation tables within a transaction. No-op if parent IDs
+	// already exist or flat hierarchy is empty.
+	AddParents(ctx context.Context) error
 }
 
 // Reader provides methods to feed data from SFGA tables to a channel with

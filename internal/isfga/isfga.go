@@ -130,9 +130,9 @@ func (s *isfga) Version() string {
 	return version
 }
 
-// IsCompatible checks if the provided version is compatible with the current version of isfga.
+// IsCompatible checks if the provided version is compatible with the target version of isfga.
 // It compares the given version string with the version of the isfga instance using gnlib.CmpVersion.
-// If the given version is greater than or equal to the current version, it returns true; otherwise, it returns false.
+// If the given version is greater than or equal to the target version, it returns true; otherwise, it returns false.
 //
 // Parameters:
 //   - version: A string representing the version to be checked.

@@ -5,13 +5,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.6.0] - 2026-05-13 Wed
+
+- Add [#27]: use Atlas declarative migration to convert older versions of
+  SFGA to the current version. The is a problem with current way how Atlas
+  deals with foreign keys because SFGA used implicit references before.
+  And replace statements are ignored when a library is used in downstream
+  projects. SFGA version starting from v0.5.0 will use explicit foreign
+  keys references, but for now we have to make a dependency on our fork
+  of atlas. I also added an issue #3728 for Atlas project describing the
+  problem.
+
 ## [v0.5.11] - 2026-04-02 Thu
 
 - Fix: avoid superfluous, and duplicate synonyms.
 
 ## [v0.5.10] - 2026-03-31 Tue
 
-- Fix [#28]: CoLDP archives that have references in csv/tsv/psv format as well
+- Fix: CoLDP archives that have references in csv/tsv/psv format as well
   as jsonl, json, or bib formats now get references imported correctly.
 
 ## [v0.5.9] - 2026-03-25 Wed
@@ -241,6 +252,7 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.6.0]: https://github.com/sfborg/sflib/compare/v0.5.11...v0.6.0
 [v0.5.11]: https://github.com/sfborg/sflib/compare/v0.5.10...v0.5.11
 [v0.5.10]: https://github.com/sfborg/sflib/compare/v0.5.9...v0.5.10
 [v0.5.9]: https://github.com/sfborg/sflib/compare/v0.5.8...v0.5.9
@@ -293,7 +305,7 @@ This document follows [changelog guidelines]
 [v0.1.1]: https://github.com/sfborg/sflib/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/sfborg/sflib/compare/v0.0.1...v0.1.0
 [v0.0.1]: https://github.com/sfborg/sflib/tree/v0.0.1
-[#28]: https://github.com/sfborg/sflib/issues/28
+[#27]: https://github.com/sfborg/sflib/issues/27
 [#26]: https://github.com/sfborg/sflib/issues/26
 [#24]: https://github.com/sfborg/sflib/issues/24
 [#22]: https://github.com/sfborg/sflib/issues/22

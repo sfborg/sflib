@@ -3,10 +3,14 @@ package isfga
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/gnames/gnlib"
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/util"
 	"github.com/sfborg/sflib/pkg/arch"
 	_ "modernc.org/sqlite"
@@ -31,6 +35,42 @@ func (a *isfga) Fetch(src, dstDir string) error {
 		return &arch.ErrSQLiteCreateSQL{File: src, Err: err}
 	}
 
+	if gnlib.CmpVersion(a.Version(), config.SchemaVersion) == -1 {
+		slog.Warn("SFGA schema outdated, migrating",
+			"file_version", a.Version(),
+			"target_version", config.SchemaVersion,
+		)
+		migDir, err := os.MkdirTemp("", "sflib-migrate-")
+		if err != nil {
+			return fmt.Errorf("creating migration temp dir: %w", err)
+		}
+		defer os.RemoveAll(migDir)
+
+		migrated, err := a.Migrate(migDir)
+		if err != nil {
+			return fmt.Errorf("auto-migration failed: %w", err)
+		}
+		_ = migrated.Close()
+		_ = a.Close()
+
+		// Replace the original archive in dstDir with the migrated copy so
+		// callers see a single, up-to-date .sqlite file.
+		if err := os.Rename(migrated.DbPath(), a.dbPath); err != nil {
+			return fmt.Errorf("replacing archive with migrated copy: %w", err)
+		}
+
+		if a.cfg.MigrateOutputDir != "" {
+			outPath := filepath.Join(a.cfg.MigrateOutputDir, filepath.Base(a.dbPath))
+			if err := copyFile(a.dbPath, outPath); err != nil {
+				return fmt.Errorf("saving migrated copy: %w", err)
+			}
+			slog.Info("Migrated SFGA saved", "path", outPath)
+		}
+	}
+
+	// Close so WAL/SHM sidecar files are checkpointed and removed; callers
+	// obtain a live connection via Connect().
+	_ = a.Close()
 	return nil
 }
 

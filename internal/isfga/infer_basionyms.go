@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/sfborg/sflib/pkg/coldp"
-	"github.com/sfborg/sflib/pkg/sfga"
 )
 
 // nameForInference holds the data needed for basionym matching.
@@ -53,9 +52,9 @@ type nameLookups struct {
 // Key matching uses: stemmed_lowest_epithet + basionym_authorship + year
 // Year helps disambiguate when same author described same epithet in different years.
 // Parentheses detection checks both col__combination_authorship AND parses col__authorship.
-func (a *isfga) InferBasionyms(ctx context.Context, cfg sfga.BasionymInferenceConfig) error {
+func (a *isfga) InferBasionyms(ctx context.Context) error {
 	// Check if we should skip due to existing relations
-	if cfg.SkipIfRelationsExist {
+	if a.cfg.SkipBasionymsIfRelationsExist {
 		exists, err := a.basionymRelationsExist()
 		if err != nil {
 			return fmt.Errorf("checking existing relations: %w", err)
@@ -116,7 +115,7 @@ func (a *isfga) InferBasionyms(ctx context.Context, cfg sfga.BasionymInferenceCo
 
 	// Build lookup maps for OriginalX relationships (avoids N+1 queries)
 	var lookups nameLookups
-	if cfg.CreateOriginalCombinations {
+	if a.cfg.CreateOriginalCombinations {
 		slog.Info("Building name lookup maps for OriginalX relationships")
 		var err error
 		lookups, err = a.buildNameLookups(ctx)
@@ -173,7 +172,7 @@ func (a *isfga) InferBasionyms(ctx context.Context, cfg sfga.BasionymInferenceCo
 		})
 
 		// Optionally create OriginalCombination relationships
-		if cfg.CreateOriginalCombinations {
+		if a.cfg.CreateOriginalCombinations {
 			origRels := createOriginalCombinationRelations(n, basionym, lookups)
 			relations = append(relations, origRels...)
 		}
@@ -183,7 +182,7 @@ func (a *isfga) InferBasionyms(ctx context.Context, cfg sfga.BasionymInferenceCo
 
 	// Also create self-referencing relationships for basionyms (protonyms)
 	// In both COLDP and TaxonWorks, a basionym declares itself as its own basionym
-	if cfg.CreateOriginalCombinations {
+	if a.cfg.CreateOriginalCombinations {
 		basionymCount := 0
 		for _, basionym := range basionymLookup {
 			basionymCount++

@@ -12,24 +12,145 @@ import (
 	"github.com/gnames/gnparser"
 	"github.com/sfborg/sflib/pkg/coldp"
 	"github.com/sfborg/sflib/pkg/parser"
-	"github.com/sfborg/sflib/pkg/sfga"
 	"golang.org/x/sync/errgroup"
 )
 
-func (a *isfga) addParents(emptySfga sfga.Archive) error {
-	var err error
-	var nodes map[string]*node
-	var maxSfID int
-	nodes, maxSfID, err = a.buildNodes()
-	if err != nil {
+// AddParents builds a parent/child hierarchy from flat classification in-place.
+// It is a no-op when parent IDs already exist or no flat classification is present.
+func (a *isfga) AddParents(ctx context.Context) error {
+	should, err := a.shouldAddParents()
+	if err != nil || !should {
 		return err
 	}
-	err = a.addNameUsages(emptySfga, nodes, maxSfID)
+
+	nodes, maxSfID, err := a.buildNodes()
 	if err != nil {
 		return err
 	}
 
+	enriched, err := a.collectEnrichedNameUsages(ctx, nodes, maxSfID)
+	if err != nil {
+		return err
+	}
+
+	tx, err := a.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	for _, q := range []string{
+		"DELETE FROM name_relation",
+		"DELETE FROM synonym",
+		"DELETE FROM taxon",
+		"DELETE FROM name",
+	} {
+		if _, err := tx.ExecContext(ctx, q); err != nil {
+			return err
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	batchSize := a.cfg.BatchSize
+	for i := 0; i < len(enriched); i += batchSize {
+		end := i + batchSize
+		if end > len(enriched) {
+			end = len(enriched)
+		}
+		if err := a.InsertNameUsages(enriched[i:end]); err != nil {
+			return err
+		}
+	}
+
+	slog.Info("Added parent hierarchy", "count", len(enriched))
 	return nil
+}
+
+// shouldAddParents returns true if the archive has flat classification but no
+// parent IDs — meaning AddParents should run.
+func (a *isfga) shouldAddParents() (bool, error) {
+	var hasParents bool
+	err := a.db.QueryRow(`
+		SELECT EXISTS (
+		  SELECT 1 from taxon
+		    WHERE col__parent_id IS NOT NULL AND col__parent_id != ''
+		)
+	`).Scan(&hasParents)
+	if err != nil {
+		return false, err
+	}
+	if hasParents {
+		slog.Info("Parent IDs already exist, skipping adding parents")
+		return false, nil
+	}
+
+	var hasFlatHierarchy bool
+	err = a.db.QueryRow(`
+	SELECT EXISTS (
+		SELECT 1 FROM taxon
+			WHERE
+				col__genus != '' OR col__tribe != '' OR col__family != '' OR
+				col__order != '' OR col__class != '' OR col__phylum != '' OR
+				col__kingdom != ''
+)
+`).Scan(&hasFlatHierarchy)
+	if err != nil {
+		return false, err
+	}
+
+	if !hasFlatHierarchy {
+		slog.Info("Flat hierarchy does not exist, skipping adding parents")
+		return false, nil
+	}
+
+	return true, nil
+}
+
+// collectEnrichedNameUsages reads all NameUsages, enriches them with parent
+// IDs from nodes, and returns the full slice without writing to the DB.
+func (a *isfga) collectEnrichedNameUsages(
+	ctx context.Context,
+	nodes map[string]*node,
+	maxSfID int,
+) ([]coldp.NameUsage, error) {
+	g, ctx := errgroup.WithContext(ctx)
+	chIn := make(chan coldp.NameUsage)
+	chOut := make(chan []coldp.NameUsage)
+	pp := parser.Pool(1)
+
+	var result []coldp.NameUsage
+
+	g.Go(func() error {
+		defer close(chOut)
+		return a.addParentData(ctx, pp, chIn, chOut, nodes, maxSfID)
+	})
+
+	g.Go(func() error {
+		for {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case batch, ok := <-chOut:
+				if !ok {
+					return nil
+				}
+				result = append(result, batch...)
+			}
+		}
+	})
+
+	if err := a.LoadNameUsages(ctx, chIn); err != nil {
+		return nil, err
+	}
+	close(chIn)
+
+	if err := g.Wait(); err != nil && !errors.Is(err, context.Canceled) {
+		return nil, err
+	}
+	return result, nil
 }
 
 type node struct {
@@ -174,40 +295,6 @@ func getPathFromNameUsage(nu coldp.NameUsage) []coldp.NameUsage {
 	return taxa[:idx]
 }
 
-func (a *isfga) addNameUsages(
-	emptySfga sfga.Archive,
-	ids map[string]*node,
-	maxSfID int,
-) error {
-	var err error
-	g, ctx := errgroup.WithContext(context.Background())
-	chIn := make(chan coldp.NameUsage)
-	chOut := make(chan []coldp.NameUsage)
-	// for now we do not parallelize
-	pp := parser.Pool(1)
-
-	g.Go(func() error {
-		defer close(chOut)
-		return a.addParentData(ctx, pp, chIn, chOut, ids, maxSfID)
-	})
-
-	g.Go(func() error {
-		return saveNameUsages(ctx, emptySfga, chOut)
-	})
-
-	err = a.LoadNameUsages(ctx, chIn)
-	if err != nil {
-		return err
-	}
-	close(chIn)
-
-	err = g.Wait()
-	if err != nil && !errors.Is(err, context.Canceled) {
-		return err
-	}
-
-	return nil
-}
 
 func (a *isfga) addParentData(
 	ctx context.Context,
@@ -420,31 +507,6 @@ func nodeWithID(name string, maxSfID int, nameMap map[string]*node) *node {
 	return n
 }
 
-func saveNameUsages(
-	ctx context.Context,
-	a sfga.Archive,
-	chOut <-chan []coldp.NameUsage,
-) error {
-	// ensure connection
-	_, err := a.Connect()
-	if err != nil {
-		return err
-	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case batch, ok := <-chOut:
-			if !ok {
-				return nil
-			}
-			if err := a.InsertNameUsages(batch); err != nil {
-				return err
-			}
-		}
-	}
-}
 
 func returnParser(ch chan<- gnparser.GNparser, p gnparser.GNparser) {
 	ch <- p

@@ -4,7 +4,7 @@ go 1.25.1
 
 // Local fork with a fix for SQLite shorthand REFERENCES introspection.
 // Swap for the pushed fork reference once available upstream or on GitHub.
-replace ariga.io/atlas => /home/dimus/code/golang/atlas
+replace ariga.io/atlas => github.com/dimus/atlas v0.0.0-20260512202807-c70f08441137
 
 require (
 	ariga.io/atlas v1.2.0

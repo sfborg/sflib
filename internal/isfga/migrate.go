@@ -11,6 +11,7 @@ import (
 
 	atlasschema "ariga.io/atlas/sql/schema"
 	atlassqlite "ariga.io/atlas/sql/sqlite"
+	"github.com/gnames/gnlib"
 	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/pkg/sfga"
 )
@@ -19,6 +20,11 @@ import (
 // bring it up to the current schema version, updates the version table, and
 // returns a new Archive pointing at the migrated copy.
 func (a *isfga) Migrate(dstDir string) (sfga.Archive, error) {
+	if v := a.Version(); gnlib.CmpVersion(v, config.RepoMinVersion) < 0 {
+		return nil, fmt.Errorf("sfga version %s is below minimum supported %s; "+
+			"use an older sflib to migrate first", v, config.RepoMinVersion)
+	}
+
 	if err := os.MkdirAll(dstDir, 0755); err != nil {
 		return nil, fmt.Errorf("creating migration dir: %w", err)
 	}
@@ -41,7 +47,19 @@ func (a *isfga) Migrate(dstDir string) (sfga.Archive, error) {
 		return nil, fmt.Errorf("opening atlas driver: %w", err)
 	}
 
-	desired, err := a.desiredSchema(ctx)
+	var sch sfga.Schema
+	if a.cfg.LocalSchemaPath != "" {
+		sch = NewSchemaWithLocalPath(a.cfg.GitRepo, a.cfg.LocalSchemaPath)
+	} else {
+		sch = NewSchema(a.cfg.GitRepo)
+	}
+
+	schemaSQL, err := sch.Fetch()
+	if err != nil {
+		return nil, fmt.Errorf("fetching schema.sql: %w", err)
+	}
+
+	desired, err := a.desiredSchemaFromSQL(ctx, schemaSQL)
 	if err != nil {
 		return nil, fmt.Errorf("building desired schema: %w", err)
 	}
@@ -65,8 +83,11 @@ func (a *isfga) Migrate(dstDir string) (sfga.Archive, error) {
 		slog.Info("SFGA schema migrated", "changes", len(changes))
 	}
 
-	if _, err := db.ExecContext(ctx, "UPDATE version SET id = ?", config.SchemaVersion); err != nil {
-		return nil, fmt.Errorf("updating version table: %w", err)
+	if _, err := db.ExecContext(ctx, "DELETE FROM version"); err != nil {
+		return nil, fmt.Errorf("clearing version table: %w", err)
+	}
+	if _, err := db.ExecContext(ctx, "INSERT INTO version (sf__id) VALUES (?)", config.SchemaVersion); err != nil {
+		return nil, fmt.Errorf("setting version: %w", err)
 	}
 
 	result := &isfga{cfg: a.cfg}
@@ -77,21 +98,12 @@ func (a *isfga) Migrate(dstDir string) (sfga.Archive, error) {
 	return result, nil
 }
 
-// desiredSchema builds an in-memory SQLite database from the current schema.sql
-// and returns the Atlas schema object representing the target state.
-func (a *isfga) desiredSchema(ctx context.Context) (*atlasschema.Schema, error) {
-	var sch sfga.Schema
-	if a.cfg.LocalSchemaPath != "" {
-		sch = NewSchemaWithLocalPath(a.cfg.GitRepo, a.cfg.LocalSchemaPath)
-	} else {
-		sch = NewSchema(a.cfg.GitRepo)
-	}
-
-	schemaSQL, err := sch.Fetch()
-	if err != nil {
-		return nil, fmt.Errorf("fetching schema.sql: %w", err)
-	}
-
+// desiredSchemaFromSQL builds an in-memory SQLite database from the provided
+// schema SQL and returns the Atlas schema object representing the target state.
+func (a *isfga) desiredSchemaFromSQL(
+	ctx context.Context,
+	schemaSQL []byte,
+) (*atlasschema.Schema, error) {
 	memDB, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		return nil, fmt.Errorf("opening in-memory db: %w", err)

@@ -10,13 +10,18 @@ var (
 	repoURL = "https://github.com/sfborg/sfga"
 
 	// repoTag of the sfga repo to get correct schema version.
-	repoTag = "v0.5.0"
+	repoTag = "v0.5.1"
 
 	// schemaHash is the sha256 sum of the correponding schema version.
-	schemaHash = "94c4745ea91e64c"
+	schemaHash = "dd7a806e1384d"
 
 	// SchemaVersion is the desired SFGA schema version.
 	SchemaVersion = repoTag
+
+	// RepoMinVersion is the oldest SFGA schema version that sflib can migrate.
+	// Archives below this version must be brought up to RepoMinVersion using an
+	// older sflib release before further migration is possible.
+	RepoMinVersion = "v0.5.1"
 )
 
 type GitRepo struct {

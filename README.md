@@ -1,17 +1,5 @@
 # `SFlib`
 
-## WARNING
-
-To use migration functionality the downstream projects have to place
-the following line in `go.mod`:
-
-```go
-replace ariga.io/atlas => github.com/dimus/atlas v0.0.0-20260513171052-87ae9a6c4982
-```
-
-This is a temporary measure until the issue is fixed in the upstream
-Atlas project.
-
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18879464.svg)](https://doi.org/10.5281/zenodo.18879464)
 
 `SFlib` is a Go library containing shared functionality for Species File Group

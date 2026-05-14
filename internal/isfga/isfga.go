@@ -123,9 +123,13 @@ func (s *isfga) Version() string {
 	}
 
 	var version string
-	err = s.db.QueryRow("SELECT id FROM version LIMIT 1").Scan(&version)
+	err = s.db.QueryRow("SELECT sf__id FROM version LIMIT 1").Scan(&version)
 	if err != nil {
-		return ""
+		// fall back to the pre-v0.5.1 column name
+		err = s.db.QueryRow("SELECT id FROM version LIMIT 1").Scan(&version)
+		if err != nil {
+			return ""
+		}
 	}
 	return version
 }

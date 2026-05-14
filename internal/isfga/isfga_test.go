@@ -112,24 +112,43 @@ func TestDownload(t *testing.T) {
 	if !gnsys.Ping("opendata.globalnames.org:80", 3) {
 		return
 	}
-	assert := assert.New(t)
-	dir := filepath.Join(testDir, "dl")
-	err := os.Mkdir(dir, 0755)
-	assert.Nil(err)
-	defer os.RemoveAll(dir)
 
-	var a sfga.Archive
-	sf := "http://opendata.globalnames.org/sfga/archive/147-vascan-2025-01-31.sql.zip"
-	a = isfga.New()
-	assert.Nil(err)
-	err = a.Fetch(sf, dir)
-	assert.Nil(err)
+	tests := []struct {
+		name    string
+		url     string
+		files   int
+		suffix  string
+	}{
+		{
+			name:   "sqlite zip",
+			url:    "http://opendata.globalnames.org/sfga/tests/0147-vascan-2026-05-14-v37.16.sqlite.zip",
+			files:  1,
+			suffix: ".sqlite",
+		},
+		{
+			name:   "sql zip",
+			url:    "http://opendata.globalnames.org/sfga/tests/0147-vascan-2026-05-14-v37.16.sql.zip",
+			files:  2,
+			suffix: ".sql",
+		},
+	}
 
-	ents, err := os.ReadDir(dir)
-	assert.Nil(err)
-	// sqlite should be created from sql, therefore 2 fiels
-	assert.Equal(2, len(ents))
-	assert.True(strings.HasSuffix(ents[0].Name(), ".sql"))
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert := assert.New(t)
+			dir := filepath.Join(testDir, "dl-"+tt.name)
+			assert.Nil(os.Mkdir(dir, 0755))
+			defer os.RemoveAll(dir)
+
+			a := isfga.New()
+			assert.Nil(a.Fetch(tt.url, dir))
+
+			ents, err := os.ReadDir(dir)
+			assert.Nil(err)
+			assert.Equal(tt.files, len(ents))
+			assert.True(strings.HasSuffix(ents[0].Name(), tt.suffix))
+		})
+	}
 }
 
 func TestImport(t *testing.T) {

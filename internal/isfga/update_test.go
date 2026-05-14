@@ -19,7 +19,7 @@ func TestMigrate(t *testing.T) {
 	assert.Nil(err)
 	defer os.RemoveAll(dir)
 
-	path := "../../testdata/sfga/ptero_v0.3.31.sqlite"
+	path := "../../testdata/sfga/ptero_v0.5.1.sqlite"
 	oldSfga := isfga.New()
 	err = oldSfga.Fetch(path, dir)
 	assert.Nil(err)
@@ -47,7 +47,7 @@ func TestMigrateExplicit(t *testing.T) {
 	require.NoError(err)
 	defer os.RemoveAll(dir)
 
-	path := "../../testdata/sfga/ptero_v0.3.31.sqlite"
+	path := "../../testdata/sfga/ptero_v0.5.1.sqlite"
 	src := isfga.New()
 	err = src.Fetch(path, dir)
 	require.NoError(err)

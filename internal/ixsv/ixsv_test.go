@@ -330,7 +330,7 @@ func TestWriteSkipsSynonyms(t *testing.T) {
 	err = os.Mkdir(sfgaDir, 0755)
 	assert.Nil(err)
 
-	sfgaSrc := filepath.Join("../../testdata/sfga", "ptero_v0.4.1.sqlite.sqlite")
+	sfgaSrc := filepath.Join("../../testdata/sfga", "ptero_v0.5.1.sqlite")
 	sfga := isfga.New()
 	err = sfga.Fetch(sfgaSrc, sfgaDir)
 	assert.Nil(err)

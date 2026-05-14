@@ -2,10 +2,6 @@ module github.com/sfborg/sflib
 
 go 1.25.1
 
-// Local fork with a fix for SQLite shorthand REFERENCES introspection.
-// Swap for the pushed fork reference once available upstream or on GitHub.
-replace ariga.io/atlas => github.com/dimus/atlas v0.0.0-20260513171052-87ae9a6c4982
-
 require (
 	ariga.io/atlas v1.2.0
 	github.com/dustin/go-humanize v1.0.1
@@ -24,7 +20,6 @@ require (
 require (
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/cheggaaa/pb/v3 v3.1.7 // indirect
@@ -49,7 +44,6 @@ require (
 	github.com/ulikunitz/xz v0.5.15 // indirect
 	github.com/zclconf/go-cty v1.18.1 // indirect
 	github.com/zclconf/go-cty-yaml v1.2.0 // indirect
-	golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a // indirect
 	golang.org/x/mod v0.36.0 // indirect
 	golang.org/x/net v0.54.0 // indirect
 	golang.org/x/sys v0.44.0 // indirect

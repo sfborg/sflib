@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.6.1] - 2026-05-14 Thu
+
+- Fix: bug in SFGA current version.
+
 ## [v0.6.0] - 2026-05-13 Wed
 
 - Add [#27]: use Atlas declarative migration to convert older versions of
@@ -252,6 +256,7 @@ Add: Fetching repo works.
 
 This document follows [changelog guidelines]
 
+[v0.6.1]: https://github.com/sfborg/sflib/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/sfborg/sflib/compare/v0.5.11...v0.6.0
 [v0.5.11]: https://github.com/sfborg/sflib/compare/v0.5.10...v0.5.11
 [v0.5.10]: https://github.com/sfborg/sflib/compare/v0.5.9...v0.5.10

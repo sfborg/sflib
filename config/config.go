@@ -13,7 +13,7 @@ var (
 	repoTag = "v0.5.0"
 
 	// schemaHash is the sha256 sum of the correponding schema version.
-	schemaHash = "2562db8a318efd2"
+	schemaHash = "94c4745ea91e64c"
 
 	// SchemaVersion is the desired SFGA schema version.
 	SchemaVersion = repoTag

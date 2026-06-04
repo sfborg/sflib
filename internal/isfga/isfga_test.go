@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/gnames/gnsys"
+	"github.com/sfborg/sflib/config"
 	"github.com/sfborg/sflib/internal/isfga"
 	"github.com/sfborg/sflib/pkg/arch"
 	"github.com/sfborg/sflib/pkg/sfga"
@@ -250,6 +251,21 @@ func TestConnect(t *testing.T) {
 		_, err = a.Connect()
 		assert.True(a.Ping())
 	}
+}
+
+func TestSchemaVersion(t *testing.T) {
+	assert := assert.New(t)
+
+	dir := filepath.Join(testDir, "schema-ver")
+	err := os.Mkdir(dir, 0755)
+	assert.Nil(err)
+	defer os.RemoveAll(dir)
+
+	a := isfga.New()
+	err = a.Create(dir)
+	assert.Nil(err)
+
+	assert.Equal(config.SchemaVersion, a.Version())
 }
 
 func TestVersion(t *testing.T) {
